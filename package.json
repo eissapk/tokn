@@ -1,0 +1,28 @@
+{
+  "name": "ollama",
+  "description": "Olum App",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "olum-compiler dev",
+    "build": "olum-compiler build",
+    "start": "olum-compiler start"
+  },
+  "olum": {
+    "SITE_URL": "https://www.olumjs.top",
+    "SSG_DELAY": 0
+  },
+  "keywords": [
+    "olum"
+  ],
+  "author": "Eissa Saber",
+  "license": "ISC",
+  "dependencies": {
+    "olum": "^0.10.1",
+    "olum-router": "^0.5.3"
+  },
+  "devDependencies": {
+    "olum-compiler": "^2.1.0",
+    "olum-devtool": "^1.0.5"
+  }
+}
