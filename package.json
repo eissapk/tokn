@@ -4,13 +4,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "olum-compiler dev",
+    "dev": "npm run css && concurrently -k -n css,app -c magenta,green \"npm run css:watch\" \"npm run dev:app\"",
     "build": "olum-compiler build",
-    "start": "olum-compiler start"
+    "start": "olum-compiler start",
+    "css": "tailwindcss -i src/main.css -o public/main.css",
+    "css:watch": "npm run css -- --watch",
+    "dev:app": "olum-compiler dev"
   },
   "olum": {
     "SITE_URL": "https://www.olumjs.top",
-    "SSG_DELAY": 0
+    "SSG_DELAY": 0,
+    "base": "./"
   },
   "keywords": [
     "olum"
@@ -22,7 +26,34 @@
     "olum-router": "^0.5.3"
   },
   "devDependencies": {
-    "olum-compiler": "^2.1.0",
-    "olum-devtool": "^1.0.5"
+    "vite": "^8.3.0",
+    "@tailwindcss/cli": "^4.3.3",
+    "concurrently": "^10.0.5",
+    "olum-compiler": "^2.1.1",
+    "tailwindcss": "^4.3.3"
+  },
+  "main": "dist/index.html",
+  "window": {
+    "title": "Note Manager",
+    "toolbar": true,
+    "frame": true,
+    "width": 1073,
+    "height": 660,
+    "min_width": 500,
+    "min_height": 500,
+    "icon": "dist/favicon.svg",
+    "position": "center",
+    "background-color": "#a69aa6"
+  },
+  "chromium-args": "--disable-web-security",
+  "webview": {
+    "partitions": [
+      {
+        "name": "trusted",
+        "accessible_resources": [
+          "file://*/*"
+        ]
+      }
+    ]
   }
 }

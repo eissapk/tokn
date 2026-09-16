@@ -3,6 +3,7 @@ build
 dist
 desktop
 nwjs
+nw
 
 # Logs
 logs
