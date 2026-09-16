@@ -23,14 +23,17 @@
   "license": "ISC",
   "dependencies": {
     "olum": "^0.10.1",
-    "olum-router": "^0.5.3"
+    "olum-router": "^0.5.3",
+    "olum-store": "^0.1.0",
+    "olum-transition": "^0.2.1",
+    "tailwind-merge": "latest"
   },
   "devDependencies": {
-    "vite": "^8.3.0",
     "@tailwindcss/cli": "^4.3.3",
     "concurrently": "^10.0.5",
     "olum-compiler": "^2.1.1",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.3.0"
   },
   "main": "dist/index.html",
   "window": {
