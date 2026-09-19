@@ -1,0 +1,75 @@
+<script>
+  import Button from "./ui/Button/Button";
+  import DropdownMenu from "./ui/DropdownMenu/DropdownMenu";
+  import DropdownMenuContent from "./ui/DropdownMenu/DropdownMenuContent";
+  import DropdownMenuLabel from "./ui/DropdownMenu/DropdownMenuLabel";
+  import DropdownMenuSeparator from "./ui/DropdownMenu/DropdownMenuSeparator";
+  import DropdownMenuTrigger from "./ui/DropdownMenu/DropdownMenuTrigger";
+  import Icon from "./ui/Icon/Icon";
+  import ContextMeter from "./ContextMeter";
+  import ModelOption from "./ModelOption";
+  import { chat } from "../utils/store";
+  import { ChevronDown, Moon, Settings, SquarePen, Sun } from "../utils/icons";
+
+  /* Function props travel by name, so every store action a component tag
+     receives needs a local wrapper -- onclick="{chat.clear}" would arrive
+     undefined. Calling through the store also keeps `this` bound to it. */
+  const clear = () => chat.clear();
+  const toggleTheme = () => chat.toggleTheme();
+</script>
+
+<header class="flex h-14 shrink-0 items-center gap-3 border-b border-border px-4">
+  <!-- The wordmark is the identity: no logo tile, no spark. The dot beside it
+       is the daemon, and it is the only coloured pixel up here. -->
+  <span
+    class="size-1.5 shrink-0 rounded-full"
+    style="background: {chat.server === 'connected' ? 'var(--signal)' : 'var(--olum-muted-foreground)'}"
+    title="{chat.server === 'connected' ? 'Connected to the local server' : 'No local server'}"
+    aria-hidden="true"
+  ></span>
+  <h1 class="font-display hidden text-[15px] leading-none font-bold tracking-tight lowercase sm:block">ollama</h1>
+
+  <span class="hidden h-5 w-px bg-border sm:block"></span>
+
+  <!-- Which weights are answering is the one thing worth naming at the top of
+       a window with no history in it. -->
+  <DropdownMenu>
+    <DropdownMenuTrigger class="rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
+      <span class="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted">
+        <span class="font-mono text-sm font-medium">{chat.model}</span>
+        <span class="tnum hidden text-[11px] text-muted-foreground md:inline">{chat.modelInfo().params} · {chat.modelInfo().quant}</span>
+        <Icon icon="{ChevronDown}" class="size-3.5 text-muted-foreground" />
+      </span>
+    </DropdownMenuTrigger>
+
+    <DropdownMenuContent class="w-80 p-1.5">
+      <DropdownMenuLabel class="px-2 pt-1 pb-2">Installed models</DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      <for each="m of chat.models" key="m.name">
+        <ModelOption model="{m}" />
+      </for>
+    </DropdownMenuContent>
+  </DropdownMenu>
+
+  <div class="flex-1"></div>
+
+  <!-- Both of these are about a conversation in progress: a meter reading
+       0/33k measures nothing, and there is nothing to discard yet. An empty
+       window shows neither. -->
+  <if when="chat.messages.length">
+    <ContextMeter />
+
+    <Button variant="ghost" size="sm" class="gap-1.5 text-muted-foreground" onclick="{clear}">
+      <Icon icon="{SquarePen}" class="size-3.5" />
+      New chat
+    </Button>
+  </if>
+
+  <Button variant="ghost" size="icon-sm" ariaLabel="{chat.theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}" onclick="{toggleTheme}">
+    <Icon icon="{chat.theme === 'dark' ? Sun : Moon}" class="size-4" />
+  </Button>
+
+  <Button variant="ghost" size="icon-sm" ariaLabel="Settings">
+    <Icon icon="{Settings}" class="size-4" />
+  </Button>
+</header>

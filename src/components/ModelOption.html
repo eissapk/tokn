@@ -1,0 +1,34 @@
+<script>
+  import { props } from "olum";
+  import DropdownMenuItem from "./ui/DropdownMenu/DropdownMenuItem";
+  import Icon from "./ui/Icon/Icon";
+  import { chat } from "../utils/store";
+  import { Check } from "../utils/icons";
+
+  /* One row of the model menu. It exists because a function prop can't be
+     pre-bound to a value -- the row has to own the model it represents and
+     call back with it. */
+  const { model } = props();
+
+  const choose = () => chat.setModel(model.name);
+</script>
+
+<DropdownMenuItem class="gap-3 px-2 py-1.5" onclick="{choose}">
+  <span class="grid size-4 shrink-0 place-items-center">
+    <if when="model.name === chat.model"><Icon icon="{Check}" class="size-3.5" /></if>
+    <else>
+      <span
+        class="size-1.5 rounded-full"
+        style="background: {chat.isLoaded(model.name) ? 'var(--signal)' : 'transparent'}"
+        title="{chat.isLoaded(model.name) ? 'Loaded in memory' : ''}"
+      ></span>
+    </else>
+  </span>
+
+  <span class="flex min-w-0 flex-1 flex-col items-start gap-0.5">
+    <span class="font-mono text-[13px] leading-none">{model.name}</span>
+    <span class="text-[11px] leading-none text-muted-foreground">{model.params} · {model.quant} · {model.size}</span>
+  </span>
+
+  <span class="tnum shrink-0 font-mono text-[11px] text-muted-foreground">{Math.round(model.context / 1024)}k</span>
+</DropdownMenuItem>

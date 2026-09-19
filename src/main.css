@@ -1,1 +1,287 @@
 @import "./components/ui/olum-ui.css";
+
+/* Three faces, three jobs. Inter runs the interface, Space Grotesk carries the
+   wordmark and model names (the only places the app speaks for itself), and
+   Plex Mono is reserved for values the machine reports -- model tags, token
+   counts, context numbers, code. Never for UI labels: mono on a label is
+   decoration, mono on a measurement is the unit. */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* olum-ui ships chroma-0 greys. A trace of blue (h 255) at c 0.004-0.012 keeps
+   the surfaces from reading as dead newsprint and nudges the whole shell
+   towards the cool cast of a system tool, without tinting anything enough to
+   notice on its own. */
+:root {
+  --olum-radius: 0.5rem;
+  --olum-background: oklch(0.995 0.001 255);
+  --olum-foreground: oklch(0.17 0.008 255);
+  --olum-primary: oklch(0.22 0.012 255);
+  --olum-primary-foreground: oklch(0.985 0.001 255);
+  --olum-secondary: oklch(0.965 0.003 255);
+  --olum-secondary-foreground: oklch(0.22 0.012 255);
+  --olum-muted: oklch(0.965 0.003 255);
+  --olum-muted-foreground: oklch(0.545 0.012 255);
+  --olum-accent: oklch(0.955 0.005 255);
+  --olum-accent-foreground: oklch(0.22 0.012 255);
+  --olum-border: oklch(0.915 0.005 255);
+  --olum-ring: oklch(0.68 0.012 255);
+
+  /* The one colour in the app. It marks liveness and nothing else: the server
+     dot, a loaded model, the caret while tokens are arriving. If it shows up
+     on a surface or a button, something has gone wrong. */
+  --signal: oklch(0.64 0.15 152);
+  /* Context pressure, and only that -- the meter switches to it past 80%. */
+  --warn: oklch(0.7 0.14 72);
+
+  /* The chat column. Prose, not layout: the shell is full-bleed, this is the
+     measure the reading stays inside. ~72ch at 15px. */
+  --measure: 46rem;
+
+  /* The rail sits *under* the page in both themes -- one step darker than the
+     background, not one step lighter, so the transcript is always the lit
+     surface. olum-ui's --muted can't do this: in dark mode it's lighter than
+     the background. */
+  --rail: oklch(0.975 0.003 255);
+}
+
+.dark {
+  --olum-background: oklch(0.155 0.008 255);
+  --olum-foreground: oklch(0.965 0.002 255);
+  --olum-primary: oklch(0.93 0.004 255);
+  --olum-primary-foreground: oklch(0.2 0.01 255);
+  --olum-secondary: oklch(0.255 0.009 255);
+  --olum-secondary-foreground: oklch(0.965 0.002 255);
+  --olum-muted: oklch(0.235 0.009 255);
+  --olum-muted-foreground: oklch(0.7 0.012 255);
+  --olum-accent: oklch(0.3 0.01 255);
+  --olum-accent-foreground: oklch(0.975 0.002 255);
+  --olum-border: oklch(1 0 0 / 13%);
+  --olum-ring: oklch(0.55 0.012 255);
+
+  --signal: oklch(0.76 0.17 152);
+  --warn: oklch(0.8 0.15 75);
+  --rail: oklch(0.125 0.008 255);
+}
+
+@theme inline {
+  --color-signal: var(--signal);
+  --color-warn: var(--warn);
+  --color-rail: var(--rail);
+  --container-measure: var(--measure);
+}
+
+@layer base {
+  /* Olum renders every component instance inside a wrapper <div>. The wrapper
+     is invisible in the source but very much present in layout: it becomes the
+     flex item in place of the element the component actually renders, so a
+     height chain (h-screen > flex-1 > overflow-auto) snaps the moment it
+     crosses a component boundary -- which in an app shell is every level.
+     olum-ui patches this per container with [&>[data-olum]]:contents; a shell
+     needs it the whole way down, so it is stated once, here.
+
+     This changes layout only. The DOM is untouched, so every closest() and
+     querySelector() the components run against those wrappers still resolves.
+     Scoped to div because <html> carries data-olum too. */
+  body div[data-olum] {
+    display: contents;
+  }
+
+  /* An application window, not a document: the shell owns every scroll region
+     so the page itself never moves. */
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Tabular figures everywhere a number changes in place -- token counts and
+     the context readout tick without the row reflowing under them. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Hairline scrollbars. The app is dense; full-width bars eat the gutter the
+     chat column depends on. */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--olum-border);
+    border: 3px solid transparent;
+    background-clip: content-box;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--olum-muted-foreground);
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Rendered model output.
+
+   These have to be global. The markdown renderer hands back a raw HTML string
+   that Olum injects with html="", so those nodes never receive a component's
+   scope attribute and a scoped <style> block would miss every one of them.
+   --------------------------------------------------------------------------- */
+.md {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--olum-foreground);
+  overflow-wrap: break-word;
+}
+
+.md > * + * {
+  margin-top: 0.85em;
+}
+
+.md h1,
+.md h2,
+.md h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  margin-top: 1.6em;
+}
+.md h1 {
+  font-size: 1.25rem;
+}
+.md h2 {
+  font-size: 1.0625rem;
+}
+.md h3 {
+  font-size: 0.9375rem;
+}
+.md > :first-child {
+  margin-top: 0;
+}
+
+.md ul,
+.md ol {
+  padding-left: 1.35em;
+}
+.md ul {
+  list-style: disc;
+}
+.md ol {
+  list-style: decimal;
+}
+.md li::marker {
+  color: var(--olum-muted-foreground);
+}
+.md li + li {
+  margin-top: 0.3em;
+}
+
+.md a {
+  color: var(--olum-foreground);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--olum-border);
+}
+.md a:hover {
+  text-decoration-color: currentColor;
+}
+
+.md strong {
+  font-weight: 600;
+}
+
+.md blockquote {
+  border-left: 2px solid var(--olum-border);
+  padding-left: 0.9em;
+  color: var(--olum-muted-foreground);
+}
+
+.md hr {
+  border: 0;
+  border-top: 1px solid var(--olum-border);
+  margin: 1.5em 0;
+}
+
+.md :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--olum-muted);
+  border-radius: 4px;
+  padding: 0.15em 0.35em;
+}
+
+/* Code arrives from the model as a unit of output, so it gets a frame with the
+   language it declared -- the one piece of chrome in the transcript. */
+.md .code {
+  border: 1px solid var(--olum-border);
+  border-radius: calc(var(--olum-radius) * 0.8);
+  overflow: hidden;
+  background: var(--olum-muted);
+}
+.md .code-lang {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+  color: var(--olum-muted-foreground);
+  padding: 0.4rem 0.75rem;
+  border-bottom: 1px solid var(--olum-border);
+}
+.md pre {
+  margin: 0;
+  padding: 0.75rem;
+  overflow-x: auto;
+}
+.md pre code {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.65;
+}
+
+/* The caret is the only thing in the app that moves on its own, and it stops
+   the moment the stream does. It rides the last block of the answer rather
+   than the container, so it trails the text instead of dropping to its own
+   line under it. */
+.md.streaming > :last-child::after {
+  content: "";
+  display: inline-block;
+  width: 0.5em;
+  height: 1.05em;
+  margin-left: 0.12em;
+  vertical-align: text-bottom;
+  background: var(--signal);
+  border-radius: 1px;
+  animation: caret 1.1s steps(1) infinite;
+}
+
+@keyframes caret {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}

@@ -1,0 +1,61 @@
+<script>
+  import { onMount } from "olum";
+  import MessageScroller from "./ui/MessageScroller/MessageScroller";
+  import MessageScrollerButton from "./ui/MessageScroller/MessageScrollerButton";
+  import MessageScrollerContent from "./ui/MessageScroller/MessageScrollerContent";
+  import MessageScrollerItem from "./ui/MessageScroller/MessageScrollerItem";
+  import MessageScrollerProvider from "./ui/MessageScroller/MessageScrollerProvider";
+  import MessageScrollerViewport from "./ui/MessageScroller/MessageScrollerViewport";
+  import Turn from "./Turn";
+  import Welcome from "./Welcome";
+  import { chat } from "../utils/store";
+
+  /* Follow the stream, but only while the reader is already at the bottom.
+     Scrolling up to re-read an earlier answer has to survive the next hundred
+     tokens arriving, so anything further than a line from the end releases the
+     follow until the reader comes back down. A MutationObserver rather than a
+     hook into the store: this way it tracks the DOM growing for any reason,
+     including a thread being switched underneath it. */
+  onMount(() => {
+    const viewport = host.querySelector('[data-slot="message-scroller-viewport"]');
+    if (!viewport) return;
+
+    const atBottom = () => viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight < 32;
+    let follow = true;
+
+    const onScroll = () => (follow = atBottom());
+    const observer = new MutationObserver(() => {
+      if (follow) viewport.scrollTop = viewport.scrollHeight;
+    });
+
+    viewport.addEventListener("scroll", onScroll, { passive: true });
+    observer.observe(viewport, { childList: true, subtree: true, characterData: true });
+
+    return () => {
+      viewport.removeEventListener("scroll", onScroll);
+      observer.disconnect();
+    };
+  });
+</script>
+
+<MessageScrollerProvider>
+  <MessageScroller class="flex-1">
+    <MessageScrollerViewport>
+      <if when="chat.messages.length">
+        <!-- The shell runs edge to edge; the reading does not. Chrome gets the
+             full window, prose gets a measure. -->
+        <MessageScrollerContent class="mx-auto w-full max-w-measure gap-7 px-6 py-8">
+          <for each="m of chat.messages" key="m.id">
+            <MessageScrollerItem>
+              <Turn message="{m}" />
+            </MessageScrollerItem>
+          </for>
+        </MessageScrollerContent>
+      </if>
+      <else>
+        <Welcome />
+      </else>
+    </MessageScrollerViewport>
+    <MessageScrollerButton />
+  </MessageScroller>
+</MessageScrollerProvider>

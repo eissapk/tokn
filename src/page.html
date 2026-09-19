@@ -1,209 +1,37 @@
-<main class="min-h-screen bg-[#f8faff] text-slate-800 font-sans antialiased">
-  <!-- Subtle background -->
-  <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-    <div class="absolute left-1/2 top-[-280px] h-[650px] w-[900px] -translate-x-1/2 rounded-full bg-indigo-100/35 blur-3xl"></div>
-    <div class="absolute bottom-[-300px] left-1/2 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-blue-100/25 blur-3xl"></div>
+<head>
+  <title>ollama — local chat</title>
+  <meta name="description" content="A desktop client for models running on your own machine." />
+</head>
+
+<script>
+  import { onMount } from "olum";
+  import TooltipProvider from "./components/ui/Tooltip/TooltipProvider";
+  import Composer from "./components/Composer";
+  import Thread from "./components/Thread";
+  import Topbar from "./components/Topbar";
+  import { chat, restoreTheme } from "./utils/store";
+
+  onMount(() => {
+    restoreTheme();
+
+    /* Nothing is saved, so the only shortcut worth having is the one that
+       throws the current thread away and starts over. It lives on window so
+       it works wherever the focus happens to be. */
+    const onKey = (e) => {
+      if (!(e.ctrlKey || e.metaKey) || e.key !== "n") return;
+      e.preventDefault();
+      chat.clear();
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
+</script>
+
+<TooltipProvider>
+  <div class="flex h-screen w-screen flex-col overflow-hidden bg-background text-foreground">
+    <Topbar />
+    <Thread />
+    <Composer />
   </div>
-
-  <!-- Main chat -->
-  <main class="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-5 sm:px-8">
-    <!-- Minimal top bar -->
-    <header class="flex h-20 items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="grid h-9 w-9 place-items-center rounded-xl bg-slate-900 text-white shadow-sm">
-          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M12 3.5 14.2 9.8 20.5 12l-6.3 2.2L12 20.5l-2.2-6.3L3.5 12l6.3-2.2L12 3.5Z" />
-          </svg>
-        </div>
-        <span class="text-sm font-semibold tracking-tight">AI Agent</span>
-      </div>
-
-      <button class="rounded-full px-3 py-2 text-sm text-slate-500 transition hover:bg-white hover:text-slate-800">New chat</button>
-    </header>
-
-    <!-- Conversation -->
-    <section class="flex-1 pb-40 pt-8 sm:pt-14">
-      <!-- User request -->
-      <div class="mb-8 flex justify-end">
-        <div class="max-w-[85%] rounded-[22px] rounded-br-md bg-[#e9f0ff] px-5 py-3.5 text-[15px] leading-6 text-slate-700 sm:max-w-xl">
-          Explain how to use git rebase to clean up my commits.
-        </div>
-      </div>
-
-      <!-- Agent response -->
-      <article class="mx-auto max-w-2xl">
-        <div class="mb-4 flex items-center gap-3">
-          <div class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white shadow-sm ring-1 ring-slate-200/70">
-            <svg viewBox="0 0 24 24" class="h-4 w-4 text-slate-700" fill="none" stroke="currentColor" stroke-width="1.8">
-              <circle cx="12" cy="12" r="7.5" />
-              <path d="M8.5 10.5c1.5-1.8 5.5-1.8 7 0M9 14.5c1.7 1.2 4.3 1.2 6 0" />
-              <path d="M5 8.2 3.7 6.7M19 8.2l1.3-1.5M8.2 4.8 7.6 2.9M15.8 4.8l.6-1.9" />
-            </svg>
-          </div>
-          <span class="text-sm font-medium text-slate-500">AI Agent</span>
-        </div>
-
-        <div class="rounded-[28px] bg-white px-6 py-6 shadow-soft ring-1 ring-slate-200/60 sm:px-8 sm:py-7">
-          <p class="text-[15px] leading-7 text-slate-600">
-            Git rebase lets you move or combine commits, helping you keep a cleaner, more linear history. Here's a simple guide:
-          </p>
-
-          <div class="mt-6 space-y-6 text-[15px] leading-7">
-            <div>
-              <h3 class="font-semibold text-slate-800">1. Start on your branch</h3>
-              <p class="text-slate-500">Make sure you're on the branch you want to clean up:</p>
-              <code class="mt-2 inline-flex rounded-lg bg-slate-50 px-3 py-1.5 font-mono text-[13px] text-slate-700 ring-1 ring-slate-200/70"
-                >git checkout feature-branch</code
-              >
-            </div>
-
-            <div>
-              <h3 class="font-semibold text-slate-800">2. Rebase onto the target branch</h3>
-              <p class="text-slate-500">
-                Rebase your branch onto the latest <code class="rounded bg-slate-50 px-1.5 py-0.5 font-mono text-[13px] text-slate-600">main</code>:
-              </p>
-              <code class="mt-2 inline-flex rounded-lg bg-slate-50 px-3 py-1.5 font-mono text-[13px] text-slate-700 ring-1 ring-slate-200/70"
-                >git rebase main</code
-              >
-            </div>
-
-            <div>
-              <h3 class="font-semibold text-slate-800">3. Resolve conflicts if needed</h3>
-              <p class="text-slate-500">Fix conflicts, stage the files, then continue:</p>
-              <div class="mt-2 flex flex-wrap gap-2">
-                <code class="rounded-lg bg-slate-50 px-3 py-1.5 font-mono text-[13px] text-slate-700 ring-1 ring-slate-200/70"
-                  >git add &lt;file&gt;</code
-                >
-                <code class="rounded-lg bg-slate-50 px-3 py-1.5 font-mono text-[13px] text-slate-700 ring-1 ring-slate-200/70"
-                  >git rebase --continue</code
-                >
-              </div>
-            </div>
-
-            <div>
-              <h3 class="font-semibold text-slate-800">4. Squash or edit commits</h3>
-              <p class="text-slate-500">Use an interactive rebase when you want to combine, rename, or remove commits:</p>
-              <code class="mt-2 inline-flex rounded-lg bg-slate-50 px-3 py-1.5 font-mono text-[13px] text-slate-700 ring-1 ring-slate-200/70"
-                >git rebase -i HEAD~n</code
-              >
-            </div>
-
-            <div>
-              <h3 class="font-semibold text-slate-800">5. Push the cleaned history</h3>
-              <p class="text-slate-500">If the branch was already pushed, update it safely with:</p>
-              <code class="mt-2 inline-flex rounded-lg bg-slate-50 px-3 py-1.5 font-mono text-[13px] text-slate-700 ring-1 ring-slate-200/70"
-                >git push --force-with-lease</code
-              >
-            </div>
-          </div>
-
-          <div class="mt-7 border-t border-slate-100 pt-4">
-            <div class="flex items-center justify-between">
-              <span class="text-sm text-slate-500">That's it. Your commit history will be cleaner.</span>
-
-              <button
-                aria-label="Copy response"
-                class="group relative grid h-9 w-9 shrink-0 place-items-center rounded-xl text-slate-400 transition hover:bg-slate-50 hover:text-slate-700"
-              >
-                <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <rect x="8" y="8" width="11" height="11" rx="2" />
-                  <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
-                </svg>
-                <span
-                  class="pointer-events-none absolute bottom-11 right-0 whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1.5 text-[11px] text-white opacity-0 shadow-lg transition group-hover:opacity-100"
-                >
-                  Copy to clipboard
-                </span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </article>
-    </section>
-
-    <!-- Composer -->
-    <div class="fixed bottom-6 left-1/2 z-20 w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2 sm:bottom-8 sm:w-[calc(100%-4rem)]">
-      <div class="rounded-[25px] border border-slate-200/80 bg-white/95 p-2 shadow-[0_18px_55px_rgba(30,50,100,.13)] backdrop-blur-xl">
-        <div class="flex items-center gap-1">
-          <!-- Plus -->
-          <button
-            aria-label="Add attachment"
-            class="grid h-11 w-11 shrink-0 place-items-center rounded-[18px] text-slate-500 transition hover:bg-slate-50 hover:text-slate-800"
-          >
-            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-          </button>
-
-          <!-- Message input -->
-          <div class="min-w-0 flex-1 px-2">
-            <input
-              type="text"
-              placeholder="Message the AI agent..."
-              class="w-full bg-transparent py-3 text-[15px] text-slate-800 outline-none placeholder:text-slate-400"
-            />
-          </div>
-
-          <!-- Think -->
-          <button
-            aria-label="Think"
-            class="group relative grid h-11 w-11 shrink-0 place-items-center rounded-[18px] text-slate-500 transition hover:bg-slate-50 hover:text-slate-800"
-          >
-            <svg viewBox="0 0 24 24" class="h-[19px] w-[19px]" fill="none" stroke="currentColor" stroke-width="1.7">
-              <path d="M9 18h6M9.8 21h4.4" />
-              <path d="M8.1 14.7A6.2 6.2 0 1 1 16 14.6c-.9.8-1.5 1.6-1.5 2.4h-5c0-.8-.5-1.6-1.4-2.3Z" />
-              <path d="M12 5.5v4M6.9 7.6l2.8 2M17.1 7.6l-2.8 2" />
-            </svg>
-            <span
-              class="pointer-events-none absolute bottom-14 left-1/2 -translate-x-1/2 rounded-lg bg-slate-900 px-2.5 py-1.5 text-[11px] text-white opacity-0 shadow-lg transition group-hover:opacity-100"
-              >Think</span
-            >
-          </button>
-
-          <!-- Mic -->
-          <button
-            aria-label="Voice input"
-            class="group relative grid h-11 w-11 shrink-0 place-items-center rounded-[18px] text-slate-500 transition hover:bg-slate-50 hover:text-slate-800"
-          >
-            <svg viewBox="0 0 24 24" class="h-[19px] w-[19px]" fill="none" stroke="currentColor" stroke-width="1.8">
-              <rect x="9" y="3" width="6" height="11" rx="3" />
-              <path d="M6.5 11.5a5.5 5.5 0 0 0 11 0M12 17v4M8.5 21h7" />
-            </svg>
-            <span
-              class="pointer-events-none absolute bottom-14 left-1/2 -translate-x-1/2 rounded-lg bg-slate-900 px-2.5 py-1.5 text-[11px] text-white opacity-0 shadow-lg transition group-hover:opacity-100"
-              >Mic</span
-            >
-          </button>
-
-          <!-- Send -->
-          <button
-            aria-label="Send message"
-            class="group relative grid h-11 w-11 shrink-0 place-items-center rounded-[18px] bg-indigo-600 text-white shadow-button transition hover:bg-indigo-700 active:scale-95"
-          >
-            <svg viewBox="0 0 24 24" class="h-[19px] w-[19px]" fill="none" stroke="currentColor" stroke-width="1.9">
-              <path d="m4 4 16 8-16 8 3-8-3-8Z" />
-              <path d="M7 12h13" />
-            </svg>
-            <span
-              class="pointer-events-none absolute bottom-14 left-1/2 -translate-x-1/2 rounded-lg bg-slate-900 px-2.5 py-1.5 text-[11px] text-white opacity-0 shadow-lg transition group-hover:opacity-100"
-              >Send</span
-            >
-          </button>
-        </div>
-      </div>
-
-      <p class="mt-2 text-center text-[11px] text-slate-400">AI can make mistakes. Check important information.</p>
-    </div>
-
-    <!-- New request -->
-    <button
-      class="fixed bottom-7 right-6 hidden items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-600 shadow-sm transition hover:border-slate-300 hover:text-slate-900 lg:flex"
-    >
-      <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8">
-        <path d="M5 6.5h14M5 12h9M5 17.5h7" />
-        <path d="M17 15v6M14 18h6" />
-      </svg>
-      New request
-    </button>
-  </main>
-</main>
+</TooltipProvider>

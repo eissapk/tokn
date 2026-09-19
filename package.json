@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run css && concurrently -k -n css,app -c magenta,green \"npm run css:watch\" \"npm run dev:app\"",
-    "build": "olum-compiler build",
+    "build": "olum-compiler build && cp public/common.js dist",
     "start": "olum-compiler start",
     "css": "tailwindcss -i src/main.css -o public/main.css",
     "css:watch": "npm run css -- --watch",
@@ -23,6 +23,7 @@
   "license": "ISC",
   "dependencies": {
     "olum": "^0.10.1",
+    "olum-icons": "^0.4.0",
     "olum-router": "^0.5.3",
     "olum-store": "^0.1.0",
     "olum-transition": "^0.2.1",
