@@ -1,7 +1,7 @@
 /**
  * A small markdown renderer for model output.
  *
- * Ollama streams markdown, so something has to turn it into HTML before it
+ * Buildr streams markdown, so something has to turn it into HTML before it
  * reaches html="". This covers what a chat model actually emits -- fenced
  * code, headings, lists, emphasis, quotes, links -- and nothing else. Swap it
  * for marked/markdown-it when the transcript needs tables or footnotes; the

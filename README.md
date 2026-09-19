@@ -1,4 +1,4 @@
-# ollama
+# Buildr
 
 A web application built with [Olum.js](https://olumjs.top/), a minimal JavaScript framework for building reactive single-page applications with HTML, CSS, and JavaScript.
 

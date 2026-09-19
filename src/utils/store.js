@@ -7,21 +7,21 @@ import { store } from "olum";
  * history, no persistence and no session list: the app opens empty every time
  * and `clear()` is the only way to end a thread.
  *
- * This is a front end against a fake Ollama. Each place that would talk to the
+ * This is a front end against a fake Buildr. Each place that would talk to the
  * daemon is marked `API:` with the endpoint that belongs there, and nothing
  * else in the app knows where the data comes from -- components read this
  * store and call these methods, so wiring the real thing means replacing the
  * bodies below and deleting the stand-in generator at the bottom.
  *
- * Ollama listens on http://localhost:11434 by default.
+ * Buildr listens on http://localhost:11434 by default.
  */
 
-export const OLLAMA_HOST = "http://localhost:11434";
+export const Buildr_HOST = "http://localhost:11434";
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 const now = () => Date.now();
 
-/* Rough enough for a context meter: Ollama reports real counts in the /api/chat
+/* Rough enough for a context meter: Buildr reports real counts in the /api/chat
    response (prompt_eval_count + eval_count), so this only has to hold until
    the first reply arrives. */
 const estimateTokens = (text) => Math.ceil(String(text || "").length / 4);
@@ -146,7 +146,7 @@ export const chat = store({
     });
   },
 
-  /** API: abort the fetch -- Ollama stops generating when the response body is cancelled. */
+  /** API: abort the fetch -- Buildr stops generating when the response body is cancelled. */
   stop() {
     stopFakeStream();
     this.streaming = false;
@@ -178,7 +178,7 @@ export const chat = store({
 export const applyTheme = (theme) => {
   document.documentElement.classList.toggle("dark", theme === "dark");
   try {
-    localStorage.setItem("ollama-theme", theme);
+    localStorage.setItem("Buildr-theme", theme);
   } catch {
     /* a locked-down profile just gets the default next launch */
   }
@@ -187,7 +187,7 @@ export const applyTheme = (theme) => {
 export const restoreTheme = () => {
   let stored = null;
   try {
-    stored = localStorage.getItem("ollama-theme");
+    stored = localStorage.getItem("Buildr-theme");
   } catch {
     /* ignore */
   }
@@ -250,13 +250,13 @@ git push --force-with-lease
 A **context window** is how many tokens the model can hold at once — your prompt, the conversation so far, and the answer it's writing, all counted together. When a chat outgrows the window, the oldest turns fall out of it.
 
 \`\`\`bash
-ollama show qwen3:8b --modelfile | grep num_ctx
+Buildr show qwen3:8b --modelfile | grep num_ctx
 \`\`\`
 
 You can raise it per session:
 
 \`\`\`bash
-ollama run qwen3:8b
+Buildr run qwen3:8b
 /set parameter num_ctx 8192
 \`\`\`
 
