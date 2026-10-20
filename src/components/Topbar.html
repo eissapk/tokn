@@ -10,12 +10,18 @@
   import ModelOption from "./ModelOption";
   import { chat } from "../utils/store";
   import { ChevronDown, Moon, SquarePen, Sun } from "../utils/icons";
+  import { onMount } from "olum";
 
   /* Function props travel by name, so every store action a component tag
      receives needs a local wrapper -- onclick="{chat.clear}" would arrive
      undefined. Calling through the store also keeps `this` bound to it. */
   const clear = () => chat.clear();
   const toggleTheme = () => chat.toggleTheme();
+  onMount( async ()=> {
+    const response = await fetch("http://localhost:11434/api/tags");
+    const json = await response.json();
+    console.log(json);
+  })
 </script>
 
 <header class="flex h-14 shrink-0 items-center gap-3 border-b border-border px-4">
