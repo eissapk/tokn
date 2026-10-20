@@ -8,20 +8,44 @@
   import Icon from "./ui/Icon/Icon";
   import ContextMeter from "./ContextMeter";
   import ModelOption from "./ModelOption";
-  import { chat } from "../utils/store";
-  import { ChevronDown, Moon, SquarePen, Sun } from "../utils/icons";
   import { onMount } from "olum";
+  import { chat, Buildr_HOST } from "../utils/store";
+  import { ChevronDown, Moon, SquarePen, Sun } from "../utils/icons";
 
   /* Function props travel by name, so every store action a component tag
      receives needs a local wrapper -- onclick="{chat.clear}" would arrive
      undefined. Calling through the store also keeps `this` bound to it. */
   const clear = () => chat.clear();
   const toggleTheme = () => chat.toggleTheme();
-  onMount( async ()=> {
-    const response = await fetch("http://localhost:11434/api/tags");
-    const json = await response.json();
-    console.log(json);
-  })
+
+  const formatSize = (bytes) => `${(bytes / 1e9).toFixed(1)} GB`;
+
+  /* One /api/tags entry, flattened into what the menu and the meter read.
+     context_length only appears on newer servers; without it the meter
+     stays hidden rather than guessing. */
+  const toModel = (m) => ({
+    name: m.name,
+    family: m.details?.family || "",
+    params: m.details?.parameter_size || "",
+    quant: m.details?.quantization_level || "",
+    size: formatSize(m.size),
+    context: m.details?.context_length || 0,
+    thinks: (m.capabilities || []).includes("thinking"),
+  });
+
+  /* The installed list doubles as the health check: if it answers, the
+     server is up, and that is what the dot beside the wordmark reports. */
+  onMount(async () => {
+    try {
+      const response = await fetch(`${Buildr_HOST}/api/tags`);
+      if (!response.ok) throw new Error(`${response.status}`);
+      const { models = [] } = await response.json();
+      chat.setModels(models.map(toModel));
+      chat.server = "connected";
+    } catch {
+      chat.server = "offline";
+    }
+  });
 </script>
 
 <header class="flex h-14 shrink-0 items-center gap-3 border-b border-border px-4">
@@ -42,8 +66,13 @@
   <DropdownMenu>
     <DropdownMenuTrigger class="rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
       <span class="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted">
-        <span class="font-mono text-sm font-medium">{chat.model}</span>
-        <span class="tnum hidden text-[11px] text-muted-foreground md:inline">{chat.modelInfo().params} · {chat.modelInfo().quant}</span>
+        <if when="chat.model">
+          <span class="font-mono text-sm font-medium">{chat.model}</span>
+          <span class="tnum hidden text-[11px] text-muted-foreground md:inline">{chat.modelInfo().params} · {chat.modelInfo().quant}</span>
+        </if>
+        <else>
+          <span class="text-sm text-muted-foreground">{chat.server === "connecting" ? "Loading models…" : "No models"}</span>
+        </else>
         <Icon icon="{ChevronDown}" class="size-3.5 text-muted-foreground" />
       </span>
     </DropdownMenuTrigger>
@@ -54,6 +83,11 @@
       <for each="m of chat.models" key="m.name">
         <ModelOption model="{m}" />
       </for>
+      <if when="!chat.models.length">
+        <p class="px-2 py-3 text-[13px] text-muted-foreground">
+          {chat.server === "offline" ? "Can't reach the server at " + Buildr_HOST : "No models installed"}
+        </p>
+      </if>
     </DropdownMenuContent>
   </DropdownMenu>
 
@@ -63,7 +97,7 @@
        0/33k measures nothing, and there is nothing to discard yet. An empty
        window shows neither. -->
   <if when="chat.messages.length">
-    <ContextMeter />
+    <if when="chat.contextLimit()"><ContextMeter /></if>
 
     <Button variant="ghost" size="sm" class="gap-1.5 text-muted-foreground" onclick="{clear}">
       <Icon icon="{SquarePen}" class="size-3.5" />
