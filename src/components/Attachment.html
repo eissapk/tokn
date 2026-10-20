@@ -1,0 +1,28 @@
+<script>
+  import { props } from "olum";
+  import Icon from "./ui/Icon/Icon";
+  import { FileText, X } from "../utils/icons";
+
+  /* One attached file as a chip. Like ModelOption, it exists so the row owns
+     the file it represents and can call back with it -- a function prop can't
+     be pre-bound to a value. Without onremove it is read-only, which is how
+     a sent turn shows what went with it. */
+  const { file, onremove } = props();
+
+  const remove = () => onremove(file.id);
+</script>
+
+<span class="flex max-w-56 items-center gap-1.5 rounded-md border border-border bg-muted px-2 py-1 text-[12px] font-normal text-foreground">
+  <Icon icon="{FileText}" class="size-3.5 shrink-0 text-muted-foreground" />
+  <span class="truncate font-mono" title="{file.name}">{file.name}</span>
+  <if when="onremove">
+    <button
+      type="button"
+      aria-label="{'Remove ' + file.name}"
+      class="-mr-0.5 grid size-4 shrink-0 cursor-pointer place-items-center rounded text-muted-foreground hover:bg-background hover:text-foreground"
+      onclick="{remove}"
+    >
+      <Icon icon="{X}" class="size-3" />
+    </button>
+  </if>
+</span>

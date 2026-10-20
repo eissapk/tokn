@@ -1,5 +1,6 @@
 <script>
   import { props } from "olum";
+  import Attachment from "./Attachment";
   import Bubble from "./ui/Bubble/Bubble";
   import BubbleContent from "./ui/Bubble/BubbleContent";
   import Button from "./ui/Button/Button";
@@ -15,6 +16,11 @@
 
   const { message } = props();
   const state = { copied: false };
+
+  /* A user turn with files carries them inlined in content for the model;
+     the bubble shows only what was typed. */
+  const hasFiles = () => Boolean(message.files && message.files.length);
+  const typed = () => (hasFiles() ? message.text : message.content);
 
   /* Assistant output is the only raw HTML in the app. render() escapes before
      it builds a single tag, so a model that writes "<script>" gets a model
@@ -39,9 +45,18 @@
 <Message align="{message.role === 'user' ? 'end' : 'start'}">
   <MessageContent class="gap-1.5">
     <if when="message.role === 'user'">
-      <Bubble align="end" variant="tinted">
-        <BubbleContent class="px-3.5 py-2.5 text-[15px] leading-relaxed whitespace-pre-wrap">{message.content}</BubbleContent>
-      </Bubble>
+      <if when="hasFiles()">
+        <div class="flex flex-wrap justify-end gap-1.5">
+          <for each="f of message.files" key="f.id">
+            <Attachment file="{f}" />
+          </for>
+        </div>
+      </if>
+      <if when="typed()">
+        <Bubble align="end" variant="tinted">
+          <BubbleContent class="px-3.5 py-2.5 text-[15px] leading-relaxed whitespace-pre-wrap">{typed()}</BubbleContent>
+        </Bubble>
+      </if>
     </if>
     <else>
       <Bubble variant="ghost" class="w-full max-w-full">

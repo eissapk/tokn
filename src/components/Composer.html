@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "olum";
+  import Attachment from "./Attachment";
   import Icon from "./ui/Icon/Icon";
   import InputGroup from "./ui/InputGroup/InputGroup";
   import InputGroupAddon from "./ui/InputGroup/InputGroupAddon";
@@ -12,35 +13,58 @@
   import { chat, Buildr_HOST } from "../utils/store";
   import { ArrowUp, Lightbulb, Mic, Paperclip } from "../utils/icons";
 
-  const state = { input: "", think: false, sending: false };
+  const state = { input: "", think: false, sending: false, attachments: [] };
 
   const uid = () => Math.random().toString(36).slice(2, 10);
 
+  /* Files wait beside the field as chips until the next send, which folds
+     them into that one message. Only text goes to the model, so anything
+     with a NUL byte in it -- an image, a binary -- is turned away here
+     rather than arriving as noise. */
   const onAttach = () => {
     const fileInput = document.createElement("input");
     fileInput.type = "file";
+    fileInput.multiple = true;
 
-    fileInput.onchange = (event) => {
-      const file = event.target.files?.[0];
-
-      if (!file) return;
-
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        const content = reader.result;
-        console.log("File name:", file.name);
-        console.log("File content:", content);
-      };
-
-      reader.onerror = () => console.error("Failed to read file:", reader.error);
-
-      reader.readAsText(file);
-
+    fileInput.onchange = async (event) => {
+      const files = [...(event.target.files || [])];
       fileInput.value = "";
+
+      const read = await Promise.all(
+        files.map(async (file) => {
+          try {
+            const content = await file.text();
+            if (content.includes("\u0000")) throw new Error("not a text file");
+            return { id: uid(), name: file.name, content };
+          } catch (err) {
+            console.error(`Failed to read ${file.name}:`, err.message);
+            return null;
+          }
+        }),
+      );
+
+      // Reassigned, not pushed: a new array is what re-renders the chips.
+      state.attachments = [...state.attachments, ...read.filter(Boolean)];
     };
 
     fileInput.click();
+  };
+
+  const removeAttachment = (id) => (state.attachments = state.attachments.filter((f) => f.id !== id));
+
+  /* The message the model actually receives. Each file is fenced in its own
+     <file name="..."> tag rather than a ``` block, because source files
+     often carry ``` themselves and would close the fence early. The request
+     goes last, after the material it is about, so it is the freshest thing
+     in the context when the answer starts. */
+  const buildPrompt = (text, files) => {
+    if (!files.length) return text;
+
+    const intro = files.length === 1 ? "I've attached a file." : `I've attached ${files.length} files.`;
+    const blocks = files.map((f) => `<file name="${f.name}">\n${f.content.trimEnd()}\n</file>`).join("\n\n");
+    const ask = text || (files.length === 1 ? "Please review this file." : "Please review these files.");
+
+    return `${intro}\n\n${blocks}\n\n${ask}`;
   };
   const onMic = () => {};
   const onThink = (pressed) => (state.think = pressed);
@@ -50,9 +74,18 @@
      is easily half a minute of apparent silence. */
   const onSend = async () => {
     const text = state.input.trim();
-    if (!text || state.sending || !chat.model) return;
+    const files = state.attachments;
+    if ((!text && !files.length) || state.sending || !chat.model) return;
 
-    chat.messages.push({ id: uid(), role: "user", content: text });
+    // content is the full prompt, files and all, so follow-up turns still
+    // carry them in the history; text and files are only what the bubble shows.
+    chat.messages.push({
+      id: uid(),
+      role: "user",
+      content: buildPrompt(text, files),
+      text,
+      files: files.map(({ id, name }) => ({ id, name })),
+    });
     const history = chat.messages.map(({ role, content }) => ({ role, content }));
     chat.messages.push({ id: uid(), role: "assistant", content: "" });
 
@@ -62,6 +95,7 @@
     const reply = chat.messages[chat.messages.length - 1];
 
     state.input = "";
+    state.attachments = [];
     state.sending = true;
     const field = host.querySelector("textarea");
     if (field) field.style.height = "auto";
@@ -139,7 +173,15 @@
        edge lands exactly on the text edge above it. -->
   <div class="mx-auto w-full max-w-measure px-6">
     <InputGroup class="rounded-xl bg-background">
-      <textarea
+      <if when="state.attachments.length">
+        <InputGroupAddon align="block-start" class="flex-wrap gap-1.5 px-2.5 pt-2.5 pb-0">
+          <for each="f of state.attachments" key="f.id">
+            <Attachment file="{f}" onremove="{removeAttachment}" />
+          </for>
+        </InputGroupAddon>
+      </if>
+
+      <Textarea
         rows="1"
         slot="input-group-control"
         placeholder="{chat.model ? 'Message ' + chat.model : 'No model available'}"
