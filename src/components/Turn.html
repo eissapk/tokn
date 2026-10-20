@@ -11,7 +11,7 @@
   import Tooltip from "./ui/Tooltip/Tooltip";
   import TooltipContent from "./ui/Tooltip/TooltipContent";
   import TooltipTrigger from "./ui/Tooltip/TooltipTrigger";
-  import { render } from "../utils/markdown";
+  import { copyFace, render } from "../utils/markdown";
   import { Check, Copy } from "../utils/icons";
 
   const { message } = props();
@@ -55,8 +55,12 @@
 
       navigator.clipboard.writeText(code.textContent).then(
         () => {
-          button.innerHTML = `${Check}<span>Copied</span>`;
-          setTimeout(() => (button.innerHTML = `${Copy}<span>Copy</span>`), 1600);
+          button.innerHTML = copyFace(true);
+          button.title = "Copied";
+          setTimeout(() => {
+            button.innerHTML = copyFace(false);
+            button.title = "Copy code";
+          }, 1600);
         },
         () => {
           /* a denied clipboard leaves the button as it was */

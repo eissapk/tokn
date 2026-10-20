@@ -13,7 +13,14 @@
  * between the transcript and the DOM.
  */
 
-import { Copy } from "./icons.js";
+import { Check, Copy } from "./icons.js";
+
+/* The code block's copy button face, shared with Turn, which swaps it to the
+   copied state. The size is written into the SVG itself rather than left to
+   CSS: the icon strings only carry height="24", so without a stylesheet they
+   draw at 24px inside an 11px header. */
+const sized = (svg) => svg.replace('height="24"', 'width="13" height="13"');
+export const copyFace = (copied) => sized(copied ? Check : Copy);
 
 const escapeHtml = (str) =>
   String(str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -117,7 +124,7 @@ export const render = (markdown) => {
     // and reads the block's text back out of the DOM, already unescaped.
     out.push(
       `<div class="code"><div class="code-head"><span>${code.lang}</span>` +
-        `<button type="button" class="code-copy" data-copy aria-label="Copy code">${Copy}<span>Copy</span></button></div>` +
+        `<button type="button" class="code-copy" data-copy aria-label="Copy code" title="Copy code">${copyFace(false)}</button></div>` +
         `<pre><code>${code.lines.join("\n")}</code></pre></div>`,
     );
     code = null;
