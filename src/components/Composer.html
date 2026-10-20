@@ -9,30 +9,74 @@
   import Tooltip from "./ui/Tooltip/Tooltip";
   import TooltipContent from "./ui/Tooltip/TooltipContent";
   import TooltipTrigger from "./ui/Tooltip/TooltipTrigger";
-  import { chat } from "../utils/store";
+  import { chat, Buildr_HOST } from "../utils/store";
   import { ArrowUp, Lightbulb, Mic, Paperclip } from "../utils/icons";
 
-  const state = { input: "" };
+  const state = { input: "", think: false, sending: false };
+
+  const uid = () => Math.random().toString(36).slice(2, 10);
 
   /* Stubs, one per control. Wire them up here; nothing else in the app calls
      them. onThink receives the toggle's new pressed state. */
   const onAttach = () => {};
   const onMic = () => {};
-  const onThink = (pressed) => {};
+  const onThink = (pressed) => (state.think = pressed);
+
+  /* Streams the answer into the transcript. With stream: false nothing shows
+     until the whole reply -- thinking included -- is finished, which on qwen3
+     is easily half a minute of apparent silence. */
   const onSend = async () => {
-    console.log(state.input);
-    const response = await fetch("http://localhost:11434/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "qwen3-dev",
-        messages: [{ role: "user", content: state.input }],
-        stream: false,
-      }),
-    });
-    const json = await response.json();
-    console.log(json);
-    
+    const text = state.input.trim();
+    if (!text || state.sending) return;
+
+    chat.messages.push({ id: uid(), role: "user", content: text });
+    const history = chat.messages.map(({ role, content }) => ({ role, content }));
+    chat.messages.push({ id: uid(), role: "assistant", content: "" });
+
+    // Read the turn back OUT of the store: only writes through the store's
+    // wrapper re-render, so mutating the plain object pushed above would fill
+    // in the text with nothing on screen changing.
+    const reply = chat.messages[chat.messages.length - 1];
+
+    state.input = "";
+    state.sending = true;
+    const field = host.querySelector("textarea");
+    if (field) field.style.height = "auto";
+
+    try {
+      const response = await fetch(`${Buildr_HOST}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ model: "qwen3-dev", messages: history, stream: true, think: state.think }),
+      });
+      if (!response.ok) throw new Error(`${response.status} ${await response.text()}`);
+
+      // The stream is newline-delimited JSON, one chunk per line, and a read
+      // can end mid-line -- so keep the unfinished tail for the next read.
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        const lines = buffer.split("\n");
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          const chunk = JSON.parse(line);
+          if (chunk.error) throw new Error(chunk.error);
+          if (chunk.message && chunk.message.content) reply.content += chunk.message.content;
+        }
+      }
+    } catch (err) {
+      reply.content += `${reply.content ? "\n\n" : ""}**Error:** ${err.message}`;
+    } finally {
+      state.sending = false;
+    }
   };
   const handleInput = (e) => {
     state.input = e.target.value;
