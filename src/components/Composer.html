@@ -23,7 +23,11 @@
     console.log(state.input);
     
   };
-  const handleInput = (e) => (state.input = e.target.value);
+  const handleInput = (e) => {
+    state.input = e.target.value;
+    grow(e.target);
+  };
+
   /* field-sizing: content isn't in every engine NW.js ships on, so the height
      is set by hand: reset, then take the content's own height up to a ceiling
      of roughly eight lines, after which the field scrolls. */
@@ -32,25 +36,22 @@
     el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
   };
 
-  /* Textarea doesn't forward keydown, and its input handler is called without
-     the event, so both are attached to the field directly. */
+  /* Textarea doesn't forward keydown, so Enter-to-send is attached to the
+     field it renders. */
   onMount(() => {
     const field = host.querySelector("textarea");
     if (!field) return;
 
-    const onInput = () => grow(field);
     const onKeydown = (e) => {
       if (e.key !== "Enter" || e.shiftKey) return;
       e.preventDefault();
       onSend();
     };
 
-    field.addEventListener("input", onInput);
     field.addEventListener("keydown", onKeydown);
     field.focus();
 
     return () => {
-      field.removeEventListener("input", onInput);
       field.removeEventListener("keydown", onKeydown);
     };
   });
@@ -61,7 +62,7 @@
        edge lands exactly on the text edge above it. -->
   <div class="mx-auto w-full max-w-measure px-6">
     <InputGroup class="rounded-xl bg-background">
-      <textarea
+      <Textarea
         rows="1"
         slot="input-group-control"
         placeholder="Message {chat.model}"
