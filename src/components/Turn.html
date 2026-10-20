@@ -1,5 +1,5 @@
 <script>
-  import { props } from "olum";
+  import { onMount, props } from "olum";
   import Attachment from "./Attachment";
   import Bubble from "./ui/Bubble/Bubble";
   import BubbleContent from "./ui/Bubble/BubbleContent";
@@ -40,6 +40,33 @@
       },
     );
   };
+
+  /* Code blocks are rendered markup, not components, so their copy buttons
+     are handled by one delegated listener. The block is read back through
+     textContent, which undoes render()'s escaping -- what lands on the
+     clipboard is the code exactly as the model wrote it. */
+  onMount(() => {
+    const onClick = (e) => {
+      const button = e.target.closest("[data-copy]");
+      if (!button) return;
+
+      const code = button.closest(".code")?.querySelector("pre code");
+      if (!code) return;
+
+      navigator.clipboard.writeText(code.textContent).then(
+        () => {
+          button.innerHTML = `${Check}<span>Copied</span>`;
+          setTimeout(() => (button.innerHTML = `${Copy}<span>Copy</span>`), 1600);
+        },
+        () => {
+          /* a denied clipboard leaves the button as it was */
+        },
+      );
+    };
+
+    host.addEventListener("click", onClick);
+    return () => host.removeEventListener("click", onClick);
+  });
 </script>
 
 <Message align="{message.role === 'user' ? 'end' : 'start'}">

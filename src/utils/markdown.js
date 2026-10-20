@@ -13,6 +13,8 @@
  * between the transcript and the DOM.
  */
 
+import { Copy } from "./icons.js";
+
 const escapeHtml = (str) =>
   String(str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
@@ -111,7 +113,13 @@ export const render = (markdown) => {
 
   const flushCode = () => {
     if (!code) return;
-    out.push(`<div class="code"><div class="code-lang">${code.lang}</div><pre><code>${code.lines.join("\n")}</code></pre></div>`);
+    // The copy button is inert markup: Turn listens for clicks on [data-copy]
+    // and reads the block's text back out of the DOM, already unescaped.
+    out.push(
+      `<div class="code"><div class="code-head"><span>${code.lang}</span>` +
+        `<button type="button" class="code-copy" data-copy aria-label="Copy code">${Copy}<span>Copy</span></button></div>` +
+        `<pre><code>${code.lines.join("\n")}</code></pre></div>`,
+    );
     code = null;
   };
 
