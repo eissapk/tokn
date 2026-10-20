@@ -16,14 +16,10 @@
 export { ArrowUp } from "olum-icons/lucide/ArrowUp.js";
 export { Check } from "olum-icons/lucide/Check.js";
 export { ChevronDown } from "olum-icons/lucide/ChevronDown.js";
-export { CircleStop } from "olum-icons/lucide/CircleStop.js";
 export { Copy } from "olum-icons/lucide/Copy.js";
 export { Lightbulb } from "olum-icons/lucide/Lightbulb.js";
 export { Mic } from "olum-icons/lucide/Mic.js";
 export { Moon } from "olum-icons/lucide/Moon.js";
 export { Paperclip } from "olum-icons/lucide/Paperclip.js";
-export { Pencil } from "olum-icons/lucide/Pencil.js";
-export { RotateCcw } from "olum-icons/lucide/RotateCcw.js";
-export { Settings } from "olum-icons/lucide/Settings.js";
 export { SquarePen } from "olum-icons/lucide/SquarePen.js";
 export { Sun } from "olum-icons/lucide/Sun.js";

@@ -1,19 +1,29 @@
 <script>
   import { onMount } from "olum";
-  import Button from "./ui/Button/Button";
   import Icon from "./ui/Icon/Icon";
-  import Kbd from "./ui/Kbd/Kbd";
+  import InputGroup from "./ui/InputGroup/InputGroup";
+  import InputGroupAddon from "./ui/InputGroup/InputGroupAddon";
+  import InputGroupButton from "./ui/InputGroup/InputGroupButton";
+  import Textarea from "./ui/Textarea/Textarea";
+  import Toggle from "./ui/Toggle/Toggle";
   import Tooltip from "./ui/Tooltip/Tooltip";
   import TooltipContent from "./ui/Tooltip/TooltipContent";
   import TooltipTrigger from "./ui/Tooltip/TooltipTrigger";
   import { chat } from "../utils/store";
-  import { ArrowUp, CircleStop, Lightbulb, Mic, Paperclip } from "../utils/icons";
+  import { ArrowUp, Lightbulb, Mic, Paperclip } from "../utils/icons";
 
-  const onInput = (e) => {
-    chat.setDraft(e.target.value);
-    grow(e.target);
+  const state = { input: "" };
+
+  /* Stubs, one per control. Wire them up here; nothing else in the app calls
+     them. onThink receives the toggle's new pressed state. */
+  const onAttach = () => {};
+  const onMic = () => {};
+  const onThink = (pressed) => {};
+  const onSend = () => {
+    console.log(state.input);
+    
   };
-
+  const handleInput = (e) => (state.input = e.target.value);
   /* field-sizing: content isn't in every engine NW.js ships on, so the height
      is set by hand: reset, then take the content's own height up to a ceiling
      of roughly eight lines, after which the field scrolls. */
@@ -22,39 +32,27 @@
     el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
   };
 
-  const onKeydown = (e) => {
-    if (e.key !== "Enter" || e.shiftKey) return;
-    e.preventDefault();
-    submit();
-  };
-
-  const submit = () => {
-    if (chat.streaming || !chat.draft.trim()) return;
-    chat.send();
-
-    /* Clear the field here rather than leaving it to the patcher. The value
-       attribute only gets written to a live input when the TEMPLATE's value
-       changed, so if the draft is set and sent inside one tick the template
-       goes "" -> "" and the text the user typed is never wiped. Typing by
-       hand always crosses a task boundary, but dictation, a paste handler or
-       a suggestion filling the field and submitting would not. */
-    const field = host.querySelector("textarea");
-    if (field) {
-      field.value = "";
-      field.style.height = "auto";
-      field.focus();
-    }
-  };
-
-  const stop = () => chat.stop();
-  const toggleThink = () => chat.toggleThink();
-  const toggleMic = () => chat.toggleMic();
-
-  const thinks = () => chat.modelInfo().thinks;
-
+  /* Textarea doesn't forward keydown, and its input handler is called without
+     the event, so both are attached to the field directly. */
   onMount(() => {
     const field = host.querySelector("textarea");
-    if (field) field.focus();
+    if (!field) return;
+
+    const onInput = () => grow(field);
+    const onKeydown = (e) => {
+      if (e.key !== "Enter" || e.shiftKey) return;
+      e.preventDefault();
+      onSend();
+    };
+
+    field.addEventListener("input", onInput);
+    field.addEventListener("keydown", onKeydown);
+    field.focus();
+
+    return () => {
+      field.removeEventListener("input", onInput);
+      field.removeEventListener("keydown", onKeydown);
+    };
   });
 </script>
 
@@ -62,78 +60,46 @@
   <!-- Same measure and the same 24px gutter as the transcript, so the field's
        edge lands exactly on the text edge above it. -->
   <div class="mx-auto w-full max-w-measure px-6">
-    <!-- One field, one row of controls, nothing floating over the transcript.
-         The composer is docked because a local client is a tool you keep your
-         hands in, not a hero element. -->
-    <div class="rounded-xl border border-border bg-background transition-shadow focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
+    <InputGroup class="rounded-xl bg-background">
       <textarea
         rows="1"
-        value="{chat.draft}"
-        oninput="onInput($event)"
-        onkeydown="onKeydown($event)"
-        placeholder="{chat.listening ? 'Listening…' : 'Message ' + chat.model}"
-        aria-label="Message {chat.model}"
-        class="block max-h-[200px] w-full resize-none bg-transparent px-3.5 pt-3 pb-1 text-[15px] leading-relaxed text-foreground outline-none placeholder:text-muted-foreground"
-      ></textarea>
+        slot="input-group-control"
+        placeholder="Message {chat.model}"
+        class="max-h-[200px] min-h-0 resize-none rounded-none border-0 bg-transparent px-3.5 pt-3 pb-1 text-[15px] leading-relaxed focus-visible:ring-0"
+        oninput="{handleInput}"
+        value="{state.input}"
+      />
 
-      <div class="flex items-center gap-1 px-2 pt-1 pb-2">
+      <InputGroupAddon align="block-end" class="gap-1 px-2 pt-1 pb-2">
         <Tooltip>
           <TooltipTrigger>
-            <Button variant="ghost" size="icon-sm" ariaLabel="Attach a file">
+            <InputGroupButton size="icon-sm" ariaLabel="Attach a file" onclick="{onAttach}">
               <Icon icon="{Paperclip}" class="size-4" />
-            </Button>
+            </InputGroupButton>
           </TooltipTrigger>
           <TooltipContent>Attach a file</TooltipContent>
         </Tooltip>
 
-        <!-- Recording is liveness, so it earns the signal colour, same as the
-             server dot and the streaming caret. -->
         <Tooltip>
           <TooltipTrigger>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              ariaLabel="{chat.listening ? 'Stop dictation' : 'Dictate a message'}"
-              class="{chat.listening ? 'text-signal' : ''}"
-              onclick="{toggleMic}"
-            >
-              <Icon icon="{Mic}" class="size-4 {chat.listening ? 'animate-pulse' : ''}" />
-            </Button>
+            <InputGroupButton size="icon-sm" ariaLabel="Dictate a message" onclick="{onMic}">
+              <Icon icon="{Mic}" class="size-4" />
+            </InputGroupButton>
           </TooltipTrigger>
-          <TooltipContent>{chat.listening ? "Stop dictation" : "Dictate a message"}</TooltipContent>
+          <TooltipContent>Dictate a message</TooltipContent>
         </Tooltip>
 
-        <if when="thinks()">
-          <!-- Only offered by models that actually reason out loud, so the
-               control never promises something the weights can't do. -->
-          <Button variant="{chat.think ? 'secondary' : 'ghost'}" size="sm" class="gap-1.5 {chat.think ? '' : 'text-muted-foreground'}" onclick="{toggleThink}">
-            <Icon icon="{Lightbulb}" class="size-3.5" />
-            Think
-          </Button>
-        </if>
+        <Toggle size="sm" class="gap-1.5 text-muted-foreground aria-pressed:text-foreground" onchange="{onThink}">
+          <Icon icon="{Lightbulb}" class="size-3.5" />
+          Think
+        </Toggle>
 
         <div class="flex-1"></div>
 
-        <if when="chat.streaming">
-          <Button variant="outline" size="sm" class="gap-1.5" onclick="{stop}">
-            <Icon icon="{CircleStop}" class="size-3.5" />
-            Stop
-          </Button>
-        </if>
-        <else>
-          <Button size="icon-sm" ariaLabel="Send message" disabled="{!chat.draft.trim()}" onclick="{submit}">
-            <Icon icon="{ArrowUp}" class="size-4" />
-          </Button>
-        </else>
-      </div>
-    </div>
-
-    <p class="mt-2 flex items-center justify-center gap-x-1.5 gap-y-1 text-[11px] text-muted-foreground">
-      <Kbd class="text-[10px]">Enter</Kbd>
-      <span class="mr-4">to send</span>
-      <Kbd class="text-[10px]">Shift</Kbd>
-      <Kbd class="text-[10px]">Enter</Kbd>
-      <span>for a new line</span>
-    </p>
+        <InputGroupButton variant="default" size="icon-sm" ariaLabel="Send message" onclick="{onSend}">
+          <Icon icon="{ArrowUp}" class="size-4" />
+        </InputGroupButton>
+      </InputGroupAddon>
+    </InputGroup>
   </div>
 </div>

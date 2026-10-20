@@ -9,7 +9,7 @@
   import ContextMeter from "./ContextMeter";
   import ModelOption from "./ModelOption";
   import { chat } from "../utils/store";
-  import { ChevronDown, Moon, Settings, SquarePen, Sun } from "../utils/icons";
+  import { ChevronDown, Moon, SquarePen, Sun } from "../utils/icons";
 
   /* Function props travel by name, so every store action a component tag
      receives needs a local wrapper -- onclick="{chat.clear}" would arrive
@@ -67,9 +67,5 @@
 
   <Button variant="ghost" size="icon-sm" ariaLabel="{chat.theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}" onclick="{toggleTheme}">
     <Icon icon="{chat.theme === 'dark' ? Sun : Moon}" class="size-4" />
-  </Button>
-
-  <Button variant="ghost" size="icon-sm" ariaLabel="Settings">
-    <Icon icon="{Settings}" class="size-4" />
   </Button>
 </header>

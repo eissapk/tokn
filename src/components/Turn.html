@@ -2,6 +2,7 @@
   import { props } from "olum";
   import Bubble from "./ui/Bubble/Bubble";
   import BubbleContent from "./ui/Bubble/BubbleContent";
+  import Button from "./ui/Button/Button";
   import Icon from "./ui/Icon/Icon";
   import Message from "./ui/Message/Message";
   import MessageContent from "./ui/Message/MessageContent";
@@ -9,9 +10,8 @@
   import Tooltip from "./ui/Tooltip/Tooltip";
   import TooltipContent from "./ui/Tooltip/TooltipContent";
   import TooltipTrigger from "./ui/Tooltip/TooltipTrigger";
-  import { chat } from "../utils/store";
   import { render } from "../utils/markdown";
-  import { Check, Copy, Pencil, RotateCcw } from "../utils/icons";
+  import { Check, Copy } from "../utils/icons";
 
   const { message } = props();
   const state = { copied: false };
@@ -21,15 +21,8 @@
      that wrote "<script>". Don't route anything else through html="". */
   const body = () => render(message.content) || "<p></p>";
 
-  const isLast = () => {
-    const turns = chat.messages;
-    return turns.length > 0 && turns[turns.length - 1].id === message.id;
-  };
-
-  /* The turn currently arriving. Reading chat.streaming here is what keeps the
-     caret in sync -- no prop has to be threaded down for it. */
-  const live = () => chat.streaming && isLast();
-
+  /* Copies the raw markdown, not the rendered HTML, so it pastes back into an
+     editor or another prompt exactly as the model wrote it. */
   const copy = () => {
     navigator.clipboard.writeText(message.content).then(
       () => {
@@ -41,84 +34,32 @@
       },
     );
   };
-
-  const edit = () => chat.editFrom(message.id);
-  const retry = () => chat.regenerate();
 </script>
 
-<Message align="{message.role === 'user' ? 'end' : 'start'}" class="group/turn">
+<Message align="{message.role === 'user' ? 'end' : 'start'}">
   <MessageContent class="gap-1.5">
     <if when="message.role === 'user'">
       <Bubble align="end" variant="tinted">
         <BubbleContent class="px-3.5 py-2.5 text-[15px] leading-relaxed whitespace-pre-wrap">{message.content}</BubbleContent>
       </Bubble>
-
-      <MessageFooter class="gap-1 px-0 opacity-0 transition-opacity group-hover/turn:opacity-100 focus-within:opacity-100">
-        <Tooltip>
-          <TooltipTrigger>
-            <button
-              onclick="edit()"
-              class="flex items-center gap-1.5 rounded-md px-1.5 py-1 text-muted-foreground transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
-            >
-              <Icon icon="{Pencil}" class="size-3.5" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>Edit and ask again</TooltipContent>
-        </Tooltip>
-      </MessageFooter>
     </if>
-
     <else>
-      <!-- No card, no avatar, no shadow: the answer is the page. Chrome around
-           it would only compete with the thing you came to read. -->
       <Bubble variant="ghost" class="w-full max-w-full">
         <BubbleContent class="w-full max-w-full">
-          <div class="md {live() ? 'streaming' : ''}" html="body()"></div>
+          <div class="md" html="body()"></div>
         </BubbleContent>
       </Bubble>
 
-      <if when="!live()">
-        <MessageFooter class="gap-1 px-0">
-          <Tooltip>
-            <TooltipTrigger>
-              <button
-                onclick="copy()"
-                aria-label="Copy answer"
-                class="flex items-center gap-1.5 rounded-md px-1.5 py-1 text-muted-foreground transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
-              >
-                <Icon icon="{state.copied ? Check : Copy}" class="size-3.5" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>{state.copied ? "Copied" : "Copy answer"}</TooltipContent>
-          </Tooltip>
-
-          <if when="isLast()">
-            <Tooltip>
-              <TooltipTrigger>
-                <button
-                  onclick="retry()"
-                  aria-label="Ask again"
-                  class="flex items-center gap-1.5 rounded-md px-1.5 py-1 text-muted-foreground transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
-                >
-                  <Icon icon="{RotateCcw}" class="size-3.5" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>Ask again</TooltipContent>
-            </Tooltip>
-          </if>
-
-          <!-- What the run cost, in the units the runner reports. This is the
-               readout the app is built around; it stays visible rather than
-               hiding behind a hover. -->
-          <span class="ml-1 flex items-center gap-3 font-mono text-[11px] text-muted-foreground">
-            <span>{message.model}</span>
-            <if when="message.tokens">
-              <span class="tnum">{message.tokens} tok</span>
-              <span class="tnum">{message.tps.toFixed(1)} tok/s</span>
-            </if>
-          </span>
-        </MessageFooter>
-      </if>
+      <MessageFooter class="px-0">
+        <Tooltip>
+          <TooltipTrigger>
+            <Button variant="ghost" size="icon-xs" ariaLabel="Copy response" class="text-muted-foreground" onclick="{copy}">
+              <Icon icon="{state.copied ? Check : Copy}" class="size-3.5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{state.copied ? "Copied" : "Copy response"}</TooltipContent>
+        </Tooltip>
+      </MessageFooter>
     </else>
   </MessageContent>
 </Message>
