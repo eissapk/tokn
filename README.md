@@ -51,9 +51,11 @@ If you know HTML, you already know most of what you need to get started with Olu
 
 ### todos:
 
-- add search functgioality betwwen chats
-- use node in nwjs to store each conversation as json file with chat id so we can retrieve later old chats
 - use browser api to reach attached files content
+
+- use node in nwjs to store each conversation as json file with chat id so we can retrieve later old chats (use opfs)
+- add search functgioality betwwen chats
 
 - when clicing new change send request to ollama server to close old chat and create new one so wipe out the context window
 
+- cycle through commands in current session via up/down arrows
