@@ -1174,14 +1174,6 @@
     .sm\:flex {
       display: flex;
     }
-    .sm\:inline {
-      display: inline;
-    }
-  }
-  @media (width >= 48rem) {
-    .md\:inline {
-      display: inline;
-    }
   }
   .\[\&_\[data-slot\=bubble-content\]\]\:rounded-none [data-slot=bubble-content] {
     border-radius: 0;

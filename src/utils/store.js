@@ -18,6 +18,24 @@ export const Buildr_HOST = "http://localhost:11434";
    the first reply arrives. */
 const estimateTokens = (text) => Math.ceil(String(text || "").length / 4);
 
+/* The picked model survives a reload. Storage can throw in a locked-down
+   profile; then the choice just lasts for the session. */
+const MODEL_KEY = "Buildr-model";
+const readStoredModel = () => {
+  try {
+    return localStorage.getItem(MODEL_KEY) || "";
+  } catch {
+    return "";
+  }
+};
+const storeModel = (name) => {
+  try {
+    localStorage.setItem(MODEL_KEY, name);
+  } catch {
+    /* ignore */
+  }
+};
+
 /* What modelInfo() hands back before any model is known, so the topbar and
    the context meter can read fields off it without guarding every access. */
 const NO_MODEL = { name: "", label: "", nickname: "", uncensored: false, uses: [], family: "", params: "", quant: "", size: "", context: 0, thinks: false };
@@ -105,12 +123,18 @@ export const chat = store({
 
   setModel(name) {
     this.model = name;
+    storeModel(name);
   },
 
-  /** Replace the installed list, keeping the selection if it's still there. */
+  /** Replace the installed list, keeping the selection if it's still there.
+      On first load that's the pick saved in localStorage; if it's no longer
+      installed, fall back to the first model. */
   setModels(models) {
     this.models = models;
-    if (!models.some((m) => m.name === this.model)) this.model = models.length ? models[0].name : "";
+    const has = (name) => name && models.some((m) => m.name === name);
+    if (has(this.model)) return;
+    const saved = readStoredModel();
+    this.model = has(saved) ? saved : models.length ? models[0].name : "";
   },
 
   /* ---- conversation actions --------------------------------------------- */
