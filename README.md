@@ -47,8 +47,3 @@ Olum.js is designed to let you build reactive web applications using familiar HT
 If you know HTML, you already know most of what you need to get started with Olum.js.
 
 **[Visit Olum.js →](https://olumjs.top/)**
-
-
-### todos:
-- cycle through commands in current session via up/down arrows
-- ask how the model remembers the whole req/res in the session if i closed ollama server and reloaded the app
