@@ -111,7 +111,8 @@ export const chat = store({
       only becomes a session -- and a file -- once its first message is sent. */
   sessionId: null,
 
-  /** Every saved session, newest first, messages included. */
+  /** Every saved session, newest first, messages included. A session with
+      `starred: true` is pinned to the top of the sidebar. */
   sessions: [],
 
   /* ---- interface -------------------------------------------------------- */
@@ -219,13 +220,29 @@ export const chat = store({
     this.messages = session.messages;
   },
 
-  /** Step through history: dir 1 goes older, -1 newer. From a fresh chat,
-      older lands on the newest session. */
+  /** Sessions in sidebar order: starred first, then the rest, each newest
+      first. */
+  orderedSessions() {
+    return [...this.sessions.filter((s) => s.starred), ...this.sessions.filter((s) => !s.starred)];
+  },
+
+  /** Step through history in sidebar order: dir 1 goes down the list, -1
+      up. From a fresh chat, down lands on the first row. */
   stepSession(dir) {
-    if (!this.sessions.length) return;
-    const at = this.sessions.findIndex((s) => s.id === this.sessionId);
-    const next = Math.min(Math.max(at + dir, 0), this.sessions.length - 1);
-    if (next !== at) this.openSession(this.sessions[next].id);
+    const list = this.orderedSessions();
+    if (!list.length) return;
+    const at = list.findIndex((s) => s.id === this.sessionId);
+    const next = Math.min(Math.max(at + dir, 0), list.length - 1);
+    if (next !== at) this.openSession(list[next].id);
+  },
+
+  /** Star or unstar. Saved straight away, but without touching updatedAt:
+      starring isn't activity, so it shouldn't reorder the chat by recency. */
+  toggleStar(id) {
+    const session = this.sessions.find((s) => s.id === id);
+    if (!session) return;
+    session.starred = !session.starred;
+    saveSession(session);
   },
 
   removeSession(id) {

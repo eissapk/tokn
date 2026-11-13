@@ -2,15 +2,21 @@
   import { props } from "olum";
   import Icon from "./ui/Icon/Icon";
   import { chat } from "../utils/store";
-  import { Trash2 } from "../utils/icons";
+  import { Star, Trash2 } from "../utils/icons";
+  import { snippetFor } from "../utils/search";
 
   /* One row of the history sidebar. Like ModelOption, it exists so the row
      owns the session it represents -- a function prop can't be pre-bound. */
-  const { session } = props();
+  const { session, query = "" } = props();
 
   const open = () => chat.openSession(session.id);
   const remove = () => chat.removeSession(session.id);
+  const star = () => chat.toggleStar(session.id);
   const active = () => session.id === chat.sessionId;
+
+  /* While searching, the second line shows where the match is instead of
+     the time -- unless the title already shows it. */
+  const snippet = () => snippetFor(session, query);
 
   /* Time of day for today's chats, the date for anything older. */
   const when = () => {
@@ -30,7 +36,23 @@
     onclick="open()"
   >
     <span class="w-full truncate text-[13px]">{session.title}</span>
-    <span class="tnum text-[11px] text-muted-foreground">{when()}</span>
+    <if when="snippet()">
+      <span class="line-clamp-2 text-[11px] leading-snug text-muted-foreground">{snippet()}</span>
+    </if>
+    <else>
+      <span class="tnum text-[11px] text-muted-foreground">{when()}</span>
+    </else>
+  </button>
+  <!-- Hover controls. A starred chat keeps its star showing, filled, so the
+       state reads without hovering. -->
+  <button
+    type="button"
+    aria-label="{(session.starred ? 'Unstar ' : 'Star ') + session.title}"
+    aria-pressed="{session.starred ? 'true' : 'false'}"
+    class="grid size-6 shrink-0 cursor-pointer place-items-center rounded-md outline-none hover:bg-background hover:text-foreground focus-visible:opacity-100 focus-visible:ring-3 focus-visible:ring-ring/50 {session.starred ? 'text-foreground' : 'text-muted-foreground opacity-0 group-hover:opacity-100'}"
+    onclick="star()"
+  >
+    <Icon icon="{Star}" class="size-3.5 {session.starred ? '[&_svg]:fill-current' : ''}" />
   </button>
   <button
     type="button"

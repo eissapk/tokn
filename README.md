@@ -50,5 +50,5 @@ If you know HTML, you already know most of what you need to get started with Olu
 
 
 ### todos:
-- add search functgioality betwwen chats
 - cycle through commands in current session via up/down arrows
+- ask how the model remembers the whole req/res in the session if i closed ollama server and reloaded the app
