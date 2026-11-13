@@ -20,18 +20,28 @@
 
   const formatSize = (bytes) => `${(bytes / 1e9).toFixed(1)} GB`;
 
-  /* One /api/tags entry, flattened into what the menu and the meter read.
+  /* One /api/tags entry, flattened into what the menu and the meter read,
+     merged with our own notes from modelsDic. `name` stays the server's tag
+     because it is what /api/chat expects; `label` is what the UI shows.
      context_length only appears on newer servers; without it the meter
      stays hidden rather than guessing. */
-  const toModel = (m) => ({
-    name: m.name,
-    family: m.details?.family || "",
-    params: m.details?.parameter_size || "",
-    quant: m.details?.quantization_level || "",
-    size: formatSize(m.size),
-    context: m.details?.context_length || 0,
-    thinks: (m.capabilities || []).includes("thinking"),
-  });
+  const toModel = (m) => {
+    const dic = modelsDic[m.name] || {};
+    return {
+      name: m.name,
+      label: dic.name || m.name,
+      nickname: dic.nickname || "",
+      uncensored: !!dic.uncensored,
+      uses: dic.uses || [],
+      order: dic.order ?? Infinity,
+      family: m.details?.family || "",
+      params: m.details?.parameter_size || "",
+      quant: m.details?.quantization_level || "",
+      size: formatSize(m.size),
+      context: m.details?.context_length || 0,
+      thinks: (m.capabilities || []).includes("thinking"),
+    };
+  };
 
   /* The installed list doubles as the health check: if it answers, the
      server is up, and that is what the dot beside the wordmark reports. */
@@ -40,16 +50,9 @@
       const response = await fetch(`${Buildr_HOST}/api/tags`);
       if (!response.ok) throw new Error(`${response.status}`);
       const { models = [] } = await response.json();
-      models.forEach((model) => {
-        const dicItem = modelsDic[model.name];
-        if (dicItem) {
-          model.name = dicItem.name;
-          model.nickname = dicItem.nickname;
-          model.uncensored = dicItem.uncensored;
-          model.uses = dicItem.uses;
-        }
-      });
-      chat.setModels(models.map(toModel));
+      /* modelsDic's `order` decides the menu; models we have no notes on
+         go last. sort() is stable, so those keep the server's order. */
+      chat.setModels(models.map(toModel).sort((a, b) => a.order - b.order));
       chat.server = "connected";
     } catch {
       chat.server = "offline";
@@ -76,8 +79,7 @@
     <DropdownMenuTrigger class="rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
       <span class="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted">
         <if when="chat.model">
-          <span class="font-mono text-sm font-medium">{chat.model}</span>
-          <span class="tnum hidden text-[11px] text-muted-foreground md:inline">{chat.modelInfo().params} · {chat.modelInfo().quant}</span>
+          <span class="font-mono text-sm font-medium">{chat.modelInfo().nickname || chat.modelInfo().label}</span>
         </if>
         <else>
           <span class="text-sm text-muted-foreground">{chat.server === "connecting" ? "Loading models…" : "No models"}</span>
@@ -86,7 +88,7 @@
       </span>
     </DropdownMenuTrigger>
 
-    <DropdownMenuContent class="w-80 p-1.5">
+    <DropdownMenuContent class="w-96 p-1.5">
       <DropdownMenuLabel class="px-2 pt-1 pb-2">Installed models</DropdownMenuLabel>
       <DropdownMenuSeparator />
       <for each="m of chat.models" key="m.name">

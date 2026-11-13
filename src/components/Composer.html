@@ -184,7 +184,7 @@
       <Textarea
         rows="1"
         slot="input-group-control"
-        placeholder="{chat.model ? 'Message ' + chat.model : 'No model available'}"
+        placeholder="{chat.model ? 'Message ' + (chat.modelInfo().nickname || chat.modelInfo().label) : 'No model available'}"
         class="max-h-[200px] min-h-0 resize-none rounded-none border-0 bg-transparent px-3.5 pt-3 pb-1 text-[15px] leading-relaxed focus-visible:ring-0"
         oninput="{handleInput}"
         value="{state.input}"

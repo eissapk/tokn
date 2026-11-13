@@ -25,9 +25,24 @@
     </else>
   </span>
 
-  <span class="flex min-w-0 flex-1 flex-col items-start gap-0.5">
-    <span class="font-mono text-[13px] leading-none">{model.name}</span>
+  <span class="flex min-w-0 flex-1 flex-col items-start gap-1">
+    <span class="flex items-center gap-1.5">
+      <span class="font-mono text-[13px] leading-none font-medium">{model.nickname || model.label}</span>
+      <if when="model.nickname">
+        <span class="text-[11px] leading-none text-muted-foreground">{model.label}</span>
+      </if>
+      <if when="model.uncensored">
+        <span class="rounded border border-border px-1 text-[10px] leading-4 text-muted-foreground uppercase">uncensored</span>
+      </if>
+    </span>
     <span class="text-[11px] leading-none text-muted-foreground">{model.params} · {model.quant} · {model.size}</span>
+    <if when="model.uses.length">
+      <span class="flex flex-wrap gap-1 pt-0.5">
+        <for each="use of model.uses" key="use">
+          <span class="rounded bg-muted px-1.5 py-0.5 text-[10px] leading-none text-muted-foreground">{use}</span>
+        </for>
+      </span>
+    </if>
   </span>
 
   <span class="tnum shrink-0 font-mono text-[11px] text-muted-foreground">{Math.round(model.context / 1024)}k</span>
