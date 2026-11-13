@@ -1,0 +1,96 @@
+<script>
+  import { onMount, props } from "olum";
+  import Bubble from "./ui/Bubble/Bubble";
+  import BubbleContent from "./ui/Bubble/BubbleContent";
+  import Button from "./ui/Button/Button";
+  import Collapsible from "./ui/Collapsible/Collapsible";
+  import CollapsibleContent from "./ui/Collapsible/CollapsibleContent";
+  import CollapsibleTrigger from "./ui/Collapsible/CollapsibleTrigger";
+  import Icon from "./ui/Icon/Icon";
+  import Message from "./ui/Message/Message";
+  import MessageContent from "./ui/Message/MessageContent";
+  import MessageFooter from "./ui/Message/MessageFooter";
+  import Tooltip from "./ui/Tooltip/Tooltip";
+  import TooltipContent from "./ui/Tooltip/TooltipContent";
+  import TooltipTrigger from "./ui/Tooltip/TooltipTrigger";
+  import FileChip from "./FileChip";
+  import { copyFace, render } from "../utils/markdown";
+  import { Check, ChevronDown, Copy } from "../utils/icons";
+
+  // One message in the Thread: a bubble for the user, rendered markdown for the model.
+  const { message } = props();
+  const state = { copied: false };
+
+  const isUser = () => message.role === "user";
+  const hasFiles = () => Boolean(message.files?.length);
+  // A user message with files keeps them inside `content` for the model; the bubble shows only what was typed.
+  const typed = () => (hasFiles() ? message.text : message.content);
+  // render() escapes the text before adding any tags, which makes html="" safe here.
+  const html = () => render(message.content) || "<p></p>";
+
+  const copyReply = async () => {
+    await navigator.clipboard.writeText(message.content);
+    state.copied = true;
+    setTimeout(() => (state.copied = false), 1600);
+  };
+
+  // Code blocks are plain HTML from render(), so one click listener handles all their copy buttons.
+  onMount(() => {
+    const onClick = async (e) => {
+      const button = e.target.closest("[data-copy]");
+      if (!button) return;
+      await navigator.clipboard.writeText(button.closest(".code").querySelector("pre code").textContent);
+      button.innerHTML = copyFace(true);
+      setTimeout(() => (button.innerHTML = copyFace(false)), 1600);
+    };
+    host.addEventListener("click", onClick);
+    return () => host.removeEventListener("click", onClick);
+  });
+</script>
+
+<Message align="{isUser() ? 'end' : 'start'}">
+  <MessageContent class="gap-1.5">
+    <if when="isUser()">
+      <if when="hasFiles()">
+        <div class="flex flex-wrap justify-end gap-1.5">
+          <for each="f of message.files" key="f.id"><FileChip file="{f}" /></for>
+        </div>
+      </if>
+      <if when="typed()">
+        <Bubble align="end" variant="tinted">
+          <BubbleContent class="px-3.5 py-2.5 text-[15px] leading-relaxed whitespace-pre-wrap">{typed()}</BubbleContent>
+        </Bubble>
+      </if>
+    </if>
+
+    <else>
+      <!-- The model's reasoning: open while it thinks, folds away once the answer starts. -->
+      <if when="message.thinking">
+        <Collapsible defaultOpen="{!message.content}" class="w-full">
+          <CollapsibleTrigger class="flex cursor-pointer items-center gap-1 rounded-md text-[13px] text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50">
+            {message.content ? "Thought process" : "Thinking…"}
+            <Icon icon="{ChevronDown}" class="size-3.5 transition-transform group-has-[>input:checked]/collapsible:rotate-180" />
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div class="mt-1.5 border-l-2 border-border pl-3 text-[13px] leading-relaxed whitespace-pre-wrap text-muted-foreground">{message.thinking.trim()}</div>
+          </CollapsibleContent>
+        </Collapsible>
+      </if>
+
+      <Bubble variant="ghost" class="w-full max-w-full">
+        <BubbleContent class="w-full max-w-full"><div class="md" html="html()"></div></BubbleContent>
+      </Bubble>
+
+      <MessageFooter class="px-0">
+        <Tooltip>
+          <TooltipTrigger>
+            <Button variant="ghost" size="icon-xs" ariaLabel="Copy response" class="text-muted-foreground" onclick="{copyReply}">
+              <Icon icon="{state.copied ? Check : Copy}" class="size-3.5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{state.copied ? "Copied" : "Copy response"}</TooltipContent>
+        </Tooltip>
+      </MessageFooter>
+    </else>
+  </MessageContent>
+</Message>

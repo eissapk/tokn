@@ -1,203 +1,197 @@
 import { store } from "olum";
-import { deleteSession, listSessions, requestPersistence, saveSession } from "./sessions.js";
+import { listModels, reloadModel, streamChat } from "./ollama.js";
+import { deleteSession, listSessions, saveSession } from "./sessions.js";
 
 /**
- * Everything the UI reads.
- *
- * `messages` is the open conversation ({ id, role: "user" | "assistant",
- * content }). Every conversation is also a session in `sessions`, saved to
- * OPFS by utils/sessions.js, and the open session's `messages` IS the array
- * `chat.messages` points at -- one array, not a copy -- so a turn pushed onto
- * the transcript is already in the session that gets saved.
- *
- * Buildr listens on http://localhost:11434 by default.
+ * The app's shared state, and every action that changes it.
+ * Components read `chat.*` to render and call `chat.*()` to act.
  */
 
-export const Buildr_HOST = "http://localhost:11434";
-
-/* Rough enough for a context meter: Buildr reports real counts in the /api/chat
-   response (prompt_eval_count + eval_count), so this only has to hold until
-   the first reply arrives. */
-const estimateTokens = (text) => Math.ceil(String(text || "").length / 4);
-
-/* Time first, so ids sort by creation; the random tail keeps two sessions
-   started in the same millisecond apart. */
 const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
-/* The sidebar label: what was typed in the first message, or the files sent
-   with it when nothing was typed. */
+// localStorage can throw in a locked-down profile; then settings just aren't remembered.
+const remember = (key, value) => {
+  try {
+    localStorage.setItem(key, value);
+  } catch {}
+};
+const recall = (key) => {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
+// About 4 characters per token: close enough for the context meter.
+const estimateTokens = (text) => Math.ceil(String(text || "").length / 4);
+
+// The sidebar label: the first message's text (or its file names).
 const titleFor = (messages) => {
   const first = messages.find((m) => m.role === "user");
-  if (!first) return "New chat";
-  const text = first.text ?? first.content;
-  const files = (first.files || []).map((f) => f.name).join(", ");
-  return (text || files || "New chat").replace(/\s+/g, " ").trim().slice(0, 60);
+  const label = first?.text || (first?.files || []).map((f) => f.name).join(", ") || "New chat";
+  return label.replace(/\s+/g, " ").trim().slice(0, 60);
 };
 
-/* The picked model survives a reload. Storage can throw in a locked-down
-   profile; then the choice just lasts for the session. */
-const MODEL_KEY = "Buildr-model";
-const readStoredModel = () => {
-  try {
-    return localStorage.getItem(MODEL_KEY) || "";
-  } catch {
-    return "";
-  }
-};
-const storeModel = (name) => {
-  try {
-    localStorage.setItem(MODEL_KEY, name);
-  } catch {
-    /* ignore */
-  }
+// What the model reads: each file in its own <file> tag (``` fences would break on
+// files that contain ```), then the question last, right before the answer starts.
+const buildPrompt = (text, files) => {
+  if (!files.length) return text;
+  const blocks = files.map((f) => `<file name="${f.name}">\n${f.content.trimEnd()}\n</file>`).join("\n\n");
+  const ask = text || (files.length === 1 ? "Please review this file." : "Please review these files.");
+  return `I've attached ${files.length === 1 ? "a file" : `${files.length} files`}.\n\n${blocks}\n\n${ask}`;
 };
 
-/* What modelInfo() hands back before any model is known, so the topbar and
-   the context meter can read fields off it without guarding every access. */
-const NO_MODEL = { name: "", label: "", nickname: "", uncensored: false, uses: [], family: "", params: "", quant: "", size: "", context: 0, thinks: false };
-export const modelsDic = {
-  "hf.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-GGUF:Q4_K_M": {
-    nickname: "deepcoder",
-    name: "DeepSeek Heretic 9B",
-    uncensored: true,
-    uses: ["Coding", "Debugging", "JavaScript", "TypeScript", "Node.js", "Technical problem-solving"],
-    order: 1
-  },
+const applyTheme = (theme) => document.documentElement.classList.toggle("dark", theme === "dark");
 
-  "qwen3.5:9b": {
-    nickname: "qwenpro",
-    name: "Qwen3.5 9B",
-    uncensored: false,
-    uses: ["General questions", "Writing", "Brainstorming", "Reasoning", "Explanations", "Research"],
-    order: 2
-  },
-  "qwen3:8b": {
-    nickname: "qwencode",
-    model: "Qwen3 8B",
-    name: "Qwen3 8B",
-    uncensored: false,
-    uses: ["Programming", "Code review", "Debugging", "Technical assistance"],
-    order: 3
-  },
-  "qwen3:0.6b": {
-    nickname: "qwenlite",
-    name: "Qwen3 0.6B",
-    uncensored: false,
-    uses: ["Quick answers", "Classification", "Text formatting", "Lightweight tasks"],
-    order: 4
-  },
-};
+// Stops the reply that is streaming. Not in the store: the UI never renders it.
+let controller = null;
+const stopStreaming = () => controller?.abort();
 
 export const chat = store({
-  /* ---- machine ---------------------------------------------------------- */
+  server: "connecting", // "connecting" | "connected" | "offline"
+  models: [], // installed models, see toModel() in ollama.js
+  model: "", // tag of the selected model
 
-  /** "connecting" until Topbar's GET /api/tags settles, then "connected" | "offline". */
-  server: "connecting",
-
-  /** Filled from GET /api/tags by Topbar -- see toModel() there for the shape. */
-  models: [],
-
-  /** API: GET /api/ps -- the models currently held in memory. */
-  loaded: [],
-
-  /** The model the composer sends to. Empty until the list arrives. */
-  model: "",
-
-  /* ---- the conversation ------------------------------------------------- */
-
-  messages: [],
-
-  /** Which saved session `messages` belongs to. null on a fresh chat, which
-      only becomes a session -- and a file -- once its first message is sent. */
-  sessionId: null,
-
-  /** Every saved session, newest first, messages included. A session with
-      `starred: true` is pinned to the top of the sidebar. */
-  sessions: [],
-
-  /* ---- interface -------------------------------------------------------- */
+  messages: [], // the open chat: { id, role: "user" | "assistant", content, text?, files?, thinking? }
+  sending: false, // true while a reply streams in
+  sessionId: null, // the saved chat `messages` belongs to; null until its first message is sent
+  sessions: [], // every saved chat: { id, title, starred?, createdAt, updatedAt, messages }
 
   theme: "light",
+  sidebar: window.innerWidth >= 768,
 
-  /** History sidebar. Open by default unless the window starts narrow. */
-  sidebar: typeof window === "undefined" || window.innerWidth >= 768,
+  /* ---- reads ---- */
 
-  /* ---- reads ------------------------------------------------------------ */
-
-  modelInfo(name) {
-    return this.models.find((m) => m.name === (name || this.model)) || this.models[0] || NO_MODEL;
+  current() {
+    return this.models.find((m) => m.name === this.model) || { label: "", context: 0 };
   },
 
-  isLoaded(name) {
-    return this.loaded.includes(name);
-  },
-
-  /** Tokens the next turn would carry, against the active model's window. */
   contextUsed() {
     return this.messages.reduce((sum, m) => sum + estimateTokens(m.content), 0);
   },
 
-  contextLimit() {
-    return this.modelInfo().context;
+  /** Sidebar order: starred chats first, each group newest first. */
+  orderedSessions() {
+    return [...this.sessions.filter((s) => s.starred), ...this.sessions.filter((s) => !s.starred)];
   },
 
-  /* ---- interface actions ------------------------------------------------ */
+  /* ---- startup ---- */
+
+  async loadModels() {
+    try {
+      this.models = await listModels();
+      this.server = "connected";
+    } catch {
+      this.server = "offline";
+    }
+    const saved = recall("Buildr-model");
+    this.model = this.models.some((m) => m.name === saved) ? saved : this.models[0]?.name || "";
+  },
+
+  loadTheme() {
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    this.theme = recall("Buildr-theme") || (prefersDark ? "dark" : "light");
+    applyTheme(this.theme);
+  },
+
+  // Merged rather than replaced, in case a chat was started before the disk answered.
+  async loadSessions() {
+    for (const s of await listSessions()) {
+      if (!this.sessions.some((x) => x.id === s.id)) this.sessions.push(s);
+    }
+    this.sessions.sort((a, b) => b.updatedAt - a.updatedAt);
+  },
+
+  /* ---- settings ---- */
+
+  selectModel(name) {
+    this.model = name;
+    remember("Buildr-model", name);
+  },
 
   toggleTheme() {
     this.theme = this.theme === "dark" ? "light" : "dark";
     applyTheme(this.theme);
-  },
-
-  setModel(name) {
-    this.model = name;
-    storeModel(name);
-  },
-
-  /** Replace the installed list, keeping the selection if it's still there.
-      On first load that's the pick saved in localStorage; if it's no longer
-      installed, fall back to the first model. */
-  setModels(models) {
-    this.models = models;
-    const has = (name) => name && models.some((m) => m.name === name);
-    if (has(this.model)) return;
-    const saved = readStoredModel();
-    this.model = has(saved) ? saved : models.length ? models[0].name : "";
+    remember("Buildr-theme", this.theme);
   },
 
   toggleSidebar() {
     this.sidebar = !this.sidebar;
   },
 
-  /* ---- sessions --------------------------------------------------------- */
+  /* ---- chatting ---- */
 
-  /* A note on the store: it unwraps a proxy only when it is assigned directly
-     (store.x = proxy). A proxy tucked inside a new array or object would be
-     stored as-is and wrapped a second time. So `sessions` is only ever
-     changed in place -- push, unshift, splice, sort -- and a session's
-     `messages` is attached by direct assignment. */
+  async send(text, files, think) {
+    // `content` is what the model reads (files included); `text` and `files` are what the bubble shows.
+    this.messages.push({
+      id: newId(),
+      role: "user",
+      content: buildPrompt(text, files),
+      text,
+      files: files.map(({ id, name }) => ({ id, name })),
+    });
+    const history = this.messages.map(({ role, content }) => ({ role, content }));
+    this.messages.push({ id: newId(), role: "assistant", content: "", thinking: "" });
+    const reply = this.messages[this.messages.length - 1]; // read back from the store, so edits re-render
 
-  /** Read history from disk. Merged rather than assigned, in case a message
-      was sent (and a session made) before the read came back. */
-  async loadSessions() {
-    requestPersistence();
-    const saved = await listSessions();
-    for (const s of saved) {
-      if (!this.sessions.some((x) => x.id === s.id)) this.sessions.push(s);
+    // Keep the chat's id: if the user switches chats mid-reply, saves still land in this one.
+    const sessionId = this.save();
+    let savedAt = Date.now();
+    this.sending = true;
+    controller = new AbortController();
+
+    try {
+      await streamChat({
+        model: this.model,
+        messages: history,
+        think,
+        signal: controller.signal,
+        onChunk: ({ content, thinking }) => {
+          if (thinking) reply.thinking += thinking;
+          if (content) reply.content += content;
+          if (Date.now() - savedAt > 1000) {
+            savedAt = Date.now();
+            this.save(sessionId);
+          }
+        },
+      });
+    } catch (err) {
+      if (err.name !== "AbortError") reply.content += `${reply.content ? "\n\n" : ""}**Error:** ${err.message}`;
+      else if (!reply.content) reply.content = "_Stopped._";
+    } finally {
+      controller = null;
+      this.sending = false;
+      this.save(sessionId);
     }
-    this.sessions.sort((a, b) => b.updatedAt - a.updatedAt);
   },
 
-  /** Save a session to disk; with no id, the open one, which is created on
-      its first save. Returns the id, so a streaming reply can keep saving to
-      the session it began in even after the reader has moved to another. */
-  persist(id = this.sessionId) {
+  stop() {
+    stopStreaming();
+  },
+
+  /** Start a fresh chat. The old one stays in the sidebar; the model is reloaded to drop its cache. */
+  newChat() {
+    if (!this.messages.length) return;
+    stopStreaming();
+    this.messages = [];
+    this.sessionId = null;
+    if (this.model) reloadModel(this.model).catch((err) => console.error("Failed to reset the model:", err.message));
+  },
+
+  /* ---- saved chats ----
+     Note: the store only unwraps a reactive object when it is assigned directly
+     (this.x = obj). So `sessions` is only changed in place (push, unshift, splice,
+     sort), and a session shares its `messages` array with `chat.messages`. */
+
+  /** Save a chat to disk (by default the open one, which is created on its first save). Returns its id. */
+  save(id = this.sessionId) {
     let session = id && this.sessions.find((s) => s.id === id);
 
     if (!session) {
-      if (id) return id; // deleted while its reply was still streaming
-      if (!this.messages.length) return null;
+      if (id || !this.messages.length) return id; // deleted mid-reply, or nothing to save
       const now = Date.now();
-      this.sessions.unshift({ id: newId(), title: titleFor(this.messages), model: this.model, createdAt: now, updatedAt: now, messages: [] });
+      this.sessions.unshift({ id: newId(), title: titleFor(this.messages), createdAt: now, updatedAt: now, messages: [] });
       session = this.sessions[0];
       session.messages = this.messages;
       this.sessionId = session.id;
@@ -209,35 +203,23 @@ export const chat = store({
     return session.id;
   },
 
-  /** Show a saved session. A reply still streaming is stopped first; it
-      saves what it got into its own session on the way out. */
   openSession(id) {
-    if (id === this.sessionId) return;
     const session = this.sessions.find((s) => s.id === id);
-    if (!session) return;
-    abortRequest();
+    if (!session || id === this.sessionId) return;
+    stopStreaming();
     this.sessionId = id;
     this.messages = session.messages;
   },
 
-  /** Sessions in sidebar order: starred first, then the rest, each newest
-      first. */
-  orderedSessions() {
-    return [...this.sessions.filter((s) => s.starred), ...this.sessions.filter((s) => !s.starred)];
-  },
-
-  /** Step through history in sidebar order: dir 1 goes down the list, -1
-      up. From a fresh chat, down lands on the first row. */
-  stepSession(dir) {
+  /** Open the next (1) or previous (-1) chat in sidebar order. */
+  stepSession(direction) {
     const list = this.orderedSessions();
-    if (!list.length) return;
     const at = list.findIndex((s) => s.id === this.sessionId);
-    const next = Math.min(Math.max(at + dir, 0), list.length - 1);
-    if (next !== at) this.openSession(list[next].id);
+    const next = list[Math.min(Math.max(at + direction, 0), list.length - 1)];
+    if (next) this.openSession(next.id);
   },
 
-  /** Star or unstar. Saved straight away, but without touching updatedAt:
-      starring isn't activity, so it shouldn't reorder the chat by recency. */
+  // Starring doesn't touch updatedAt, so it doesn't reorder the list.
   toggleStar(id) {
     const session = this.sessions.find((s) => s.id === id);
     if (!session) return;
@@ -246,95 +228,14 @@ export const chat = store({
   },
 
   removeSession(id) {
-    const i = this.sessions.findIndex((s) => s.id === id);
-    if (i < 0) return;
+    const index = this.sessions.findIndex((s) => s.id === id);
+    if (index < 0) return;
     if (id === this.sessionId) {
-      abortRequest();
+      stopStreaming();
       this.sessionId = null;
       this.messages = [];
     }
-    this.sessions.splice(i, 1);
+    this.sessions.splice(index, 1);
     deleteSession(id);
   },
-
-  /* ---- conversation actions --------------------------------------------- */
-
-  /** End this thread and start the next one from a clean server.
-      /api/chat is stateless -- the context is just the `messages` we send --
-      but the server still holds the model with the last thread's KV cache.
-      So: stop any reply still streaming, drop the transcript, unload the
-      model (keep_alive: 0 frees its cache), then load it again empty so the
-      first message of the new chat doesn't pay the load time. */
-  async clear() {
-    // Already a fresh chat (e.g. Ctrl+N on an empty window): nothing to reset.
-    if (!this.messages.length) return;
-    abortRequest();
-    this.messages = [];
-    // The old thread stays in `sessions`; this one gets an id on first send.
-    this.sessionId = null;
-
-    const model = this.model;
-    if (!model) return;
-    const post = (body) =>
-      fetch(`${Buildr_HOST}/api/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model, messages: [], ...body }),
-      });
-    try {
-      await post({ keep_alive: 0 });
-      await post({});
-    } catch (err) {
-      console.error("Failed to reset the model:", err.message);
-    }
-  },
 });
-
-/* -------------------------------------------------------------------------- */
-/* In-flight request                                                          */
-/* -------------------------------------------------------------------------- */
-
-/* The AbortController for the /api/chat reply that is streaming, if any.
-   It lives here rather than in Composer so New chat can stop it too. It's a
-   handle, not something the view renders, so it stays out of the store. */
-let controller = null;
-
-/** Start a request; returns the signal to hand to fetch. */
-export const beginRequest = () => {
-  controller = new AbortController();
-  return controller.signal;
-};
-
-export const endRequest = () => {
-  controller = null;
-};
-
-/* Aborting the fetch also cancels the body stream, so the server sees the
-   connection close and stops generating. */
-export const abortRequest = () => controller && controller.abort();
-
-/* -------------------------------------------------------------------------- */
-/* Theme                                                                      */
-/* -------------------------------------------------------------------------- */
-
-/** olum-ui keys its dark palette off `.dark`, so the toggle is one class on <html>. */
-export const applyTheme = (theme) => {
-  document.documentElement.classList.toggle("dark", theme === "dark");
-  try {
-    localStorage.setItem("Buildr-theme", theme);
-  } catch {
-    /* a locked-down profile just gets the default next launch */
-  }
-};
-
-export const restoreTheme = () => {
-  let stored = null;
-  try {
-    stored = localStorage.getItem("Buildr-theme");
-  } catch {
-    /* ignore */
-  }
-  const theme = stored || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-  chat.theme = theme;
-  applyTheme(theme);
-};

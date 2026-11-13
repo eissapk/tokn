@@ -1,24 +1,12 @@
 /**
- * A small markdown renderer for model output.
- *
- * Buildr streams markdown, so something has to turn it into HTML before it
- * reaches html="". This covers what a chat model actually emits -- fenced
- * code, headings, lists, emphasis, quotes, links -- and nothing else. Swap it
- * for marked/markdown-it when the transcript needs tables or footnotes; the
- * only contract the UI depends on is `render(text) -> html string`.
- *
- * Everything is escaped BEFORE any tag is produced, so a model that echoes
- * "<script>" back at you renders it as text. Keep that order if you edit this:
- * html="" does not escape, and this function is the only thing standing
- * between the transcript and the DOM.
+ * Turns the model's markdown into HTML: code blocks, headings, lists, quotes,
+ * emphasis and links. The whole text is HTML-escaped FIRST, so a model that
+ * writes "<script>" shows it as text. Keep that order if you edit this file.
  */
 
 import { Check, Copy } from "./icons.js";
 
-/* The code block's copy button face, shared with Turn, which swaps it to the
-   copied state. The size is written into the SVG itself rather than left to
-   CSS: the icon strings only carry height="24", so without a stylesheet they
-   draw at 24px inside an 11px header. */
+// The icon inside a code block's copy button (ChatMessage swaps it to a check once copied).
 const sized = (svg) => svg.replace('height="24"', 'width="13" height="13"');
 export const copyFace = (copied) => sized(copied ? Check : Copy);
 
@@ -104,10 +92,8 @@ const blocks = (src) => {
 export const render = (markdown) => {
   if (!markdown) return "";
 
-  // Fences are found by scanning lines, not by one clever regex: a response is
-  // rendered on every chunk while it streams, so the common case is a block
-  // whose closing fence has not arrived yet. An unterminated fence runs to the
-  // end of the text and still renders as code.
+  // Scanned line by line: while a reply streams, a code block's closing ``` may
+  // not have arrived yet, and it should still render as code.
   const lines = escapeHtml(markdown).split("\n");
   const out = [];
   let prose = [];
@@ -120,8 +106,7 @@ export const render = (markdown) => {
 
   const flushCode = () => {
     if (!code) return;
-    // The copy button is inert markup: Turn listens for clicks on [data-copy]
-    // and reads the block's text back out of the DOM, already unescaped.
+    // ChatMessage handles clicks on [data-copy] buttons.
     out.push(
       `<div class="code"><div class="code-head"><span>${code.lang}</span>` +
         `<button type="button" class="code-copy" data-copy aria-label="Copy code" title="Copy code">${copyFace(false)}</button></div>` +

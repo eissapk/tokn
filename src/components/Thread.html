@@ -6,28 +6,19 @@
   import MessageScrollerItem from "./ui/MessageScroller/MessageScrollerItem";
   import MessageScrollerProvider from "./ui/MessageScroller/MessageScrollerProvider";
   import MessageScrollerViewport from "./ui/MessageScroller/MessageScrollerViewport";
-  import Turn from "./Turn";
+  import ChatMessage from "./ChatMessage";
   import { chat } from "../utils/store";
 
-  /* Follow new content, but only while the reader is already at the bottom.
-     Scrolling up to re-read an earlier answer has to survive the next message
-     arriving, so anything further than a line from the end releases the
-     follow until the reader comes back down. */
+  // Keep scrolled to the newest text while it streams, unless the reader has scrolled up.
   onMount(() => {
     const viewport = host.querySelector('[data-slot="message-scroller-viewport"]');
-    if (!viewport) return;
-
-    const atBottom = () => viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight < 32;
     let follow = true;
 
-    const onScroll = () => (follow = atBottom());
-    const observer = new MutationObserver(() => {
-      if (follow) viewport.scrollTop = viewport.scrollHeight;
-    });
+    const onScroll = () => (follow = viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight < 32);
+    const observer = new MutationObserver(() => follow && (viewport.scrollTop = viewport.scrollHeight));
 
     viewport.addEventListener("scroll", onScroll, { passive: true });
     observer.observe(viewport, { childList: true, subtree: true, characterData: true });
-
     return () => {
       viewport.removeEventListener("scroll", onScroll);
       observer.disconnect();
@@ -40,9 +31,7 @@
     <MessageScrollerViewport>
       <MessageScrollerContent class="mx-auto w-full max-w-measure gap-7 px-6 py-8">
         <for each="m of chat.messages" key="m.id">
-          <MessageScrollerItem>
-            <Turn message="{m}" />
-          </MessageScrollerItem>
+          <MessageScrollerItem><ChatMessage message="{m}" /></MessageScrollerItem>
         </for>
       </MessageScrollerContent>
     </MessageScrollerViewport>

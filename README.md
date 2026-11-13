@@ -2,6 +2,37 @@
 
 A web application built with [Olum.js](https://olumjs.top/), a minimal JavaScript framework for building reactive single-page applications with HTML, CSS, and JavaScript.
 
+A chat app for AI models running on your own machine through [Ollama](https://ollama.com) (`ollama serve`, at http://localhost:11434).
+
+## How the code is organized
+
+```
+src/
+├── page.html              the app layout + keyboard shortcuts (Ctrl+N, Ctrl+K, Alt+Up/Down)
+├── main.css               theme colours and the style of the model's markdown
+├── components/
+│   ├── Sidebar.html       saved chats + search
+│   │   └── SessionItem.html   one saved chat (open / star / delete)
+│   ├── Topbar.html        model picker, context meter, new chat, theme
+│   │   ├── ModelOption.html   one model in the picker
+│   │   └── ContextMeter.html  how full the model's memory is
+│   ├── Thread.html        the list of messages
+│   │   └── ChatMessage.html   one message (with thinking + copy buttons)
+│   ├── Composer.html      the message box: type, attach files, send / stop
+│   ├── FileChip.html      one attached file
+│   └── ui/                olum-ui components (added with `npx olum add <name>`)
+└── utils/
+    ├── store.js           ALL app state and actions (send, newChat, openSession…)
+    ├── ollama.js          every request to the Ollama server
+    ├── models.js          nicknames / notes for your installed models
+    ├── sessions.js        saving chats to disk
+    ├── search.js          searching saved chats
+    ├── markdown.js        model output → HTML
+    └── icons.js           the icons the app uses
+```
+
+Rule of thumb: **components only draw things and call `chat.something()`; the logic lives in `utils/`.**
+
 ## Getting Started
 
 ### Installation

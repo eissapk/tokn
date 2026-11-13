@@ -8,93 +8,37 @@
   import Icon from "./ui/Icon/Icon";
   import ContextMeter from "./ContextMeter";
   import ModelOption from "./ModelOption";
-  import { onMount } from "olum";
-  import { chat, Buildr_HOST, modelsDic } from "../utils/store";
+  import { chat } from "../utils/store";
+  import { OLLAMA_URL } from "../utils/ollama";
   import { ChevronDown, Moon, PanelLeft, SquarePen, Sun } from "../utils/icons";
 
-  /* Function props travel by name, so every store action a component tag
-     receives needs a local wrapper -- onclick="{chat.clear}" would arrive
-     undefined. Calling through the store also keeps `this` bound to it. */
-  const clear = () => chat.clear();
+  // Component tags take functions by name, so store actions get local wrappers.
+  const newChat = () => chat.newChat();
   const toggleTheme = () => chat.toggleTheme();
   const toggleSidebar = () => chat.toggleSidebar();
 
-  const formatSize = (bytes) => `${(bytes / 1e9).toFixed(1)} GB`;
-
-  /* One /api/tags entry, flattened into what the menu and the meter read,
-     merged with our own notes from modelsDic. `name` stays the server's tag
-     because it is what /api/chat expects; `label` is what the UI shows.
-     context_length only appears on newer servers; without it the meter
-     stays hidden rather than guessing. */
-  const toModel = (m) => {
-    const dic = modelsDic[m.name] || {};
-    return {
-      name: m.name,
-      label: dic.name || m.name,
-      nickname: dic.nickname || "",
-      uncensored: !!dic.uncensored,
-      uses: dic.uses || [],
-      order: dic.order ?? Infinity,
-      family: m.details?.family || "",
-      params: m.details?.parameter_size || "",
-      quant: m.details?.quantization_level || "",
-      size: formatSize(m.size),
-      context: m.details?.context_length || 0,
-      thinks: (m.capabilities || []).includes("thinking"),
-    };
-  };
-
-  /* The installed list doubles as the health check: if it answers, the
-     server is up, and that is what the dot beside the wordmark reports. */
-  onMount(async () => {
-    try {
-      const response = await fetch(`${Buildr_HOST}/api/tags`);
-      if (!response.ok) throw new Error(`${response.status}`);
-      const { models = [] } = await response.json();
-      /* modelsDic's `order` decides the menu; models we have no notes on
-         go last. sort() is stable, so those keep the server's order. */
-      chat.setModels(models.map(toModel).sort((a, b) => a.order - b.order));
-      chat.server = "connected";
-    } catch {
-      chat.server = "offline";
-    }
-  });
+  const online = () => chat.server === "connected";
 </script>
 
 <header class="flex h-14 shrink-0 items-center gap-3 border-b border-border px-4">
-  <Button
-    variant="ghost"
-    size="icon-sm"
-    class="-ml-1.5 text-muted-foreground"
-    ariaLabel="{chat.sidebar ? 'Hide chat history' : 'Show chat history'}"
-    onclick="{toggleSidebar}"
-  >
+  <Button variant="ghost" size="icon-sm" class="-ml-1.5 text-muted-foreground" ariaLabel="Toggle chat history" onclick="{toggleSidebar}">
     <Icon icon="{PanelLeft}" class="size-4" />
   </Button>
 
-  <!-- The wordmark is the identity: no logo tile, no spark. The dot beside it
-       is the daemon, and it is the only coloured pixel up here. -->
+  <!-- Green dot = the local Ollama server is reachable. -->
   <span
-    class="size-1.5 shrink-0 rounded-full"
-    style="background: {chat.server === 'connected' ? 'var(--signal)' : 'var(--olum-muted-foreground)'}"
-    title="{chat.server === 'connected' ? 'Connected to the local server' : 'No local server'}"
-    aria-hidden="true"
+    class="size-1.5 shrink-0 rounded-full {online() ? 'bg-signal' : 'bg-muted-foreground'}"
+    title="{online() ? 'Connected to the local server' : 'No local server'}"
   ></span>
   <h1 class="font-display hidden text-[15px] leading-none font-bold tracking-tight lowercase sm:block">Buildr</h1>
-
   <span class="hidden h-5 w-px bg-border sm:block"></span>
 
-  <!-- Which weights are answering is the one thing worth naming at the top of
-       a window with no history in it. -->
+  <!-- Model picker -->
   <DropdownMenu>
     <DropdownMenuTrigger class="rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
       <span class="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted">
-        <if when="chat.model">
-          <span class="font-mono text-sm font-medium">{chat.modelInfo().nickname || chat.modelInfo().label}</span>
-        </if>
-        <else>
-          <span class="text-sm text-muted-foreground">{chat.server === "connecting" ? "Loading models…" : "No models"}</span>
-        </else>
+        <if when="chat.model"><span class="font-mono text-sm font-medium">{chat.current().label}</span></if>
+        <else><span class="text-sm text-muted-foreground">{chat.server === "connecting" ? "Loading models…" : "No models"}</span></else>
         <Icon icon="{ChevronDown}" class="size-3.5 text-muted-foreground" />
       </span>
     </DropdownMenuTrigger>
@@ -102,12 +46,10 @@
     <DropdownMenuContent class="w-96 p-1.5">
       <DropdownMenuLabel class="px-2 pt-1 pb-2">Installed models</DropdownMenuLabel>
       <DropdownMenuSeparator />
-      <for each="m of chat.models" key="m.name">
-        <ModelOption model="{m}" />
-      </for>
+      <for each="m of chat.models" key="m.name"><ModelOption model="{m}" /></for>
       <if when="!chat.models.length">
         <p class="px-2 py-3 text-[13px] text-muted-foreground">
-          {chat.server === "offline" ? "Can't reach the server at " + Buildr_HOST : "No models installed"}
+          {chat.server === "offline" ? "Can't reach the server at " + OLLAMA_URL : "No models installed"}
         </p>
       </if>
     </DropdownMenuContent>
@@ -115,16 +57,14 @@
 
   <div class="flex-1"></div>
 
-  <!-- A meter reading 0/33k measures nothing, so the empty window hides it. -->
-  <if when="chat.messages.length && chat.contextLimit()"><ContextMeter /></if>
+  <if when="chat.messages.length && chat.current().context"><ContextMeter /></if>
 
-  <!-- Always there; on an empty chat clear() is a no-op. -->
-  <Button variant="ghost" size="sm" class="gap-1.5 text-muted-foreground" onclick="{clear}">
+  <Button variant="ghost" size="sm" class="gap-1.5 text-muted-foreground" onclick="{newChat}">
     <Icon icon="{SquarePen}" class="size-3.5" />
     New chat
   </Button>
 
-  <Button variant="ghost" size="icon-sm" ariaLabel="{chat.theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}" onclick="{toggleTheme}">
+  <Button variant="ghost" size="icon-sm" ariaLabel="Toggle dark theme" onclick="{toggleTheme}">
     <Icon icon="{chat.theme === 'dark' ? Sun : Moon}" class="size-4" />
   </Button>
 </header>

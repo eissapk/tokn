@@ -1,20 +1,14 @@
 @import "./components/ui/olum-ui.css";
 
-/* Three faces, three jobs. Inter runs the interface, Space Grotesk carries the
-   wordmark and model names (the only places the app speaks for itself), and
-   Plex Mono is reserved for values the machine reports -- model tags, token
-   counts, context numbers, code. Never for UI labels: mono on a label is
-   decoration, mono on a measurement is the unit. */
+/* Fonts: Inter for the UI, Space Grotesk for the wordmark and headings,
+   Plex Mono for machine values (model tags, token counts, code). */
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
   --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-/* olum-ui ships chroma-0 greys. A trace of blue (h 255) at c 0.004-0.012 keeps
-   the surfaces from reading as dead newsprint and nudges the whole shell
-   towards the cool cast of a system tool, without tinting anything enough to
-   notice on its own. */
+/* Theme colours: olum-ui's greys with a faint trace of blue. `.dark` below is the dark theme. */
 :root {
   --olum-radius: 0.5rem;
   --olum-background: oklch(0.995 0.001 255);
@@ -30,21 +24,15 @@
   --olum-border: oklch(0.915 0.005 255);
   --olum-ring: oklch(0.68 0.012 255);
 
-  /* The one colour in the app. It marks liveness and nothing else: the server
-     dot, a loaded model, the caret while tokens are arriving. If it shows up
-     on a surface or a button, something has gone wrong. */
+  /* The one colour in the app: the "server is up" dot. */
   --signal: oklch(0.64 0.15 152);
-  /* Context pressure, and only that -- the meter switches to it past 80%. */
+  /* The context meter past 80%. */
   --warn: oklch(0.7 0.14 72);
 
-  /* The chat column. Prose, not layout: the shell is full-bleed, this is the
-     measure the reading stays inside. ~72ch at 15px. */
+  /* Width of the chat column (~72 characters). */
   --measure: 46rem;
 
-  /* The rail sits *under* the page in both themes -- one step darker than the
-     background, not one step lighter, so the transcript is always the lit
-     surface. olum-ui's --muted can't do this: in dark mode it's lighter than
-     the background. */
+  /* Sidebar background: one step darker than the page in both themes. */
   --rail: oklch(0.975 0.003 255);
 }
 
@@ -75,23 +63,14 @@
 }
 
 @layer base {
-  /* Olum renders every component instance inside a wrapper <div>. The wrapper
-     is invisible in the source but very much present in layout: it becomes the
-     flex item in place of the element the component actually renders, so a
-     height chain (h-screen > flex-1 > overflow-auto) snaps the moment it
-     crosses a component boundary -- which in an app shell is every level.
-     olum-ui patches this per container with [&>[data-olum]]:contents; a shell
-     needs it the whole way down, so it is stated once, here.
-
-     This changes layout only. The DOM is untouched, so every closest() and
-     querySelector() the components run against those wrappers still resolves.
-     Scoped to div because <html> carries data-olum too. */
+  /* Olum wraps every component in a <div data-olum>. Making those wrappers
+     `display: contents` keeps them out of the layout, so flex and height
+     work across component boundaries. */
   body div[data-olum] {
     display: contents;
   }
 
-  /* An application window, not a document: the shell owns every scroll region
-     so the page itself never moves. */
+  /* An app window, not a document: only the panels scroll, never the page. */
   html,
   body {
     height: 100%;
@@ -103,14 +82,12 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Tabular figures everywhere a number changes in place -- token counts and
-     the context readout tick without the row reflowing under them. */
+  /* Fixed-width digits, so changing numbers don't shift the layout. */
   .tnum {
     font-variant-numeric: tabular-nums;
   }
 
-  /* Hairline scrollbars. The app is dense; full-width bars eat the gutter the
-     chat column depends on. */
+  /* Thin scrollbars. */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -142,11 +119,8 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Rendered model output.
-
-   These have to be global. The markdown renderer hands back a raw HTML string
-   that Olum injects with html="", so those nodes never receive a component's
-   scope attribute and a scoped <style> block would miss every one of them.
+   The model's rendered markdown (see utils/markdown.js). These styles must be
+   global: HTML injected with html="" doesn't get a component's scoped styles.
    --------------------------------------------------------------------------- */
 .md {
   font-size: 0.9375rem;
@@ -232,8 +206,7 @@
   padding: 0.15em 0.35em;
 }
 
-/* Code arrives from the model as a unit of output, so it gets a frame with the
-   language it declared -- the one piece of chrome in the transcript. */
+/* Code blocks: a frame with the language name and a copy button. */
 .md .code {
   border: 1px solid var(--olum-border);
   border-radius: calc(var(--olum-radius) * 0.8);
@@ -251,8 +224,7 @@
   padding: 0.4rem 0.75rem;
   border-bottom: 1px solid var(--olum-border);
 }
-/* Negative margins pull the button's hit area into the header's padding, so
-   adding it leaves the header exactly as tall as the label alone. */
+/* Negative margins keep the button from making the header taller. */
 .md .code-copy {
   display: grid;
   place-items: center;

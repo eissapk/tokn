@@ -10,29 +10,29 @@
   import Sidebar from "./components/Sidebar";
   import Thread from "./components/Thread";
   import Topbar from "./components/Topbar";
-  import { chat, restoreTheme } from "./utils/store";
+  import { chat } from "./utils/store";
+
+  // Keyboard shortcuts work wherever the focus is:
+  //   Ctrl+N new chat · Ctrl+K search chats · Alt+Up/Down previous/next chat
+  const onKey = (e) => {
+    const ctrl = e.ctrlKey || e.metaKey;
+    if (ctrl && e.key === "n") {
+      e.preventDefault();
+      chat.newChat();
+    } else if (ctrl && e.key === "k") {
+      e.preventDefault();
+      chat.sidebar = true;
+      setTimeout(() => document.querySelector('aside input[type="search"]')?.select()); // after the sidebar renders
+    } else if (e.altKey && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
+      e.preventDefault();
+      chat.stepSession(e.key === "ArrowDown" ? 1 : -1);
+    }
+  };
 
   onMount(() => {
-    restoreTheme();
+    chat.loadTheme();
+    chat.loadModels();
     chat.loadSessions();
-
-    /* Ctrl+N starts a new chat, Ctrl+K searches the saved ones, Alt+Up/Down
-       steps through them. They live on window so they work wherever the
-       focus happens to be. */
-    const onKey = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "n") {
-        e.preventDefault();
-        chat.clear();
-      } else if ((e.ctrlKey || e.metaKey) && e.key === "k") {
-        e.preventDefault();
-        chat.sidebar = true;
-        // The sidebar may have been display:none until this render.
-        setTimeout(() => document.querySelector('aside input[type="search"]')?.select());
-      } else if (e.altKey && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
-        e.preventDefault();
-        chat.stepSession(e.key === "ArrowDown" ? 1 : -1);
-      }
-    };
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);

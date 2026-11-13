@@ -1,78 +1,59 @@
 <script>
   import { onMount } from "olum";
   import Icon from "./ui/Icon/Icon";
-  import Input from "./ui/Input/Input";
+  import InputGroup from "./ui/InputGroup/InputGroup";
+  import InputGroupAddon from "./ui/InputGroup/InputGroupAddon";
+  import InputGroupInput from "./ui/InputGroup/InputGroupInput";
   import SessionItem from "./SessionItem";
   import { chat } from "../utils/store";
   import { searchSessions } from "../utils/search";
   import { Search } from "../utils/icons";
 
-  /* Saved chats, newest first, filtered by the search field. Hidden with a
-     class rather than <if> so the page itself never reads the store -- if it
-     did, every streamed token would re-render the whole shell. */
+  // Saved chats, filtered by the search box.
   const state = { query: "" };
 
-  const onSearch = (e) => (state.query = e.target.value);
+  const search = (e) => (state.query = e.target.value);
   const results = () => searchSessions(chat.sessions, state.query);
   const starred = () => results().filter((s) => s.starred);
   const recent = () => results().filter((s) => !s.starred);
 
-  /* Input doesn't forward keydown, so Escape is attached to the field it
-     renders: the first press clears the query, the next one leaves the
-     field. */
+  // Escape clears the search, a second Escape leaves the box. (The input doesn't forward keydown.)
   onMount(() => {
-    const field = host.querySelector("input");
-    if (!field) return;
-
+    const input = host.querySelector("input");
     const onKeydown = (e) => {
       if (e.key !== "Escape") return;
-      if (state.query) {
-        state.query = "";
-        field.value = "";
-      } else {
-        field.blur();
-      }
+      if (state.query) state.query = "";
+      else input.blur();
     };
-
-    field.addEventListener("keydown", onKeydown);
-    return () => field.removeEventListener("keydown", onKeydown);
+    input.addEventListener("keydown", onKeydown);
+    return () => input.removeEventListener("keydown", onKeydown);
   });
 </script>
 
+<!-- Hidden with a class (not <if>) so page.html never reads the store and re-renders on every token. -->
 <aside class="w-64 shrink-0 flex-col border-r border-border bg-rail {chat.sidebar ? 'flex' : 'hidden'}" aria-label="Chat history">
   <div class="flex h-14 shrink-0 items-center border-b border-border px-2">
-    <label class="relative flex w-full items-center">
-      <Icon icon="{Search}" class="pointer-events-none absolute left-2.5 size-3.5 text-muted-foreground" />
-      <Input
-        type="search"
-        placeholder="Search chats"
-        class="h-8 bg-background pl-8 text-[13px]"
-        value="{state.query}"
-        oninput="{onSearch}"
-      />
-    </label>
+    <InputGroup class="bg-background">
+      <InputGroupAddon><Icon icon="{Search}" class="size-3.5" /></InputGroupAddon>
+      <InputGroupInput type="search" placeholder="Search chats" class="pl-1 text-[13px]" value="{state.query}" oninput="{search}" />
+    </InputGroup>
   </div>
 
   <nav class="flex flex-1 flex-col gap-0.5 overflow-y-auto p-2">
-    <!-- Section labels only appear once there are starred chats; until then
-         it's one plain list, same as before starring existed. -->
     <if when="starred().length">
-      <p class="px-2.5 pt-1 pb-1 text-[11px] font-medium text-muted-foreground">Starred</p>
-      <for each="s of starred()" key="s.id">
-        <SessionItem session="{s}" query="{state.query}" />
-      </for>
+      <p class="px-2.5 pb-1 text-[11px] font-medium text-muted-foreground">Starred</p>
+      <for each="s of starred()" key="s.id"><SessionItem session="{s}" query="{state.query}" /></for>
       <if when="recent().length">
         <p class="px-2.5 pt-3 pb-1 text-[11px] font-medium text-muted-foreground">Recent</p>
       </if>
     </if>
-    <for each="s of recent()" key="s.id">
-      <SessionItem session="{s}" query="{state.query}" />
-    </for>
+    <for each="s of recent()" key="s.id"><SessionItem session="{s}" query="{state.query}" /></for>
+
     <if when="!chat.sessions.length">
       <p class="px-2.5 py-2 text-[13px] text-muted-foreground">No saved chats yet</p>
     </if>
-    <if when="chat.sessions.length && !results().length">
+    <else-if when="!results().length">
       <p class="px-2.5 py-2 text-[13px] text-muted-foreground">No chats match</p>
-    </if>
+    </else-if>
   </nav>
 </aside>

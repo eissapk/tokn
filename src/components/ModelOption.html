@@ -1,48 +1,36 @@
 <script>
   import { props } from "olum";
+  import Badge from "./ui/Badge/Badge";
   import DropdownMenuItem from "./ui/DropdownMenu/DropdownMenuItem";
   import Icon from "./ui/Icon/Icon";
   import { chat } from "../utils/store";
   import { Check } from "../utils/icons";
 
-  /* One row of the model menu. It exists because a function prop can't be
-     pre-bound to a value -- the row has to own the model it represents and
-     call back with it. */
+  // One row of the model menu in the Topbar.
   const { model } = props();
 
-  const choose = () => chat.setModel(model.name);
+  const choose = () => chat.selectModel(model.name);
 </script>
 
 <DropdownMenuItem class="gap-3 px-2 py-1.5" onclick="{choose}">
   <span class="grid size-4 shrink-0 place-items-center">
     <if when="model.name === chat.model"><Icon icon="{Check}" class="size-3.5" /></if>
-    <else>
-      <span
-        class="size-1.5 rounded-full"
-        style="background: {chat.isLoaded(model.name) ? 'var(--signal)' : 'transparent'}"
-        title="{chat.isLoaded(model.name) ? 'Loaded in memory' : ''}"
-      ></span>
-    </else>
   </span>
 
   <span class="flex min-w-0 flex-1 flex-col items-start gap-1">
     <span class="flex items-center gap-1.5">
-      <span class="font-mono text-[13px] leading-none font-medium">{model.nickname || model.label}</span>
-      <if when="model.nickname">
-        <span class="text-[11px] leading-none text-muted-foreground">{model.label}</span>
-      </if>
+      <span class="font-mono text-[13px] leading-none font-medium">{model.label}</span>
+      <span class="text-[11px] leading-none text-muted-foreground">{model.fullName}</span>
       <if when="model.uncensored">
-        <span class="rounded border border-border px-1 text-[10px] leading-4 text-muted-foreground uppercase">uncensored</span>
+        <Badge variant="outline" class="h-4 rounded px-1 text-[10px] font-normal text-muted-foreground uppercase">uncensored</Badge>
       </if>
     </span>
     <span class="text-[11px] leading-none text-muted-foreground">{model.params} · {model.quant} · {model.size}</span>
-    <if when="model.uses.length">
-      <span class="flex flex-wrap gap-1 pt-0.5">
-        <for each="use of model.uses" key="use">
-          <span class="rounded bg-muted px-1.5 py-0.5 text-[10px] leading-none text-muted-foreground">{use}</span>
-        </for>
-      </span>
-    </if>
+    <span class="flex flex-wrap gap-1 pt-0.5">
+      <for each="use of model.uses" key="use">
+        <Badge variant="secondary" class="h-4 rounded px-1.5 text-[10px] font-normal text-muted-foreground">{use}</Badge>
+      </for>
+    </span>
   </span>
 
   <span class="tnum shrink-0 font-mono text-[11px] text-muted-foreground">{Math.round(model.context / 1024)}k</span>

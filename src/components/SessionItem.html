@@ -1,37 +1,38 @@
 <script>
   import { props } from "olum";
+  import Button from "./ui/Button/Button";
   import Icon from "./ui/Icon/Icon";
   import { chat } from "../utils/store";
-  import { Star, Trash2 } from "../utils/icons";
   import { snippetFor } from "../utils/search";
+  import { Star, Trash2 } from "../utils/icons";
 
-  /* One row of the history sidebar. Like ModelOption, it exists so the row
-     owns the session it represents -- a function prop can't be pre-bound. */
+  // One saved chat in the Sidebar.
   const { session, query = "" } = props();
 
   const open = () => chat.openSession(session.id);
-  const remove = () => chat.removeSession(session.id);
   const star = () => chat.toggleStar(session.id);
-  const active = () => session.id === chat.sessionId;
+  const remove = () => chat.removeSession(session.id);
+  const isOpen = () => session.id === chat.sessionId;
 
-  /* While searching, the second line shows where the match is instead of
-     the time -- unless the title already shows it. */
+  // While searching, the second line shows where the match is instead of the time.
   const snippet = () => snippetFor(session, query);
 
-  /* Time of day for today's chats, the date for anything older. */
+  // Time for today's chats, the date for older ones.
   const when = () => {
-    const d = new Date(session.updatedAt);
-    return d.toDateString() === new Date().toDateString()
-      ? d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-      : d.toLocaleDateString([], { month: "short", day: "numeric" });
+    const date = new Date(session.updatedAt);
+    return date.toDateString() === new Date().toDateString()
+      ? date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      : date.toLocaleDateString([], { month: "short", day: "numeric" });
   };
+
+  // The buttons show on hover; a starred chat always shows its (filled) star.
+  const reveal = "opacity-0 group-hover:opacity-100 focus-visible:opacity-100";
 </script>
 
-<div class="group flex items-center rounded-lg {active() ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}">
+<div class="group flex items-center gap-0.5 rounded-lg pr-1.5 {isOpen() ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}">
   <button
     type="button"
     class="flex min-w-0 flex-1 cursor-pointer flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-    aria-current="{active() ? 'true' : 'false'}"
     title="{session.title}"
     onclick="open()"
   >
@@ -43,23 +44,11 @@
       <span class="tnum text-[11px] text-muted-foreground">{when()}</span>
     </else>
   </button>
-  <!-- Hover controls. A starred chat keeps its star showing, filled, so the
-       state reads without hovering. -->
-  <button
-    type="button"
-    aria-label="{(session.starred ? 'Unstar ' : 'Star ') + session.title}"
-    aria-pressed="{session.starred ? 'true' : 'false'}"
-    class="grid size-6 shrink-0 cursor-pointer place-items-center rounded-md outline-none hover:bg-background hover:text-foreground focus-visible:opacity-100 focus-visible:ring-3 focus-visible:ring-ring/50 {session.starred ? 'text-foreground' : 'text-muted-foreground opacity-0 group-hover:opacity-100'}"
-    onclick="star()"
-  >
+
+  <Button variant="ghost" size="icon-xs" ariaLabel="{session.starred ? 'Unstar chat' : 'Star chat'}" class="hover:bg-background {session.starred ? '' : reveal}" onclick="{star}">
     <Icon icon="{Star}" class="size-3.5 {session.starred ? '[&_svg]:fill-current' : ''}" />
-  </button>
-  <button
-    type="button"
-    aria-label="{'Delete ' + session.title}"
-    class="mr-1.5 grid size-6 shrink-0 cursor-pointer place-items-center rounded-md text-muted-foreground opacity-0 outline-none group-hover:opacity-100 hover:bg-background hover:text-foreground focus-visible:opacity-100 focus-visible:ring-3 focus-visible:ring-ring/50"
-    onclick="remove()"
-  >
+  </Button>
+  <Button variant="ghost" size="icon-xs" ariaLabel="Delete chat" class="hover:bg-background {reveal}" onclick="{remove}">
     <Icon icon="{Trash2}" class="size-3.5" />
-  </button>
+  </Button>
 </div>

@@ -1,0 +1,29 @@
+<script>
+  import { props } from "olum";
+  import Attachment from "./ui/Attachment/Attachment";
+  import AttachmentAction from "./ui/Attachment/AttachmentAction";
+  import AttachmentContent from "./ui/Attachment/AttachmentContent";
+  import AttachmentMedia from "./ui/Attachment/AttachmentMedia";
+  import AttachmentTitle from "./ui/Attachment/AttachmentTitle";
+  import Icon from "./ui/Icon/Icon";
+  import { FileText, X } from "../utils/icons";
+
+  // One attached file. Pass `onremove` to show an × button; it is called with the file's id.
+  const { file, onremove } = props();
+
+  const remove = () => onremove(file.id);
+</script>
+
+<Attachment size="xs" class="max-w-56 min-w-0 bg-muted">
+  <AttachmentMedia class="bg-transparent">
+    <Icon icon="{FileText}" class="size-3.5 text-muted-foreground" />
+  </AttachmentMedia>
+  <AttachmentContent>
+    <AttachmentTitle class="font-mono font-normal"><span title="{file.name}">{file.name}</span></AttachmentTitle>
+  </AttachmentContent>
+  <if when="onremove">
+    <AttachmentAction ariaLabel="Remove {file.name}" class="size-5" onclick="{remove}">
+      <Icon icon="{X}" class="size-3" />
+    </AttachmentAction>
+  </if>
+</Attachment>

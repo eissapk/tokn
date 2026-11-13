@@ -1,19 +1,19 @@
 <script>
+  import Progress from "./ui/Progress/Progress";
   import { chat } from "../utils/store";
 
-  /* How full the window is, as a bar you can read without stopping. It turns
-     amber past 80% because that is the point where the next long turn starts
-     pushing the beginning of the conversation out of the model's reach. */
-  const pct = () => (chat.contextLimit() ? Math.min(100, (chat.contextUsed() / chat.contextLimit()) * 100) : 0);
-  const tight = () => pct() >= 80;
-
+  // How much of the model's context window this chat uses. Turns amber past 80%.
+  const used = () => chat.contextUsed();
+  const limit = () => chat.current().context;
+  const percent = () => Math.min(100, (used() / limit()) * 100);
   const short = (n) => (n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k` : String(n));
 </script>
 
 <div class="hidden items-center gap-2 sm:flex" title="Context used by this conversation">
   <span class="text-[11px] text-muted-foreground">Context</span>
-  <span class="h-1 w-16 overflow-hidden rounded-full bg-border" role="img" aria-label="Context {Math.round(pct())} percent used">
-    <span class="block h-full rounded-full transition-[width] duration-500" style="width: {pct()}%; background: {tight() ? 'var(--warn)' : 'var(--olum-muted-foreground)'}"></span>
-  </span>
-  <span class="tnum font-mono text-[11px] text-muted-foreground">{short(chat.contextUsed())}/{short(chat.contextLimit())}</span>
+  <Progress
+    value="{percent()}"
+    class="w-16 {percent() >= 80 ? '[&_[data-slot=progress-indicator]]:bg-warn' : '[&_[data-slot=progress-indicator]]:bg-muted-foreground'}"
+  />
+  <span class="tnum font-mono text-[11px] text-muted-foreground">{short(used())}/{short(limit())}</span>
 </div>

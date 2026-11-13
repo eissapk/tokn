@@ -1,24 +1,13 @@
 /**
- * Search across saved chats.
- *
- * Every session is already in memory (chat.sessions), so this is a plain
- * filter -- no index, nothing on disk. A chat matches when every word of the
- * query appears somewhere in it, in any order, ignoring case: "react hook"
- * finds a chat that says "hooks in React".
- *
- * What counts as the text of a chat: its title and each message as the
- * reader saw it -- what was typed for a user turn (not the attached files
- * folded into its content), the answer for an assistant turn (not its
- * thinking).
+ * Search saved chats. A chat matches when every word of the query appears
+ * somewhere in its title or messages, in any order, ignoring case.
  */
 
 const words = (query) => String(query || "").toLowerCase().split(/\s+/).filter(Boolean);
 
 const shown = (m) => String((m.role === "user" ? (m.text ?? m.content) : m.content) || "");
 
-/* Lowercasing every chat on every keystroke adds up once replies get long,
-   so each chat's text is built once and kept until the chat changes --
-   updatedAt moves on every save, which is exactly then. */
+// Each chat's lowercased text is cached until the chat changes (its updatedAt moves).
 const cache = new Map(); // id -> { at, text }
 const haystack = (session) => {
   const hit = cache.get(session.id);
@@ -38,9 +27,7 @@ export const searchSessions = (sessions, query) => {
   });
 };
 
-/** A line of context around the first message that matches, for the
-    sidebar row. Empty when there's no query, or when the title alone
-    already shows why the chat matched. */
+/** A short excerpt around the first match, or "" when the title already shows the match. */
 export const snippetFor = (session, query) => {
   const terms = words(query);
   if (!terms.length) return "";

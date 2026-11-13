@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "olum";
-  import Attachment from "./Attachment";
+  import FileChip from "./FileChip";
   import Icon from "./ui/Icon/Icon";
   import InputGroup from "./ui/InputGroup/InputGroup";
   import InputGroupAddon from "./ui/InputGroup/InputGroupAddon";
@@ -10,315 +10,142 @@
   import Tooltip from "./ui/Tooltip/Tooltip";
   import TooltipContent from "./ui/Tooltip/TooltipContent";
   import TooltipTrigger from "./ui/Tooltip/TooltipTrigger";
-  import { chat, Buildr_HOST, beginRequest, endRequest, abortRequest } from "../utils/store";
-  import { ArrowUp, Lightbulb, Mic, Paperclip, Square } from "../utils/icons";
+  import { chat } from "../utils/store";
+  import { ArrowUp, Lightbulb, Paperclip, Square } from "../utils/icons";
 
-  const state = { input: "", think: false, sending: false, attachments: [] };
+  // The message box: type, attach files, send (Enter) or stop.
+  const state = { input: "", files: [], think: false };
 
-  const uid = () => Math.random().toString(36).slice(2, 10);
+  const field = () => host.querySelector("textarea");
 
-  /* Files wait beside the field as chips until the next send, which folds
-     them into that one message. Only text goes to the model, so anything
-     with a NUL byte in it -- an image, a binary -- is turned away here
-     rather than arriving as noise. */
-  const onAttach = () => {
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.multiple = true;
+  /* ---- sending ---- */
 
-    fileInput.onchange = async (event) => {
-      const files = [...(event.target.files || [])];
-      fileInput.value = "";
-
-      const read = await Promise.all(
-        files.map(async (file) => {
-          try {
-            const content = await file.text();
-            if (content.includes("\u0000")) throw new Error("not a text file");
-            return { id: uid(), name: file.name, content };
-          } catch (err) {
-            console.error(`Failed to read ${file.name}:`, err.message);
-            return null;
-          }
-        }),
-      );
-
-      // Reassigned, not pushed: a new array is what re-renders the chips.
-      state.attachments = [...state.attachments, ...read.filter(Boolean)];
-    };
-
-    fileInput.click();
-  };
-
-  const removeAttachment = (id) => (state.attachments = state.attachments.filter((f) => f.id !== id));
-
-  /* The message the model actually receives. Each file is fenced in its own
-     <file name="..."> tag rather than a ``` block, because source files
-     often carry ``` themselves and would close the fence early. The request
-     goes last, after the material it is about, so it is the freshest thing
-     in the context when the answer starts. */
-  const buildPrompt = (text, files) => {
-    if (!files.length) return text;
-
-    const intro = files.length === 1 ? "I've attached a file." : `I've attached ${files.length} files.`;
-    const blocks = files.map((f) => `<file name="${f.name}">\n${f.content.trimEnd()}\n</file>`).join("\n\n");
-    const ask = text || (files.length === 1 ? "Please review this file." : "Please review these files.");
-
-    return `${intro}\n\n${blocks}\n\n${ask}`;
-  };
-  const onMic = () => {};
-  const onThink = (pressed) => (state.think = pressed);
-
-  /* Streams the answer into the transcript. With stream: false nothing shows
-     until the whole reply -- thinking included -- is finished, which on qwen3
-     is easily half a minute of apparent silence. */
-  const onSend = async () => {
+  const send = () => {
     const text = state.input.trim();
-    const files = state.attachments;
-    if ((!text && !files.length) || state.sending || !chat.model) return;
-
-    // content is the full prompt, files and all, so follow-up turns still
-    // carry them in the history; text and files are only what the bubble shows.
-    chat.messages.push({
-      id: uid(),
-      role: "user",
-      content: buildPrompt(text, files),
-      text,
-      files: files.map(({ id, name }) => ({ id, name })),
-    });
-    const history = chat.messages.map(({ role, content }) => ({ role, content }));
-    // thinking holds the reasoning Ollama streams separately (message.thinking)
-    // when think is on; it's shown but never sent back in the history.
-    chat.messages.push({ id: uid(), role: "assistant", content: "", thinking: "" });
-
-    // Read the turn back OUT of the store: only writes through the store's
-    // wrapper re-render, so mutating the plain object pushed above would fill
-    // in the text with nothing on screen changing.
-    const reply = chat.messages[chat.messages.length - 1];
-
-    // On disk before the first token arrives, then again about once a second
-    // while it streams, and a last time however it ends. The id is held so
-    // switching chats mid-reply can't send these saves to the wrong session.
-    const sessionId = chat.persist();
-    let savedAt = Date.now();
-
-    state.input = "";
-    histIndex = null;
-    draft = "";
-    state.attachments = [];
-    state.sending = true;
-    const field = host.querySelector("textarea");
-    if (field) field.style.height = "auto";
-
-    const signal = beginRequest();
-
-    try {
-      const response = await fetch(`${Buildr_HOST}/api/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: chat.model, messages: history, stream: true, think: state.think }),
-        signal,
-      });
-      if (!response.ok) throw new Error(`${response.status} ${await response.text()}`);
-
-      // The stream is newline-delimited JSON, one chunk per line, and a read
-      // can end mid-line -- so keep the unfinished tail for the next read.
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-      for (;;) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-
-        const lines = buffer.split("\n");
-        buffer = lines.pop();
-
-        for (const line of lines) {
-          if (!line.trim()) continue;
-          const chunk = JSON.parse(line);
-          if (chunk.error) throw new Error(chunk.error);
-          if (!chunk.message) continue;
-          if (chunk.message.thinking) reply.thinking += chunk.message.thinking;
-          if (chunk.message.content) reply.content += chunk.message.content;
-        }
-
-        if (Date.now() - savedAt > 1000) {
-          savedAt = Date.now();
-          chat.persist(sessionId);
-        }
-      }
-    } catch (err) {
-      // A stop keeps whatever already streamed in. Only a reply with no
-      // answer yet gets a marker, so it doesn't sit there blank (or still
-      // reading "Thinking…").
-      if (err.name === "AbortError") {
-        if (!reply.content) reply.content = "_Stopped._";
-      } else {
-        reply.content += `${reply.content ? "\n\n" : ""}**Error:** ${err.message}`;
-      }
-    } finally {
-      endRequest();
-      state.sending = false;
-      chat.persist(sessionId);
-    }
+    if ((!text && !state.files.length) || chat.sending || !chat.model) return;
+    chat.send(text, state.files, state.think);
+    setInput("");
+    state.files = [];
+    historyIndex = null;
   };
 
-  const onStop = () => abortRequest();
+  const sendOrStop = () => (chat.sending ? chat.stop() : send());
+  const setThink = (on) => (state.think = on);
 
-  /* The send button doubles as stop while a reply streams. Enter only ever
-     sends, so a stray keypress can't cut an answer short. */
-  const onSendOrStop = () => (state.sending ? onStop() : onSend());
-  const handleInput = (e) => {
+  /* ---- typing ---- */
+
+  const setInput = (value) => {
+    state.input = value;
+    const el = field();
+    el.value = value;
+    grow(el);
+  };
+
+  const onInput = (e) => {
     state.input = e.target.value;
-    histIndex = null; // an edited recall becomes the new draft
+    historyIndex = null; // editing a recalled prompt makes it the new draft
     grow(e.target);
   };
 
-  /* Shell-style history: Up/Down walk back through the prompts sent in the
-     open chat. It is read straight from chat.messages, so it follows session
-     switches. Up only fires with the caret on the first line and Down on the
-     last, so moving around a multi-line message still works. Whatever was
-     being typed is kept as the draft and comes back after the newest entry. */
-  let histIndex = null; // null = not browsing; otherwise an index into prompts()
-  let draft = "";
-
-  const prompts = () =>
-    chat.messages
-      .filter((m) => m.role === "user" && m.text)
-      .map((m) => m.text)
-      .filter((t, i, all) => t !== all[i - 1]);
-
-  const recall = (field, e) => {
-    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return false;
-    if (field.selectionStart !== field.selectionEnd) return false;
-
-    const up = e.key === "ArrowUp";
-    const before = field.value.slice(0, field.selectionStart);
-    const after = field.value.slice(field.selectionEnd);
-    if (up ? before.includes("\n") : after.includes("\n")) return false;
-
-    const list = prompts();
-    if (!list.length) return false;
-    if (histIndex !== null && histIndex >= list.length) histIndex = list.length - 1;
-
-    let next;
-    if (up) {
-      if (histIndex === null) {
-        draft = field.value;
-        next = list.length - 1;
-      } else if (histIndex > 0) {
-        next = histIndex - 1;
-      } else {
-        return false; // already at the oldest
-      }
-    } else {
-      if (histIndex === null) return false; // not browsing: plain caret move
-      next = histIndex + 1 < list.length ? histIndex + 1 : null;
-    }
-
-    e.preventDefault();
-    histIndex = next;
-    const value = next === null ? draft : list[next];
-    state.input = value;
-    field.value = value;
-    field.setSelectionRange(value.length, value.length);
-    grow(field);
-    return true;
-  };
-
-  /* field-sizing: content isn't in every engine NW.js ships on, so the height
-     is set by hand: reset, then take the content's own height up to a ceiling
-     of roughly eight lines, after which the field scrolls. */
+  // Grow with the text up to ~8 lines, then scroll. (CSS field-sizing isn't in NW.js's engine yet.)
   const grow = (el) => {
     el.style.height = "auto";
     el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
   };
 
-  /* Textarea doesn't forward keydown, so Enter-to-send is attached to the
-     field it renders. */
+  /* ---- files ---- */
+
+  const pickFiles = () => host.querySelector('input[type="file"]').click();
+
+  const addFiles = async (e) => {
+    const picked = [...e.target.files];
+    e.target.value = ""; // lets the same file be picked again
+    const read = await Promise.all(picked.map(async (file) => ({ id: Math.random().toString(36).slice(2), name: file.name, content: await file.text() })));
+    // Only text reaches the model, so binary files (images, archives…) are left out.
+    state.files = [...state.files, ...read.filter((f) => !f.content.includes("\u0000"))];
+  };
+
+  const removeFile = (id) => (state.files = state.files.filter((f) => f.id !== id));
+
+  /* ---- prompt history: Up/Down walk through what you sent in this chat, like a terminal ---- */
+
+  let historyIndex = null; // null = not browsing
+  let draft = ""; // what was typed before browsing started
+
+  const sentPrompts = () => chat.messages.filter((m) => m.role === "user" && m.text).map((m) => m.text);
+
+  const browseHistory = (up) => {
+    const list = sentPrompts();
+    const next = Math.min(historyIndex ?? list.length, list.length) + (up ? -1 : 1);
+    if (next < 0 || next > list.length) return false;
+    if (historyIndex === null) draft = state.input;
+    historyIndex = next === list.length ? null : next;
+    setInput(historyIndex === null ? draft : list[historyIndex]);
+    return true;
+  };
+
+  // Textarea doesn't forward keydown, so it's attached to the field directly.
   onMount(() => {
-    const field = host.querySelector("textarea");
-    if (!field) return;
-
+    const el = field();
     const onKeydown = (e) => {
-      if ((e.key === "ArrowUp" || e.key === "ArrowDown") && recall(field, e)) return;
-      if (e.key !== "Enter" || e.shiftKey) return;
-      e.preventDefault();
-      onSend();
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        send();
+      } else if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+        // Only on the first line (Up) or last line (Down), so moving the caret in long text still works.
+        const up = e.key === "ArrowUp";
+        const caretText = up ? el.value.slice(0, el.selectionStart) : el.value.slice(el.selectionEnd);
+        const plain = !e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey;
+        if (plain && !caretText.includes("\n") && browseHistory(up)) e.preventDefault();
+      }
     };
-
-    field.addEventListener("keydown", onKeydown);
-    field.focus();
-
-    return () => {
-      field.removeEventListener("keydown", onKeydown);
-    };
+    el.addEventListener("keydown", onKeydown);
+    el.focus();
+    return () => el.removeEventListener("keydown", onKeydown);
   });
 </script>
 
 <div class="shrink-0 pb-4">
-  <!-- Same measure and the same 24px gutter as the transcript, so the field's
-       edge lands exactly on the text edge above it. -->
   <div class="mx-auto w-full max-w-measure px-6">
     <InputGroup class="rounded-xl bg-background">
-      <if when="state.attachments.length">
+      <if when="state.files.length">
         <InputGroupAddon align="block-start" class="flex-wrap gap-1.5 px-2.5 pt-2.5 pb-0">
-          <for each="f of state.attachments" key="f.id">
-            <Attachment file="{f}" onremove="{removeAttachment}" />
-          </for>
+          <for each="f of state.files" key="f.id"><FileChip file="{f}" onremove="{removeFile}" /></for>
         </InputGroupAddon>
       </if>
 
       <Textarea
         rows="1"
         slot="input-group-control"
-        placeholder="{chat.model ? 'Message ' + (chat.modelInfo().nickname || chat.modelInfo().label) : 'No model available'}"
+        placeholder="{chat.model ? 'Message ' + chat.current().label : 'No model available'}"
         class="max-h-[200px] min-h-0 resize-none rounded-none border-0 bg-transparent px-3.5 pt-3 pb-1 text-[15px] leading-relaxed focus-visible:ring-0"
-        oninput="{handleInput}"
         value="{state.input}"
+        oninput="{onInput}"
       />
 
       <InputGroupAddon align="block-end" class="gap-1 px-2 pt-1 pb-2">
         <Tooltip>
           <TooltipTrigger>
-            <InputGroupButton size="icon-sm" ariaLabel="Attach a file" onclick="{onAttach}">
+            <InputGroupButton size="icon-sm" ariaLabel="Attach a file" onclick="{pickFiles}">
               <Icon icon="{Paperclip}" class="size-4" />
             </InputGroupButton>
           </TooltipTrigger>
           <TooltipContent>Attach a file</TooltipContent>
         </Tooltip>
 
-        <Tooltip>
-          <TooltipTrigger>
-            <InputGroupButton size="icon-sm" ariaLabel="Dictate a message" onclick="{onMic}">
-              <Icon icon="{Mic}" class="size-4" />
-            </InputGroupButton>
-          </TooltipTrigger>
-          <TooltipContent>Dictate a message</TooltipContent>
-        </Tooltip>
-
-        <Toggle size="sm" class="gap-1.5 text-muted-foreground aria-pressed:text-foreground" onchange="{onThink}">
+        <Toggle size="sm" class="gap-1.5 text-muted-foreground aria-pressed:text-foreground" onchange="{setThink}">
           <Icon icon="{Lightbulb}" class="size-3.5" />
           Think
         </Toggle>
 
         <div class="flex-1"></div>
 
-        <InputGroupButton
-          variant="default"
-          size="icon-sm"
-          ariaLabel="{state.sending ? 'Stop generating' : 'Send message'}"
-          onclick="{onSendOrStop}"
-        >
-          <if when="state.sending">
-            <Icon icon="{Square}" class="size-3.5 fill-current" />
-          </if>
-          <else>
-            <Icon icon="{ArrowUp}" class="size-4" />
-          </else>
+        <InputGroupButton variant="default" size="icon-sm" ariaLabel="{chat.sending ? 'Stop generating' : 'Send message'}" onclick="{sendOrStop}">
+          <Icon icon="{chat.sending ? Square : ArrowUp}" class="{chat.sending ? 'size-3.5 fill-current' : 'size-4'}" />
         </InputGroupButton>
       </InputGroupAddon>
     </InputGroup>
+
+    <input type="file" multiple hidden onchange="addFiles($event)" />
   </div>
 </div>
