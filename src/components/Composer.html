@@ -10,14 +10,10 @@
   import Tooltip from "./ui/Tooltip/Tooltip";
   import TooltipContent from "./ui/Tooltip/TooltipContent";
   import TooltipTrigger from "./ui/Tooltip/TooltipTrigger";
-  import { chat, Buildr_HOST } from "../utils/store";
+  import { chat, Buildr_HOST, beginRequest, endRequest, abortRequest } from "../utils/store";
   import { ArrowUp, Lightbulb, Mic, Paperclip, Square } from "../utils/icons";
 
   const state = { input: "", think: false, sending: false, attachments: [] };
-
-  /* Aborts the in-flight /api/chat request. Kept outside state: it's a
-     handle, not something the view renders. */
-  let controller = null;
 
   const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -106,14 +102,14 @@
     const field = host.querySelector("textarea");
     if (field) field.style.height = "auto";
 
-    controller = new AbortController();
+    const signal = beginRequest();
 
     try {
       const response = await fetch(`${Buildr_HOST}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ model: chat.model, messages: history, stream: true, think: state.think }),
-        signal: controller.signal,
+        signal,
       });
       if (!response.ok) throw new Error(`${response.status} ${await response.text()}`);
 
@@ -149,14 +145,12 @@
         reply.content += `${reply.content ? "\n\n" : ""}**Error:** ${err.message}`;
       }
     } finally {
-      controller = null;
+      endRequest();
       state.sending = false;
     }
   };
 
-  /* Aborting the fetch also cancels the body stream, so Ollama sees the
-     connection close and stops generating. */
-  const onStop = () => controller && controller.abort();
+  const onStop = () => abortRequest();
 
   /* The send button doubles as stop while a reply streams. Enter only ever
      sends, so a stray keypress can't cut an answer short. */

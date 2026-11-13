@@ -104,17 +104,14 @@
 
   <div class="flex-1"></div>
 
-  <!-- Both of these are about a conversation in progress: a meter reading
-       0/33k measures nothing, and there is nothing to discard yet. An empty
-       window shows neither. -->
-  <if when="chat.messages.length">
-    <if when="chat.contextLimit()"><ContextMeter /></if>
+  <!-- A meter reading 0/33k measures nothing, so the empty window hides it. -->
+  <if when="chat.messages.length && chat.contextLimit()"><ContextMeter /></if>
 
-    <Button variant="ghost" size="sm" class="gap-1.5 text-muted-foreground" onclick="{clear}">
-      <Icon icon="{SquarePen}" class="size-3.5" />
-      New chat
-    </Button>
-  </if>
+  <!-- Always there; on an empty chat clear() is a no-op. -->
+  <Button variant="ghost" size="sm" class="gap-1.5 text-muted-foreground" onclick="{clear}">
+    <Icon icon="{SquarePen}" class="size-3.5" />
+    New chat
+  </Button>
 
   <Button variant="ghost" size="icon-sm" ariaLabel="{chat.theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}" onclick="{toggleTheme}">
     <Icon icon="{chat.theme === 'dark' ? Sun : Moon}" class="size-4" />

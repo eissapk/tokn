@@ -139,11 +139,57 @@ export const chat = store({
 
   /* ---- conversation actions --------------------------------------------- */
 
-  /** End this thread. Nothing is kept, so there is nothing to file away. */
-  clear() {
+  /** End this thread and start the next one from a clean server.
+      /api/chat is stateless -- the context is just the `messages` we send --
+      but the server still holds the model with the last thread's KV cache.
+      So: stop any reply still streaming, drop the transcript, unload the
+      model (keep_alive: 0 frees its cache), then load it again empty so the
+      first message of the new chat doesn't pay the load time. */
+  async clear() {
+    // Already a fresh chat (e.g. Ctrl+N on an empty window): nothing to reset.
+    if (!this.messages.length) return;
+    abortRequest();
     this.messages = [];
+
+    const model = this.model;
+    if (!model) return;
+    const post = (body) =>
+      fetch(`${Buildr_HOST}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ model, messages: [], ...body }),
+      });
+    try {
+      await post({ keep_alive: 0 });
+      await post({});
+    } catch (err) {
+      console.error("Failed to reset the model:", err.message);
+    }
   },
 });
+
+/* -------------------------------------------------------------------------- */
+/* In-flight request                                                          */
+/* -------------------------------------------------------------------------- */
+
+/* The AbortController for the /api/chat reply that is streaming, if any.
+   It lives here rather than in Composer so New chat can stop it too. It's a
+   handle, not something the view renders, so it stays out of the store. */
+let controller = null;
+
+/** Start a request; returns the signal to hand to fetch. */
+export const beginRequest = () => {
+  controller = new AbortController();
+  return controller.signal;
+};
+
+export const endRequest = () => {
+  controller = null;
+};
+
+/* Aborting the fetch also cancels the body stream, so the server sees the
+   connection close and stops generating. */
+export const abortRequest = () => controller && controller.abort();
 
 /* -------------------------------------------------------------------------- */
 /* Theme                                                                      */
