@@ -621,6 +621,9 @@
   .bg-clip-padding {
     background-clip: padding-box;
   }
+  .fill-current {
+    fill: currentcolor;
+  }
   .p-0 {
     padding: 0px;
   }

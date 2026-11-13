@@ -11,9 +11,13 @@
   import TooltipContent from "./ui/Tooltip/TooltipContent";
   import TooltipTrigger from "./ui/Tooltip/TooltipTrigger";
   import { chat, Buildr_HOST } from "../utils/store";
-  import { ArrowUp, Lightbulb, Mic, Paperclip } from "../utils/icons";
+  import { ArrowUp, Lightbulb, Mic, Paperclip, Square } from "../utils/icons";
 
   const state = { input: "", think: false, sending: false, attachments: [] };
+
+  /* Aborts the in-flight /api/chat request. Kept outside state: it's a
+     handle, not something the view renders. */
+  let controller = null;
 
   const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -102,11 +106,14 @@
     const field = host.querySelector("textarea");
     if (field) field.style.height = "auto";
 
+    controller = new AbortController();
+
     try {
       const response = await fetch(`${Buildr_HOST}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ model: chat.model, messages: history, stream: true, think: state.think }),
+        signal: controller.signal,
       });
       if (!response.ok) throw new Error(`${response.status} ${await response.text()}`);
 
@@ -133,11 +140,27 @@
         }
       }
     } catch (err) {
-      reply.content += `${reply.content ? "\n\n" : ""}**Error:** ${err.message}`;
+      // A stop keeps whatever already streamed in. Only a reply with no
+      // answer yet gets a marker, so it doesn't sit there blank (or still
+      // reading "Thinking…").
+      if (err.name === "AbortError") {
+        if (!reply.content) reply.content = "_Stopped._";
+      } else {
+        reply.content += `${reply.content ? "\n\n" : ""}**Error:** ${err.message}`;
+      }
     } finally {
+      controller = null;
       state.sending = false;
     }
   };
+
+  /* Aborting the fetch also cancels the body stream, so Ollama sees the
+     connection close and stops generating. */
+  const onStop = () => controller && controller.abort();
+
+  /* The send button doubles as stop while a reply streams. Enter only ever
+     sends, so a stray keypress can't cut an answer short. */
+  const onSendOrStop = () => (state.sending ? onStop() : onSend());
   const handleInput = (e) => {
     state.input = e.target.value;
     grow(e.target);
@@ -220,8 +243,18 @@
 
         <div class="flex-1"></div>
 
-        <InputGroupButton variant="default" size="icon-sm" ariaLabel="Send message" onclick="{onSend}">
-          <Icon icon="{ArrowUp}" class="size-4" />
+        <InputGroupButton
+          variant="default"
+          size="icon-sm"
+          ariaLabel="{state.sending ? 'Stop generating' : 'Send message'}"
+          onclick="{onSendOrStop}"
+        >
+          <if when="state.sending">
+            <Icon icon="{Square}" class="size-3.5 fill-current" />
+          </if>
+          <else>
+            <Icon icon="{ArrowUp}" class="size-4" />
+          </else>
         </InputGroupButton>
       </InputGroupAddon>
     </InputGroup>

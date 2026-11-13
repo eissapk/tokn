@@ -22,6 +22,7 @@ export { Lightbulb } from "olum-icons/lucide/Lightbulb.js";
 export { Mic } from "olum-icons/lucide/Mic.js";
 export { Moon } from "olum-icons/lucide/Moon.js";
 export { Paperclip } from "olum-icons/lucide/Paperclip.js";
+export { Square } from "olum-icons/lucide/Square.js";
 export { SquarePen } from "olum-icons/lucide/SquarePen.js";
 export { Sun } from "olum-icons/lucide/Sun.js";
 export { X } from "olum-icons/lucide/X.js";

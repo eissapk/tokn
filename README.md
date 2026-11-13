@@ -50,11 +50,10 @@ If you know HTML, you already know most of what you need to get started with Olu
 
 
 ### todos:
-- add stop button to stop the request and model from current query
-- fix think mode, it does't work, it says think is enabled if clicked or unclicked
-- use node in nwjs to store each conversation as json file with chat id so we can retrieve later old chats
+
 - add search functgioality betwwen chats
-- when clicing new change send request to ollama server to close old chat and create new one so wipe out the context window
+- use node in nwjs to store each conversation as json file with chat id so we can retrieve later old chats
 - use browser api to reach attached files content
-- add cp to clipboard button for code blocks in response
-- add title to models, for coding, for planing, images, articles, quick answers,etc
+
+- when clicing new change send request to ollama server to close old chat and create new one so wipe out the context window
+
