@@ -50,6 +50,5 @@ If you know HTML, you already know most of what you need to get started with Olu
 
 
 ### todos:
-- use node in nwjs to store each conversation as json file with chat id so we can retrieve later old chats (use opfs)
 - add search functgioality betwwen chats
 - cycle through commands in current session via up/down arrows

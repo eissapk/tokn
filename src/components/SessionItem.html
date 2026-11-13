@@ -1,0 +1,43 @@
+<script>
+  import { props } from "olum";
+  import Icon from "./ui/Icon/Icon";
+  import { chat } from "../utils/store";
+  import { Trash2 } from "../utils/icons";
+
+  /* One row of the history sidebar. Like ModelOption, it exists so the row
+     owns the session it represents -- a function prop can't be pre-bound. */
+  const { session } = props();
+
+  const open = () => chat.openSession(session.id);
+  const remove = () => chat.removeSession(session.id);
+  const active = () => session.id === chat.sessionId;
+
+  /* Time of day for today's chats, the date for anything older. */
+  const when = () => {
+    const d = new Date(session.updatedAt);
+    return d.toDateString() === new Date().toDateString()
+      ? d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      : d.toLocaleDateString([], { month: "short", day: "numeric" });
+  };
+</script>
+
+<div class="group flex items-center rounded-lg {active() ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}">
+  <button
+    type="button"
+    class="flex min-w-0 flex-1 cursor-pointer flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+    aria-current="{active() ? 'true' : 'false'}"
+    title="{session.title}"
+    onclick="open()"
+  >
+    <span class="w-full truncate text-[13px]">{session.title}</span>
+    <span class="tnum text-[11px] text-muted-foreground">{when()}</span>
+  </button>
+  <button
+    type="button"
+    aria-label="{'Delete ' + session.title}"
+    class="mr-1.5 grid size-6 shrink-0 cursor-pointer place-items-center rounded-md text-muted-foreground opacity-0 outline-none group-hover:opacity-100 hover:bg-background hover:text-foreground focus-visible:opacity-100 focus-visible:ring-3 focus-visible:ring-ring/50"
+    onclick="remove()"
+  >
+    <Icon icon="{Trash2}" class="size-3.5" />
+  </button>
+</div>

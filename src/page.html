@@ -7,20 +7,25 @@
   import { onMount } from "olum";
   import TooltipProvider from "./components/ui/Tooltip/TooltipProvider";
   import Composer from "./components/Composer";
+  import Sidebar from "./components/Sidebar";
   import Thread from "./components/Thread";
   import Topbar from "./components/Topbar";
   import { chat, restoreTheme } from "./utils/store";
 
   onMount(() => {
     restoreTheme();
+    chat.loadSessions();
 
-    /* Nothing is saved, so the only shortcut worth having is the one that
-       throws the current thread away and starts over. It lives on window so
-       it works wherever the focus happens to be. */
+    /* Ctrl+N starts a new chat; Alt+Up/Down steps through saved ones. They
+       live on window so they work wherever the focus happens to be. */
     const onKey = (e) => {
-      if (!(e.ctrlKey || e.metaKey) || e.key !== "n") return;
-      e.preventDefault();
-      chat.clear();
+      if ((e.ctrlKey || e.metaKey) && e.key === "n") {
+        e.preventDefault();
+        chat.clear();
+      } else if (e.altKey && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
+        e.preventDefault();
+        chat.stepSession(e.key === "ArrowDown" ? 1 : -1);
+      }
     };
 
     window.addEventListener("keydown", onKey);
@@ -29,9 +34,12 @@
 </script>
 
 <TooltipProvider>
-  <div class="flex h-screen w-screen flex-col overflow-hidden bg-background text-foreground">
-    <Topbar />
-    <Thread />
-    <Composer />
+  <div class="flex h-screen w-screen overflow-hidden bg-background text-foreground">
+    <Sidebar />
+    <div class="flex min-w-0 flex-1 flex-col">
+      <Topbar />
+      <Thread />
+      <Composer />
+    </div>
   </div>
 </TooltipProvider>

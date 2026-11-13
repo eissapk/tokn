@@ -10,13 +10,14 @@
   import ModelOption from "./ModelOption";
   import { onMount } from "olum";
   import { chat, Buildr_HOST, modelsDic } from "../utils/store";
-  import { ChevronDown, Moon, SquarePen, Sun } from "../utils/icons";
+  import { ChevronDown, Moon, PanelLeft, SquarePen, Sun } from "../utils/icons";
 
   /* Function props travel by name, so every store action a component tag
      receives needs a local wrapper -- onclick="{chat.clear}" would arrive
      undefined. Calling through the store also keeps `this` bound to it. */
   const clear = () => chat.clear();
   const toggleTheme = () => chat.toggleTheme();
+  const toggleSidebar = () => chat.toggleSidebar();
 
   const formatSize = (bytes) => `${(bytes / 1e9).toFixed(1)} GB`;
 
@@ -61,6 +62,16 @@
 </script>
 
 <header class="flex h-14 shrink-0 items-center gap-3 border-b border-border px-4">
+  <Button
+    variant="ghost"
+    size="icon-sm"
+    class="-ml-1.5 text-muted-foreground"
+    ariaLabel="{chat.sidebar ? 'Hide chat history' : 'Show chat history'}"
+    onclick="{toggleSidebar}"
+  >
+    <Icon icon="{PanelLeft}" class="size-4" />
+  </Button>
+
   <!-- The wordmark is the identity: no logo tile, no spark. The dot beside it
        is the daemon, and it is the only coloured pixel up here. -->
   <span

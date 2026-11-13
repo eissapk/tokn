@@ -1,0 +1,23 @@
+<script>
+  import SessionItem from "./SessionItem";
+  import { chat } from "../utils/store";
+
+  /* Saved chats, newest first. Hidden with a class rather than <if> so the
+     page itself never reads the store -- if it did, every streamed token
+     would re-render the whole shell. */
+</script>
+
+<aside class="w-64 shrink-0 flex-col border-r border-border bg-rail {chat.sidebar ? 'flex' : 'hidden'}" aria-label="Chat history">
+  <div class="flex h-14 shrink-0 items-center border-b border-border px-4">
+    <span class="text-[13px] font-medium text-muted-foreground">Chats</span>
+  </div>
+
+  <nav class="flex flex-1 flex-col gap-0.5 overflow-y-auto p-2">
+    <for each="s of chat.sessions" key="s.id">
+      <SessionItem session="{s}" />
+    </for>
+    <if when="!chat.sessions.length">
+      <p class="px-2.5 py-2 text-[13px] text-muted-foreground">No saved chats yet</p>
+    </if>
+  </nav>
+</aside>

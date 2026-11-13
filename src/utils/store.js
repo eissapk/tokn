@@ -1,12 +1,14 @@
 import { store } from "olum";
+import { deleteSession, listSessions, requestPersistence, saveSession } from "./sessions.js";
 
 /**
  * Everything the UI reads.
  *
- * One conversation, held in memory, gone when the window closes. Components
- * read this store; the composer's controls are stubs in Composer.html, so
- * wiring the real thing means filling those in and pushing turns onto
- * `messages` ({ id, role: "user" | "assistant", content }).
+ * `messages` is the open conversation ({ id, role: "user" | "assistant",
+ * content }). Every conversation is also a session in `sessions`, saved to
+ * OPFS by utils/sessions.js, and the open session's `messages` IS the array
+ * `chat.messages` points at -- one array, not a copy -- so a turn pushed onto
+ * the transcript is already in the session that gets saved.
  *
  * Buildr listens on http://localhost:11434 by default.
  */
@@ -17,6 +19,20 @@ export const Buildr_HOST = "http://localhost:11434";
    response (prompt_eval_count + eval_count), so this only has to hold until
    the first reply arrives. */
 const estimateTokens = (text) => Math.ceil(String(text || "").length / 4);
+
+/* Time first, so ids sort by creation; the random tail keeps two sessions
+   started in the same millisecond apart. */
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+/* The sidebar label: what was typed in the first message, or the files sent
+   with it when nothing was typed. */
+const titleFor = (messages) => {
+  const first = messages.find((m) => m.role === "user");
+  if (!first) return "New chat";
+  const text = first.text ?? first.content;
+  const files = (first.files || []).map((f) => f.name).join(", ");
+  return (text || files || "New chat").replace(/\s+/g, " ").trim().slice(0, 60);
+};
 
 /* The picked model survives a reload. Storage can throw in a locked-down
    profile; then the choice just lasts for the session. */
@@ -91,9 +107,19 @@ export const chat = store({
 
   messages: [],
 
+  /** Which saved session `messages` belongs to. null on a fresh chat, which
+      only becomes a session -- and a file -- once its first message is sent. */
+  sessionId: null,
+
+  /** Every saved session, newest first, messages included. */
+  sessions: [],
+
   /* ---- interface -------------------------------------------------------- */
 
   theme: "light",
+
+  /** History sidebar. Open by default unless the window starts narrow. */
+  sidebar: typeof window === "undefined" || window.innerWidth >= 768,
 
   /* ---- reads ------------------------------------------------------------ */
 
@@ -137,6 +163,83 @@ export const chat = store({
     this.model = has(saved) ? saved : models.length ? models[0].name : "";
   },
 
+  toggleSidebar() {
+    this.sidebar = !this.sidebar;
+  },
+
+  /* ---- sessions --------------------------------------------------------- */
+
+  /* A note on the store: it unwraps a proxy only when it is assigned directly
+     (store.x = proxy). A proxy tucked inside a new array or object would be
+     stored as-is and wrapped a second time. So `sessions` is only ever
+     changed in place -- push, unshift, splice, sort -- and a session's
+     `messages` is attached by direct assignment. */
+
+  /** Read history from disk. Merged rather than assigned, in case a message
+      was sent (and a session made) before the read came back. */
+  async loadSessions() {
+    requestPersistence();
+    const saved = await listSessions();
+    for (const s of saved) {
+      if (!this.sessions.some((x) => x.id === s.id)) this.sessions.push(s);
+    }
+    this.sessions.sort((a, b) => b.updatedAt - a.updatedAt);
+  },
+
+  /** Save a session to disk; with no id, the open one, which is created on
+      its first save. Returns the id, so a streaming reply can keep saving to
+      the session it began in even after the reader has moved to another. */
+  persist(id = this.sessionId) {
+    let session = id && this.sessions.find((s) => s.id === id);
+
+    if (!session) {
+      if (id) return id; // deleted while its reply was still streaming
+      if (!this.messages.length) return null;
+      const now = Date.now();
+      this.sessions.unshift({ id: newId(), title: titleFor(this.messages), model: this.model, createdAt: now, updatedAt: now, messages: [] });
+      session = this.sessions[0];
+      session.messages = this.messages;
+      this.sessionId = session.id;
+    }
+
+    session.updatedAt = Date.now();
+    this.sessions.sort((a, b) => b.updatedAt - a.updatedAt);
+    saveSession(session);
+    return session.id;
+  },
+
+  /** Show a saved session. A reply still streaming is stopped first; it
+      saves what it got into its own session on the way out. */
+  openSession(id) {
+    if (id === this.sessionId) return;
+    const session = this.sessions.find((s) => s.id === id);
+    if (!session) return;
+    abortRequest();
+    this.sessionId = id;
+    this.messages = session.messages;
+  },
+
+  /** Step through history: dir 1 goes older, -1 newer. From a fresh chat,
+      older lands on the newest session. */
+  stepSession(dir) {
+    if (!this.sessions.length) return;
+    const at = this.sessions.findIndex((s) => s.id === this.sessionId);
+    const next = Math.min(Math.max(at + dir, 0), this.sessions.length - 1);
+    if (next !== at) this.openSession(this.sessions[next].id);
+  },
+
+  removeSession(id) {
+    const i = this.sessions.findIndex((s) => s.id === id);
+    if (i < 0) return;
+    if (id === this.sessionId) {
+      abortRequest();
+      this.sessionId = null;
+      this.messages = [];
+    }
+    this.sessions.splice(i, 1);
+    deleteSession(id);
+  },
+
   /* ---- conversation actions --------------------------------------------- */
 
   /** End this thread and start the next one from a clean server.
@@ -150,6 +253,8 @@ export const chat = store({
     if (!this.messages.length) return;
     abortRequest();
     this.messages = [];
+    // The old thread stays in `sessions`; this one gets an id on first send.
+    this.sessionId = null;
 
     const model = this.model;
     if (!model) return;
