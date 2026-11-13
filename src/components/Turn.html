@@ -12,10 +12,16 @@
   import TooltipContent from "./ui/Tooltip/TooltipContent";
   import TooltipTrigger from "./ui/Tooltip/TooltipTrigger";
   import { copyFace, render } from "../utils/markdown";
-  import { Check, Copy } from "../utils/icons";
+  import { Check, ChevronDown, Copy } from "../utils/icons";
 
   const { message } = props();
-  const state = { copied: false };
+  /* open is null until the reader clicks: until then the reasoning stays
+     expanded while it streams and folds away once the answer starts. */
+  const state = { copied: false, open: null };
+
+  const hasThinking = () => Boolean(message.thinking);
+  const thinkingOpen = () => (state.open === null ? !message.content : state.open);
+  const toggleThinking = () => (state.open = !thinkingOpen());
 
   /* A user turn with files carries them inlined in content for the model;
      the bubble shows only what was typed. */
@@ -90,6 +96,23 @@
       </if>
     </if>
     <else>
+      <if when="hasThinking()">
+        <div class="w-full">
+          <button
+            type="button"
+            class="flex items-center gap-1 rounded-md text-[13px] text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+            aria-expanded="{thinkingOpen()}"
+            onclick="toggleThinking()"
+          >
+            {message.content ? "Thought process" : "Thinking…"}
+            <Icon icon="{ChevronDown}" class="size-3.5 transition-transform {thinkingOpen() ? 'rotate-180' : ''}" />
+          </button>
+          <if when="thinkingOpen()">
+            <div class="mt-1.5 border-l-2 border-border pl-3 text-[13px] leading-relaxed whitespace-pre-wrap text-muted-foreground">{message.thinking.trim()}</div>
+          </if>
+        </div>
+      </if>
+
       <Bubble variant="ghost" class="w-full max-w-full">
         <BubbleContent class="w-full max-w-full">
           <div class="md" html="body()"></div>

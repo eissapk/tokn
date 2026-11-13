@@ -252,6 +252,9 @@
   .mt-1 {
     margin-top: var(--spacing);
   }
+  .mt-1\.5 {
+    margin-top: calc(var(--spacing) * 1.5);
+  }
   .-mr-0\.5 {
     margin-right: calc(var(--spacing) * -0.5);
   }
@@ -446,6 +449,9 @@
   .rotate-45 {
     rotate: 45deg;
   }
+  .rotate-180 {
+    rotate: 180deg;
+  }
   .cursor-default {
     cursor: default;
   }
@@ -570,6 +576,10 @@
   .border-b {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 1px;
+  }
+  .border-l-2 {
+    border-left-style: var(--tw-border-style);
+    border-left-width: 2px;
   }
   .border-none {
     --tw-border-style: none;
@@ -706,6 +716,9 @@
   }
   .pl-2 {
     padding-left: calc(var(--spacing) * 2);
+  }
+  .pl-3 {
+    padding-left: calc(var(--spacing) * 3);
   }
   .pl-7 {
     padding-left: calc(var(--spacing) * 7);
@@ -869,6 +882,11 @@
   }
   .transition-colors {
     transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  .transition-transform {
+    transition-property: transform, translate, scale, rotate;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }

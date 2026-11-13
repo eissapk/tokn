@@ -87,7 +87,9 @@
       files: files.map(({ id, name }) => ({ id, name })),
     });
     const history = chat.messages.map(({ role, content }) => ({ role, content }));
-    chat.messages.push({ id: uid(), role: "assistant", content: "" });
+    // thinking holds the reasoning Ollama streams separately (message.thinking)
+    // when think is on; it's shown but never sent back in the history.
+    chat.messages.push({ id: uid(), role: "assistant", content: "", thinking: "" });
 
     // Read the turn back OUT of the store: only writes through the store's
     // wrapper re-render, so mutating the plain object pushed above would fill
@@ -125,7 +127,9 @@
           if (!line.trim()) continue;
           const chunk = JSON.parse(line);
           if (chunk.error) throw new Error(chunk.error);
-          if (chunk.message && chunk.message.content) reply.content += chunk.message.content;
+          if (!chunk.message) continue;
+          if (chunk.message.thinking) reply.thinking += chunk.message.thinking;
+          if (chunk.message.content) reply.content += chunk.message.content;
         }
       }
     } catch (err) {
