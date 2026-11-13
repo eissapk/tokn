@@ -103,6 +103,8 @@
     let savedAt = Date.now();
 
     state.input = "";
+    histIndex = null;
+    draft = "";
     state.attachments = [];
     state.sending = true;
     const field = host.querySelector("textarea");
@@ -169,7 +171,60 @@
   const onSendOrStop = () => (state.sending ? onStop() : onSend());
   const handleInput = (e) => {
     state.input = e.target.value;
+    histIndex = null; // an edited recall becomes the new draft
     grow(e.target);
+  };
+
+  /* Shell-style history: Up/Down walk back through the prompts sent in the
+     open chat. It is read straight from chat.messages, so it follows session
+     switches. Up only fires with the caret on the first line and Down on the
+     last, so moving around a multi-line message still works. Whatever was
+     being typed is kept as the draft and comes back after the newest entry. */
+  let histIndex = null; // null = not browsing; otherwise an index into prompts()
+  let draft = "";
+
+  const prompts = () =>
+    chat.messages
+      .filter((m) => m.role === "user" && m.text)
+      .map((m) => m.text)
+      .filter((t, i, all) => t !== all[i - 1]);
+
+  const recall = (field, e) => {
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return false;
+    if (field.selectionStart !== field.selectionEnd) return false;
+
+    const up = e.key === "ArrowUp";
+    const before = field.value.slice(0, field.selectionStart);
+    const after = field.value.slice(field.selectionEnd);
+    if (up ? before.includes("\n") : after.includes("\n")) return false;
+
+    const list = prompts();
+    if (!list.length) return false;
+    if (histIndex !== null && histIndex >= list.length) histIndex = list.length - 1;
+
+    let next;
+    if (up) {
+      if (histIndex === null) {
+        draft = field.value;
+        next = list.length - 1;
+      } else if (histIndex > 0) {
+        next = histIndex - 1;
+      } else {
+        return false; // already at the oldest
+      }
+    } else {
+      if (histIndex === null) return false; // not browsing: plain caret move
+      next = histIndex + 1 < list.length ? histIndex + 1 : null;
+    }
+
+    e.preventDefault();
+    histIndex = next;
+    const value = next === null ? draft : list[next];
+    state.input = value;
+    field.value = value;
+    field.setSelectionRange(value.length, value.length);
+    grow(field);
+    return true;
   };
 
   /* field-sizing: content isn't in every engine NW.js ships on, so the height
@@ -187,6 +242,7 @@
     if (!field) return;
 
     const onKeydown = (e) => {
+      if ((e.key === "ArrowUp" || e.key === "ArrowDown") && recall(field, e)) return;
       if (e.key !== "Enter" || e.shiftKey) return;
       e.preventDefault();
       onSend();
