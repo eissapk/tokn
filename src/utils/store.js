@@ -21,6 +21,34 @@ const estimateTokens = (text) => Math.ceil(String(text || "").length / 4);
 /* What modelInfo() hands back before any model is known, so the topbar and
    the context meter can read fields off it without guarding every access. */
 const NO_MODEL = { name: "", family: "", params: "", quant: "", size: "", context: 0, thinks: false };
+export const modelsDic = {
+  "hf.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-GGUF:Q4_K_M": {
+    nickname: "deepcoder",
+    name: "DeepSeek Heretic 9B",
+    uncensored: true,
+    uses: ["Coding", "Debugging", "JavaScript", "TypeScript", "Node.js", "Technical problem-solving"],
+  },
+
+  "qwen3.5:9b": {
+    nickname: "qwenpro",
+    name: "Qwen3.5 9B",
+    uncensored: false,
+    uses: ["General questions", "Writing", "Brainstorming", "Reasoning", "Explanations", "Research"],
+  },
+  "qwen3:8b": {
+    nickname: "qwencode",
+    model: "Qwen3 8B",
+    name: "Qwen3 8B",
+    uncensored: false,
+    uses: ["Programming", "Code review", "Debugging", "Technical assistance"],
+  },
+  "qwen3:0.6b": {
+    nickname: "qwenlite",
+    name: "Qwen3 0.6B",
+    uncensored: false,
+    uses: ["Quick answers", "Classification", "Text formatting", "Lightweight tasks"],
+  },
+};
 
 export const chat = store({
   /* ---- machine ---------------------------------------------------------- */

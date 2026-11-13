@@ -9,7 +9,7 @@
   import ContextMeter from "./ContextMeter";
   import ModelOption from "./ModelOption";
   import { onMount } from "olum";
-  import { chat, Buildr_HOST } from "../utils/store";
+  import { chat, Buildr_HOST, modelsDic } from "../utils/store";
   import { ChevronDown, Moon, SquarePen, Sun } from "../utils/icons";
 
   /* Function props travel by name, so every store action a component tag
@@ -40,6 +40,15 @@
       const response = await fetch(`${Buildr_HOST}/api/tags`);
       if (!response.ok) throw new Error(`${response.status}`);
       const { models = [] } = await response.json();
+      models.forEach((model) => {
+        const dicItem = modelsDic[model.name];
+        if (dicItem) {
+          model.name = dicItem.name;
+          model.nickname = dicItem.nickname;
+          model.uncensored = dicItem.uncensored;
+          model.uses = dicItem.uses;
+        }
+      });
       chat.setModels(models.map(toModel));
       chat.server = "connected";
     } catch {
