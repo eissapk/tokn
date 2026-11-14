@@ -3,5 +3,5 @@ export const REPO = "https://github.com/eissapk/tokn";
 /** The folder `git clone REPO` creates. */
 export const REPO_DIR = REPO.split("/").pop();
 export const DOCS = `${REPO}#readme`;
-export const OLLAMA = "https://ollama.com";
+export const OLLAMA = "https://ollama.com/download";
 export const OLUM = "https://olumjs.top";
