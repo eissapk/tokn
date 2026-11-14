@@ -12,9 +12,9 @@
     "dev:app": "olum-compiler dev"
   },
   "olum": {
-    "SITE_URL": "https://www.olumjs.top",
+    "SITE_URL": "https://tokn.eissa.top",
     "SSG_DELAY": 0,
-    "base": "./"
+    "base": "/"
   },
   "keywords": [
     "olum"
