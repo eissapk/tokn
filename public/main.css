@@ -948,6 +948,9 @@
   .overscroll-x-contain {
     overscroll-behavior-x: contain;
   }
+  .rounded {
+    border-radius: 0.25rem;
+  }
   .rounded-2xl {
     border-radius: var(--radius-2xl);
   }
@@ -1268,6 +1271,9 @@
   .px-8 {
     padding-inline: calc(var(--spacing) * 8);
   }
+  .py-0 {
+    padding-block: 0px;
+  }
   .py-0\.5 {
     padding-block: calc(var(--spacing) * 0.5);
   }
@@ -1306,6 +1312,9 @@
   }
   .py-20 {
     padding-block: calc(var(--spacing) * 20);
+  }
+  .pe-\[5px\] {
+    padding-inline-end: 5px;
   }
   .pt-1 {
     padding-top: var(--spacing);
@@ -1399,6 +1408,9 @@
   }
   .text-left {
     text-align: left;
+  }
+  .align-middle {
+    vertical-align: middle;
   }
   .font-logo {
     font-family: var(--font-logo);
@@ -2194,6 +2206,9 @@
   .has-\[\[data-slot\=attachment-content\]\]\:px-2\.5:has(:is([data-slot=attachment-content])) {
     padding-inline: calc(var(--spacing) * 2.5);
   }
+  .has-\[\[data-slot\=attachment-content\]\]\:py-0:has(:is([data-slot=attachment-content])) {
+    padding-block: 0px;
+  }
   .has-\[\[data-slot\=attachment-content\]\]\:py-1:has(:is([data-slot=attachment-content])) {
     padding-block: var(--spacing);
   }
@@ -2211,6 +2226,9 @@
   }
   .has-\[\[data-slot\=attachment-media\]\]\:p-2:has(:is([data-slot=attachment-media])) {
     padding: calc(var(--spacing) * 2);
+  }
+  .has-\[\[data-slot\=attachment-media\]\]\:py-0:has(:is([data-slot=attachment-media])) {
+    padding-block: 0px;
   }
   .has-\[\[data-slot\=input-group-control\]\:focus-visible\]\:border-ring:has(:is([data-slot=input-group-control]:focus-visible)) {
     border-color: var(--olum-ring);

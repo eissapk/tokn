@@ -14,12 +14,17 @@
   const remove = () => onremove(file.id);
 </script>
 
-<Attachment size="xs" class="h-8 max-w-56 min-w-0 rounded-full border-transparent bg-home-tint pr-1 pl-2">
+<!-- py-0: the chip has a fixed height and centres its items; the xs size's vertical padding pushed the name off-centre. -->
+<Attachment
+  size="xs"
+  class="h-8 max-w-56 min-w-0 rounded-full border-transparent bg-home-tint pr-1 pl-2 has-[[data-slot=attachment-content]]:py-0 has-[[data-slot=attachment-media]]:py-0"
+>
   <AttachmentMedia class="bg-transparent">
     <Icon icon="{FileText}" class="size-3.5" />
   </AttachmentMedia>
   <AttachmentContent>
-    <AttachmentTitle class="font-mono font-normal"><span title="{file.name}">{file.name}</span></AttachmentTitle>
+    <!-- A sent chip has no × button: middle-align the name and keep it off the rounded right edge. -->
+    <AttachmentTitle class="font-mono font-normal {onremove ? '' : 'pe-[5px]'}"><span title="{file.name}" class="{onremove ? '' : 'align-middle'}">{file.name}</span></AttachmentTitle>
   </AttachmentContent>
   <if when="onremove">
     <AttachmentAction ariaLabel="Remove {file.name}" class="size-6 rounded-full" onclick="{remove}">
