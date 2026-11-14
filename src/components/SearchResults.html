@@ -1,0 +1,35 @@
+<script>
+  import { onMount } from "olum";
+  import CommandGroup from "./ui/Command/CommandGroup";
+  import SearchResult from "./SearchResult";
+  import { chat } from "../utils/store";
+  import { searchSessions } from "../utils/search";
+
+  // The chats listed in the SearchDialog, filtered by what's typed: starred first, then the rest.
+  const state = { query: "" };
+
+  const results = () => searchSessions(chat.sessions, state.query);
+  const starred = () => results().filter((s) => s.starred);
+  const recent = () => results().filter((s) => !s.starred);
+
+  // The search box belongs to the Command around this list, so its typing is picked up from there.
+  onMount(() => {
+    const command = host.closest('[data-slot="command"]');
+    const onInput = (e) => {
+      if (e.target.matches('[data-slot="command-input"]')) state.query = e.target.value;
+    };
+    command.addEventListener("input", onInput);
+    return () => command.removeEventListener("input", onInput);
+  });
+</script>
+
+<if when="starred().length">
+  <CommandGroup heading="Starred">
+    <for each="s of starred()" key="s.id"><SearchResult session="{s}" query="{state.query}" /></for>
+  </CommandGroup>
+</if>
+<if when="recent().length">
+  <CommandGroup heading="Recent">
+    <for each="s of recent()" key="s.id"><SearchResult session="{s}" query="{state.query}" /></for>
+  </CommandGroup>
+</if>

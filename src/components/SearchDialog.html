@@ -1,0 +1,28 @@
+<script>
+  import Command from "./ui/Command/Command";
+  import CommandDialog from "./ui/Command/CommandDialog";
+  import CommandDialogContent from "./ui/Command/CommandDialogContent";
+  import CommandEmpty from "./ui/Command/CommandEmpty";
+  import CommandInput from "./ui/Command/CommandInput";
+  import CommandList from "./ui/Command/CommandList";
+  import SearchResults from "./SearchResults";
+
+  // The chat search palette, opened with openSearch() from utils/search.js
+  // (the Sidebar's search icon and Ctrl+K). Type to search titles and messages, arrow keys to move, Enter to open.
+  //
+  // Keep this file free of store reads: the dialog moves itself into <body> once, so a
+  // re-render here would be lost. The list lives in SearchResults, which updates on its own.
+</script>
+
+<CommandDialog>
+  <CommandDialogContent>
+    <!-- shouldFilter=false: SearchResults does the filtering, so it can search inside messages. -->
+    <Command shouldFilter="{false}">
+      <CommandInput placeholder="Search chats…" />
+      <CommandList>
+        <CommandEmpty>No chats match</CommandEmpty>
+        <SearchResults />
+      </CommandList>
+    </Command>
+  </CommandDialogContent>
+</CommandDialog>

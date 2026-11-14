@@ -11,7 +11,7 @@
   import TooltipContent from "./ui/Tooltip/TooltipContent";
   import TooltipTrigger from "./ui/Tooltip/TooltipTrigger";
   import { chat } from "../utils/store";
-  import { ArrowUp, Lightbulb, Paperclip, Square } from "../utils/icons";
+  import { ArrowUp, Lightbulb, Mic, Paperclip, Square } from "../utils/icons";
 
   // The message box: type, attach files, send (Enter) or stop.
   const state = { input: "", files: [], think: false };
@@ -31,6 +31,9 @@
 
   const sendOrStop = () => (chat.sending ? chat.stop() : send());
   const setThink = (on) => (state.think = on);
+
+  // Placeholder for voice commands (not built yet).
+  const startVoice = () => {};
 
   /* ---- typing ---- */
 
@@ -131,6 +134,15 @@
             </InputGroupButton>
           </TooltipTrigger>
           <TooltipContent>Attach a file</TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger>
+            <InputGroupButton size="icon-sm" ariaLabel="Voice commands" onclick="{startVoice}">
+              <Icon icon="{Mic}" class="size-4" />
+            </InputGroupButton>
+          </TooltipTrigger>
+          <TooltipContent>Voice commands</TooltipContent>
         </Tooltip>
 
         <Toggle size="sm" class="gap-1.5 text-muted-foreground aria-pressed:text-foreground" onchange="{setThink}">

@@ -11,8 +11,11 @@ src/
 ├── page.html              the app layout + keyboard shortcuts (Ctrl+N, Ctrl+K, Alt+Up/Down)
 ├── main.css               theme colours and the style of the model's markdown
 ├── components/
-│   ├── Sidebar.html       saved chats + search
+│   ├── Sidebar.html       saved chats + search icon
 │   │   └── SessionItem.html   one saved chat (open / star / delete)
+│   ├── SearchDialog.html  the chat search palette (search icon or Ctrl+K)
+│   │   ├── SearchResults.html the chats listed in it
+│   │   └── SearchResult.html  one chat in it
 │   ├── Topbar.html        model picker, context meter, new chat, theme
 │   │   ├── ModelOption.html   one model in the picker
 │   │   └── ContextMeter.html  how full the model's memory is
@@ -26,7 +29,7 @@ src/
     ├── ollama.js          every request to the Ollama server
     ├── models.js          nicknames / notes for your installed models
     ├── sessions.js        saving chats to disk
-    ├── search.js          searching saved chats
+    ├── search.js          searching inside saved chats + openSearch()
     ├── markdown.js        model output → HTML
     └── icons.js           the icons the app uses
 ```

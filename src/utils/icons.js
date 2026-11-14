@@ -9,6 +9,7 @@ export { ChevronDown } from "olum-icons/lucide/ChevronDown.js";
 export { Copy } from "olum-icons/lucide/Copy.js";
 export { FileText } from "olum-icons/lucide/FileText.js";
 export { Lightbulb } from "olum-icons/lucide/Lightbulb.js";
+export { Mic } from "olum-icons/lucide/Mic.js";
 export { Moon } from "olum-icons/lucide/Moon.js";
 export { PanelLeft } from "olum-icons/lucide/PanelLeft.js";
 export { Paperclip } from "olum-icons/lucide/Paperclip.js";

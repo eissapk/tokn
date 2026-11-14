@@ -7,10 +7,12 @@
   import { onMount } from "olum";
   import TooltipProvider from "./components/ui/Tooltip/TooltipProvider";
   import Composer from "./components/Composer";
+  import SearchDialog from "./components/SearchDialog";
   import Sidebar from "./components/Sidebar";
   import Thread from "./components/Thread";
   import Topbar from "./components/Topbar";
   import { chat } from "./utils/store";
+  import { openSearch } from "./utils/search";
 
   // Keyboard shortcuts work wherever the focus is:
   //   Ctrl+N new chat · Ctrl+K search chats · Alt+Up/Down previous/next chat
@@ -21,8 +23,7 @@
       chat.newChat();
     } else if (ctrl && e.key === "k") {
       e.preventDefault();
-      chat.sidebar = true;
-      setTimeout(() => document.querySelector('aside input[type="search"]')?.select()); // after the sidebar renders
+      openSearch();
     } else if (e.altKey && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
       e.preventDefault();
       chat.stepSession(e.key === "ArrowDown" ? 1 : -1);
@@ -48,4 +49,5 @@
       <Composer />
     </div>
   </div>
+  <SearchDialog />
 </TooltipProvider>

@@ -1,6 +1,7 @@
 /**
- * Search saved chats. A chat matches when every word of the query appears
- * somewhere in its title or messages, in any order, ignoring case.
+ * Searching saved chats. A chat matches when every word of the query appears
+ * somewhere in its title, your messages or the model's replies -- in any order,
+ * ignoring case. Used by the SearchDialog.
  */
 
 const words = (query) => String(query || "").toLowerCase().split(/\s+/).filter(Boolean);
@@ -45,4 +46,11 @@ export const snippetFor = (session, query) => {
     return (start ? "…" : "") + text.slice(start, end).trim() + (end < text.length ? "…" : "");
   }
   return "";
+};
+
+/** Opens the SearchDialog. (olum-ui's CommandDialog opens when its hidden checkbox is checked.) */
+export const openSearch = () => {
+  const toggle = document.querySelector('[data-slot="command-dialog"] > input');
+  toggle.checked = true;
+  toggle.dispatchEvent(new Event("change"));
 };

@@ -1,59 +1,38 @@
 <script>
-  import { onMount } from "olum";
+  import Button from "./ui/Button/Button";
   import Icon from "./ui/Icon/Icon";
-  import InputGroup from "./ui/InputGroup/InputGroup";
-  import InputGroupAddon from "./ui/InputGroup/InputGroupAddon";
-  import InputGroupInput from "./ui/InputGroup/InputGroupInput";
   import SessionItem from "./SessionItem";
   import { chat } from "../utils/store";
-  import { searchSessions } from "../utils/search";
+  import { openSearch } from "../utils/search";
   import { Search } from "../utils/icons";
 
-  // Saved chats, filtered by the search box.
-  const state = { query: "" };
-
-  const search = (e) => (state.query = e.target.value);
-  const results = () => searchSessions(chat.sessions, state.query);
-  const starred = () => results().filter((s) => s.starred);
-  const recent = () => results().filter((s) => !s.starred);
-
-  // Escape clears the search, a second Escape leaves the box. (The input doesn't forward keydown.)
-  onMount(() => {
-    const input = host.querySelector("input");
-    const onKeydown = (e) => {
-      if (e.key !== "Escape") return;
-      if (state.query) state.query = "";
-      else input.blur();
-    };
-    input.addEventListener("keydown", onKeydown);
-    return () => input.removeEventListener("keydown", onKeydown);
-  });
+  // Saved chats: starred ones first, then the rest (newest first).
+  const starred = () => chat.sessions.filter((s) => s.starred);
+  const recent = () => chat.sessions.filter((s) => !s.starred);
+  const search = () => openSearch();
 </script>
 
 <!-- Hidden with a class (not <if>) so page.html never reads the store and re-renders on every token. -->
 <aside class="w-64 shrink-0 flex-col border-r border-border bg-rail {chat.sidebar ? 'flex' : 'hidden'}" aria-label="Chat history">
-  <div class="flex h-14 shrink-0 items-center border-b border-border px-2">
-    <InputGroup class="bg-background">
-      <InputGroupAddon><Icon icon="{Search}" class="size-3.5" /></InputGroupAddon>
-      <InputGroupInput type="search" placeholder="Search chats" class="pl-1 text-[13px]" value="{state.query}" oninput="{search}" />
-    </InputGroup>
+  <div class="flex h-14 shrink-0 items-center justify-between border-b border-border pr-2 pl-4">
+    <span class="text-[13px] font-medium text-muted-foreground">Chats</span>
+    <Button variant="ghost" size="icon-sm" class="text-muted-foreground" ariaLabel="Search chats (Ctrl+K)" onclick="{search}">
+      <Icon icon="{Search}" class="size-4" />
+    </Button>
   </div>
 
   <nav class="flex flex-1 flex-col gap-0.5 overflow-y-auto p-2">
     <if when="starred().length">
       <p class="px-2.5 pb-1 text-[11px] font-medium text-muted-foreground">Starred</p>
-      <for each="s of starred()" key="s.id"><SessionItem session="{s}" query="{state.query}" /></for>
+      <for each="s of starred()" key="s.id"><SessionItem session="{s}" /></for>
       <if when="recent().length">
         <p class="px-2.5 pt-3 pb-1 text-[11px] font-medium text-muted-foreground">Recent</p>
       </if>
     </if>
-    <for each="s of recent()" key="s.id"><SessionItem session="{s}" query="{state.query}" /></for>
+    <for each="s of recent()" key="s.id"><SessionItem session="{s}" /></for>
 
     <if when="!chat.sessions.length">
       <p class="px-2.5 py-2 text-[13px] text-muted-foreground">No saved chats yet</p>
     </if>
-    <else-if when="!results().length">
-      <p class="px-2.5 py-2 text-[13px] text-muted-foreground">No chats match</p>
-    </else-if>
   </nav>
 </aside>
