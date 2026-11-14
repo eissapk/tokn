@@ -8,6 +8,7 @@
   import TooltipProvider from "../components/ui/Tooltip/TooltipProvider";
   import Composer from "../components/chat/Composer";
   import SearchDialog from "../components/chat/SearchDialog";
+  import SettingsDialog from "../components/chat/SettingsDialog";
   import Sidebar from "../components/chat/Sidebar";
   import Thread from "../components/chat/Thread";
   import Topbar from "../components/chat/Topbar";
@@ -32,6 +33,7 @@
 
   onMount(() => {
     chat.loadTheme();
+    chat.loadEndpoint();
     chat.loadModels();
     chat.loadSessions();
 
@@ -50,4 +52,5 @@
     </div>
   </div>
   <SearchDialog />
+  <SettingsDialog />
 </TooltipProvider>

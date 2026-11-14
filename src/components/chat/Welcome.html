@@ -2,8 +2,8 @@
   import Icon from "../ui/Icon/Icon";
   import { chat } from "../../utils/store";
   import { OLLAMA } from "../../utils/links";
-  import { OLLAMA_URL } from "../../utils/ollama";
-  import { ArrowRight, Code, Lightbulb, Mail, RotateCw, Scale } from "../../utils/icons";
+  import { openSettings } from "../../utils/settings";
+  import { ArrowRight, Code, Lightbulb, Mail, RotateCw, Scale, Settings } from "../../utils/icons";
 
   // What the Thread shows before the first message: a greeting with prompts to
   // start from, or, when there's nothing to talk to yet, how to fix that.
@@ -16,6 +16,7 @@
   ];
 
   const ask = (prompt) => chat.model && !chat.sending && chat.send(prompt, [], false);
+  const changeServer = () => openSettings();
   const retry = () => {
     chat.server = "connecting";
     chat.loadModels();
@@ -41,7 +42,7 @@
       <else>Pull a<br />model.</else>
     </h2>
     <p class="mt-5 max-w-[26rem] text-[1.05rem] leading-relaxed text-muted-foreground">
-      <if when="mode() === 'offline'">TOKN talks to Ollama at <span class="font-mono text-[0.9em] text-foreground">{OLLAMA_URL}</span>. Start it in a terminal, then try again.</if>
+      <if when="mode() === 'offline'">TOKN talks to Ollama at <span class="font-mono text-[0.9em] text-foreground">{chat.endpoint}</span>. Start it in a terminal, or change the address in Settings, then try again.</if>
       <else>Ollama is running, but no models are installed. Grab one from the library, then try again.</else>
     </p>
 
@@ -65,6 +66,15 @@
       >
         <Icon icon="{RotateCw}" class="size-4" /> Try again
       </button>
+      <if when="mode() === 'offline'">
+        <button
+          type="button"
+          class="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full border border-border px-6 text-sm font-semibold transition-colors outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50"
+          onclick="changeServer()"
+        >
+          <Icon icon="{Settings}" class="size-4" /> Change address
+        </button>
+      </if>
       <a
         href="{OLLAMA}"
         target="_blank"

@@ -1,0 +1,94 @@
+<script>
+  import { onMount } from "olum";
+  import Dialog from "../ui/Dialog/Dialog";
+  import DialogContent from "../ui/Dialog/DialogContent";
+  import DialogDescription from "../ui/Dialog/DialogDescription";
+  import DialogTitle from "../ui/Dialog/DialogTitle";
+  import { chat } from "../../utils/store";
+  import { DEFAULT_OLLAMA_URL } from "../../utils/ollama";
+  import { closeSettings, showSettingsError } from "../../utils/settings";
+
+  // App settings, opened with openSettings() from utils/settings.js (the Sidebar's gear button).
+  // For now: which Ollama server to talk to.
+  //
+  // Keep this file free of store reads: the dialog moves itself into <body> once, so a
+  // re-render here would be lost. That's also why the form is wired by id rather than
+  // through on* attributes, and why the field is filled in openSettings().
+
+  onMount(() => {
+    const form = document.getElementById("settings-form");
+    const field = document.getElementById("settings-endpoint");
+    const reset = document.getElementById("settings-reset");
+
+    const onSubmit = (e) => {
+      e.preventDefault();
+      try {
+        chat.setEndpoint(field.value);
+        closeSettings();
+      } catch (err) {
+        showSettingsError(err.message);
+        field.focus();
+      }
+    };
+    const onReset = () => {
+      field.value = DEFAULT_OLLAMA_URL;
+      showSettingsError("");
+      field.focus();
+    };
+    const onInput = () => showSettingsError("");
+
+    form.addEventListener("submit", onSubmit);
+    reset.addEventListener("click", onReset);
+    field.addEventListener("input", onInput);
+    return () => {
+      form.removeEventListener("submit", onSubmit);
+      reset.removeEventListener("click", onReset);
+      field.removeEventListener("input", onInput);
+    };
+  });
+</script>
+
+<Dialog>
+  <DialogContent class="gap-5 rounded-[1.5rem] p-6 shadow-2xl shadow-black/20 sm:max-w-md">
+    <div class="flex flex-col gap-1.5 pr-6">
+      <DialogTitle class="text-lg font-semibold">Settings</DialogTitle>
+      <DialogDescription>Choose which Ollama server TOKN talks to.</DialogDescription>
+    </div>
+
+    <form id="settings-form" class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2">
+        <label for="settings-endpoint" class="text-[13px] font-medium">Ollama endpoint</label>
+        <input
+          id="settings-endpoint"
+          type="text"
+          inputmode="url"
+          spellcheck="false"
+          autocomplete="off"
+          placeholder="{DEFAULT_OLLAMA_URL}"
+          aria-describedby="settings-hint"
+          class="h-10 w-full min-w-0 rounded-xl border border-border bg-background px-3 font-mono text-[13px] text-foreground transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20"
+        />
+        <p id="settings-error" role="alert" class="hidden text-[13px] text-destructive"></p>
+        <p id="settings-hint" class="text-[13px] leading-relaxed text-muted-foreground">
+          Default is <span class="font-mono text-foreground">{DEFAULT_OLLAMA_URL}</span>. A server on another machine has to listen on its network address (<span class="font-mono">OLLAMA_HOST=0.0.0.0</span>) and allow this app (<span class="font-mono">OLLAMA_ORIGINS</span>).
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <button
+          type="button"
+          id="settings-reset"
+          class="inline-flex h-10 cursor-pointer items-center rounded-full px-4 text-sm font-medium text-muted-foreground transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+        >
+          Reset to default
+        </button>
+        <button
+          type="submit"
+          class="inline-flex h-10 cursor-pointer items-center rounded-full bg-home-ink px-6 text-sm font-semibold text-home-ink-foreground shadow-lg shadow-home-ink/20 transition-transform outline-none hover:-translate-y-0.5 focus-visible:ring-3 focus-visible:ring-ring/50"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  </DialogContent>
+</Dialog>

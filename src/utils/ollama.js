@@ -4,10 +4,33 @@
  */
 import { MODEL_NOTES } from "./models.js";
 
-export const OLLAMA_URL = "http://localhost:11434";
+export const DEFAULT_OLLAMA_URL = "http://localhost:11434";
+
+// Where every request goes. Changed from Settings through chat.setEndpoint().
+let baseUrl = DEFAULT_OLLAMA_URL;
+export const setOllamaUrl = (url) => (baseUrl = url);
+
+/**
+ * Tidy what the user typed into a base URL: "192.168.1.5:11434" -> "http://192.168.1.5:11434".
+ * Throws with a readable message when it isn't a web address. Empty means the default.
+ */
+export function normalizeUrl(input) {
+  let url = String(input || "").trim();
+  if (!url) return DEFAULT_OLLAMA_URL;
+  if (!/^[a-z][a-z\d+.-]*:\/\//i.test(url)) url = `http://${url}`;
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new Error("That doesn't look like a web address.");
+  }
+  if (!/^https?:$/.test(parsed.protocol)) throw new Error("Use an http:// or https:// address.");
+  // A path is kept (for a server behind a proxy); a trailing slash, query or hash is not.
+  return (parsed.origin + parsed.pathname).replace(/\/+$/, "");
+}
 
 const post = (path, body, signal) =>
-  fetch(`${OLLAMA_URL}${path}`, {
+  fetch(`${baseUrl}${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -16,7 +39,7 @@ const post = (path, body, signal) =>
 
 /** The installed models, merged with our notes from models.js, in menu order. */
 export async function listModels() {
-  const response = await fetch(`${OLLAMA_URL}/api/tags`);
+  const response = await fetch(`${baseUrl}/api/tags`);
   if (!response.ok) throw new Error(`${response.status}`);
   const { models = [] } = await response.json();
   return models.map(toModel).sort((a, b) => a.order - b.order);

@@ -1,5 +1,5 @@
 import { store } from "olum";
-import { listModels, reloadModel, streamChat } from "./ollama.js";
+import { DEFAULT_OLLAMA_URL, listModels, normalizeUrl, reloadModel, setOllamaUrl, streamChat } from "./ollama.js";
 import { deleteSession, listSessions, saveSession } from "./sessions.js";
 
 /**
@@ -50,6 +50,7 @@ const stopStreaming = () => controller?.abort();
 
 export const chat = store({
   server: "connecting", // "connecting" | "connected" | "offline"
+  endpoint: DEFAULT_OLLAMA_URL, // the Ollama server's base URL, changed in Settings
   models: [], // installed models, see toModel() in ollama.js
   model: "", // tag of the selected model
 
@@ -78,11 +79,18 @@ export const chat = store({
 
   /* ---- startup ---- */
 
+  // Before loadModels(), so the first request already goes to the saved server.
+  loadEndpoint() {
+    this.endpoint = recall("Buildr-endpoint") || DEFAULT_OLLAMA_URL;
+    setOllamaUrl(this.endpoint);
+  },
+
   async loadModels() {
     try {
       this.models = await listModels();
       this.server = "connected";
     } catch {
+      this.models = []; // don't keep showing the last server's models
       this.server = "offline";
     }
     const saved = recall("Buildr-model");
@@ -108,6 +116,17 @@ export const chat = store({
   selectModel(name) {
     this.model = name;
     remember("Buildr-model", name);
+  },
+
+  /** Point the app at another Ollama server and reload its models. Throws if `url` isn't a web address. */
+  setEndpoint(url) {
+    const endpoint = normalizeUrl(url);
+    if (endpoint === this.endpoint) return;
+    this.endpoint = endpoint;
+    setOllamaUrl(endpoint);
+    remember("Buildr-endpoint", endpoint);
+    this.server = "connecting";
+    this.loadModels();
   },
 
   toggleTheme() {

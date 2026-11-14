@@ -1,12 +1,13 @@
 <script>
   import Icon from "../ui/Icon/Icon";
   import Logo from "../Logo";
+  import Button from "../ui/Button/Button";
   import ThemeToggle from "../home/ThemeToggle";
   import SessionItem from "./SessionItem";
   import { chat } from "../../utils/store";
   import { openSearch } from "../../utils/search";
-  import { OLLAMA_URL } from "../../utils/ollama";
-  import { Plus, Search } from "../../utils/icons";
+  import { openSettings } from "../../utils/settings";
+  import { Plus, Search, Settings } from "../../utils/icons";
 
   const newChat = () => {
     chat.newChat();
@@ -14,6 +15,10 @@
   };
   const close = () => chat.toggleSidebar();
   const search = () => openSearch();
+  const settings = () => {
+    chat.closeSidebarIfNarrow();
+    openSettings();
+  };
 
   // Starred chats first, then the rest by when they were last used (newest first).
   const starred = () => chat.sessions.filter((s) => s.starred);
@@ -92,10 +97,13 @@
     </if>
   </nav>
 
-  <!-- Is the local Ollama server reachable? -->
+  <!-- Is the Ollama server reachable? -->
   <div class="flex h-14 shrink-0 items-center gap-2.5 border-t border-border pr-3 pl-5">
     <span class="size-2 shrink-0 rounded-full {status().dot}"></span>
-    <span class="min-w-0 flex-1 truncate text-[13px] font-medium" title="{OLLAMA_URL}">{status().text}</span>
+    <span class="min-w-0 flex-1 truncate text-[13px] font-medium" title="{chat.endpoint}">{status().text}</span>
+    <Button variant="ghost" size="icon-sm" class="text-home-ink hover:bg-home-ink/10 hover:text-home-ink" ariaLabel="Settings" onclick="{settings}">
+      <Icon icon="{Settings}" class="size-[18px]" />
+    </Button>
     <ThemeToggle />
   </div>
 </aside>

@@ -5,10 +5,9 @@
   import Icon from "../ui/Icon/Icon";
   import ModelOption from "./ModelOption";
   import { chat } from "../../utils/store";
-  import { OLLAMA_URL } from "../../utils/ollama";
   import { ChevronDown } from "../../utils/icons";
 
-  // The model menu under the Composer, below the send button. The dot is green when the local Ollama server answers.
+  // The model menu under the Composer, below the send button. The dot is green when the Ollama server answers.
   // It sits at the bottom right of the window, so the menu opens upward from its right edge.
   const online = () => chat.server === "connected";
 </script>
@@ -33,7 +32,7 @@
     </div>
     <if when="!chat.models.length">
       <p class="px-2.5 pt-1 pb-2 text-[13px] text-muted-foreground">
-        {chat.server === "offline" ? "Can't reach the server at " + OLLAMA_URL : "No models installed"}
+        {chat.server === "offline" ? "Can't reach the server at " + chat.endpoint : "No models installed"}
       </p>
     </if>
   </DropdownMenuContent>
