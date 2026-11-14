@@ -1,17 +1,15 @@
 <script>
   import { onMount } from "olum";
   import FileChip from "./FileChip";
+  import Button from "../ui/Button/Button";
   import Icon from "../ui/Icon/Icon";
-  import InputGroup from "../ui/InputGroup/InputGroup";
-  import InputGroupAddon from "../ui/InputGroup/InputGroupAddon";
-  import InputGroupButton from "../ui/InputGroup/InputGroupButton";
   import Textarea from "../ui/Textarea/Textarea";
   import Toggle from "../ui/Toggle/Toggle";
   import Tooltip from "../ui/Tooltip/Tooltip";
   import TooltipContent from "../ui/Tooltip/TooltipContent";
   import TooltipTrigger from "../ui/Tooltip/TooltipTrigger";
   import { chat } from "../../utils/store";
-  import { ArrowUp, Lightbulb, Mic, Paperclip, Square } from "../../utils/icons";
+  import { Brain, Mic, Paperclip, SendHorizontal, Square } from "../../utils/icons";
 
   // The message box: type, attach files, send (Enter) or stop.
   const state = { input: "", files: [], think: false };
@@ -20,9 +18,11 @@
 
   /* ---- sending ---- */
 
+  const canSend = () => Boolean((state.input.trim() || state.files.length) && chat.model);
+
   const send = () => {
     const text = state.input.trim();
-    if ((!text && !state.files.length) || chat.sending || !chat.model) return;
+    if (!canSend() || chat.sending) return;
     chat.send(text, state.files, state.think);
     setInput("");
     state.files = [];
@@ -108,55 +108,72 @@
   });
 </script>
 
-<div class="shrink-0 pb-4">
-  <div class="mx-auto w-full max-w-measure px-6">
-    <InputGroup class="rounded-xl bg-background">
+<div class="shrink-0 px-4 pb-3 sm:px-6">
+  <div class="mx-auto w-full max-w-measure">
+    <div
+      data-slot="composer"
+      class="rounded-[1.5rem] border border-border bg-background shadow-xl shadow-home-ink/[0.06] transition-[border-color,box-shadow] focus-within:border-home-ink/30 focus-within:ring-4 focus-within:ring-home-card-accent/25 dark:shadow-black/30"
+    >
       <if when="state.files.length">
-        <InputGroupAddon align="block-start" class="flex-wrap gap-1.5 px-2.5 pt-2.5 pb-0">
+        <div class="flex flex-wrap gap-1.5 px-3 pt-3">
           <for each="f of state.files" key="f.id"><FileChip file="{f}" onremove="{removeFile}" /></for>
-        </InputGroupAddon>
+        </div>
       </if>
 
       <Textarea
         rows="1"
-        slot="input-group-control"
-        placeholder="{chat.model ? 'Message ' + chat.current().label : 'No model available'}"
-        class="max-h-[200px] min-h-0 resize-none rounded-none border-0 bg-transparent px-3.5 pt-3 pb-1 text-[15px] leading-relaxed focus-visible:ring-0"
+        placeholder="{chat.model ? 'Message ' + chat.current().label + '…' : 'No model available'}"
+        class="max-h-[200px] min-h-0 resize-none rounded-none border-0 bg-transparent px-5 pt-4 pb-1 text-[15px] leading-relaxed shadow-none focus-visible:ring-0"
         value="{state.input}"
         oninput="{onInput}"
       />
 
-      <InputGroupAddon align="block-end" class="gap-1 px-2 pt-1 pb-2">
+      <div class="flex items-center gap-1 px-2.5 pt-1 pb-2.5">
         <Tooltip>
           <TooltipTrigger>
-            <InputGroupButton size="icon-sm" ariaLabel="Attach a file" onclick="{pickFiles}">
-              <Icon icon="{Paperclip}" class="size-4" />
-            </InputGroupButton>
+            <Button variant="ghost" size="icon-sm" class="size-9 rounded-full text-muted-foreground" ariaLabel="Attach a file" onclick="{pickFiles}">
+              <Icon icon="{Paperclip}" class="size-[18px]" />
+            </Button>
           </TooltipTrigger>
           <TooltipContent>Attach a file</TooltipContent>
         </Tooltip>
 
         <Tooltip>
           <TooltipTrigger>
-            <InputGroupButton size="icon-sm" ariaLabel="Voice commands" onclick="{startVoice}">
-              <Icon icon="{Mic}" class="size-4" />
-            </InputGroupButton>
+            <Button variant="ghost" size="icon-sm" class="size-9 rounded-full text-muted-foreground" ariaLabel="Voice commands" onclick="{startVoice}">
+              <Icon icon="{Mic}" class="size-[18px]" />
+            </Button>
           </TooltipTrigger>
           <TooltipContent>Voice commands</TooltipContent>
         </Tooltip>
 
-        <Toggle size="sm" class="gap-1.5 text-muted-foreground aria-pressed:text-foreground" onchange="{setThink}">
-          <Icon icon="{Lightbulb}" class="size-3.5" />
+        <Toggle
+          size="sm"
+          class="ml-1 h-9 gap-1.5 rounded-full border border-border px-3.5 text-[13px] text-muted-foreground hover:bg-muted aria-pressed:border-transparent aria-pressed:bg-home-tint aria-pressed:text-foreground"
+          onchange="{setThink}"
+        >
+          <Icon icon="{Brain}" class="size-4" />
           Think
         </Toggle>
 
         <div class="flex-1"></div>
 
-        <InputGroupButton variant="default" size="icon-sm" ariaLabel="{chat.sending ? 'Stop generating' : 'Send message'}" onclick="{sendOrStop}">
-          <Icon icon="{chat.sending ? Square : ArrowUp}" class="{chat.sending ? 'size-3.5 fill-current' : 'size-4'}" />
-        </InputGroupButton>
-      </InputGroupAddon>
-    </InputGroup>
+        <!-- Deep green with a lime arrow, like the home page's send button. -->
+        <button
+          type="button"
+          class="grid size-10 cursor-pointer place-items-center rounded-full bg-home-ink text-home-ink-foreground shadow-md shadow-home-ink/20 transition-[translate,opacity] outline-none hover:-translate-y-0.5 focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-35 disabled:shadow-none"
+          aria-label="{chat.sending ? 'Stop generating' : 'Send message'}"
+          disabled="{!chat.sending && !canSend()}"
+          onclick="sendOrStop()"
+        >
+          <Icon icon="{chat.sending ? Square : SendHorizontal}" class="{chat.sending ? 'size-3.5 [&_svg]:fill-current' : 'size-[18px] [&_svg]:fill-current'}" />
+        </button>
+      </div>
+    </div>
+
+    <p class="mt-2 text-center text-[11px] text-muted-foreground">
+      <span class="font-mono">Enter</span> to send · <span class="font-mono">Shift+Enter</span> for a new line · <span class="font-mono">↑</span> for your last prompt
+    </p>
 
     <input type="file" multiple hidden onchange="addFiles($event)" />
   </div>

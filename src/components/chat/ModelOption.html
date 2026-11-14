@@ -10,25 +10,26 @@
   const { model } = props();
 
   const choose = () => chat.selectModel(model.name);
+  const chosen = () => model.name === chat.model;
 </script>
 
-<DropdownMenuItem class="gap-3 px-2 py-1.5" onclick="{choose}">
-  <span class="grid size-4 shrink-0 place-items-center">
-    <if when="model.name === chat.model"><Icon icon="{Check}" class="size-3.5" /></if>
+<DropdownMenuItem class="items-start gap-3 rounded-xl px-2.5 py-2.5 hover:bg-home-tint/60 {chosen() ? 'bg-home-tint hover:bg-home-tint' : ''}" onclick="{choose}">
+  <span class="mt-px grid size-5 shrink-0 place-items-center rounded-full {chosen() ? 'bg-home-ink text-home-ink-foreground' : 'border border-border'}">
+    <if when="chosen()"><Icon icon="{Check}" class="size-3" /></if>
   </span>
 
   <span class="flex min-w-0 flex-1 flex-col items-start gap-1">
     <span class="flex items-center gap-1.5">
-      <span class="font-mono text-[13px] leading-none font-medium">{model.label}</span>
-      <span class="text-[11px] leading-none text-muted-foreground">{model.fullName}</span>
+      <span class="text-sm leading-none font-semibold">{model.label}</span>
+      <span class="truncate text-[11px] leading-none text-muted-foreground">{model.fullName}</span>
       <if when="model.uncensored">
-        <Badge variant="outline" class="h-4 rounded px-1 text-[10px] font-normal text-muted-foreground uppercase">uncensored</Badge>
+        <Badge variant="outline" class="h-4 rounded-full px-1.5 text-[10px] font-normal text-muted-foreground uppercase">uncensored</Badge>
       </if>
     </span>
-    <span class="text-[11px] leading-none text-muted-foreground">{model.params} · {model.quant} · {model.size}</span>
-    <span class="flex flex-wrap gap-1 pt-0.5">
+    <span class="font-mono text-[11px] leading-none text-muted-foreground">{model.params} · {model.quant} · {model.size}</span>
+    <span class="flex flex-wrap gap-1 pt-1">
       <for each="use of model.uses" key="use">
-        <Badge variant="secondary" class="h-4 rounded px-1.5 text-[10px] font-normal text-muted-foreground">{use}</Badge>
+        <Badge variant="secondary" class="h-[1.125rem] rounded-full px-2 text-[10px] font-normal text-muted-foreground {chosen() ? 'bg-background' : 'bg-muted'}">{use}</Badge>
       </for>
     </span>
   </span>

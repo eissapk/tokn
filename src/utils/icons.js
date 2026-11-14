@@ -35,3 +35,8 @@ export { Brain } from "olum-icons/lucide/Brain.js";
 export { Code } from "olum-icons/lucide/Code.js";
 export { Gauge } from "olum-icons/lucide/Gauge.js";
 export { Lock } from "olum-icons/lucide/Lock.js";
+
+// Chat app empty state.
+export { Mail } from "olum-icons/lucide/Mail.js";
+export { RotateCw } from "olum-icons/lucide/RotateCw.js";
+export { Scale } from "olum-icons/lucide/Scale.js";

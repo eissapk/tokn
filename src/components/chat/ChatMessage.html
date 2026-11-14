@@ -1,23 +1,17 @@
 <script>
   import { onMount, props } from "olum";
-  import Bubble from "../ui/Bubble/Bubble";
-  import BubbleContent from "../ui/Bubble/BubbleContent";
   import Button from "../ui/Button/Button";
   import Collapsible from "../ui/Collapsible/Collapsible";
   import CollapsibleContent from "../ui/Collapsible/CollapsibleContent";
   import CollapsibleTrigger from "../ui/Collapsible/CollapsibleTrigger";
   import Icon from "../ui/Icon/Icon";
-  import Message from "../ui/Message/Message";
-  import MessageContent from "../ui/Message/MessageContent";
-  import MessageFooter from "../ui/Message/MessageFooter";
-  import Tooltip from "../ui/Tooltip/Tooltip";
-  import TooltipContent from "../ui/Tooltip/TooltipContent";
-  import TooltipTrigger from "../ui/Tooltip/TooltipTrigger";
+  import Logo from "../Logo";
   import FileChip from "./FileChip";
+  import { chat } from "../../utils/store";
   import { copyFace, render } from "../../utils/markdown";
-  import { Check, ChevronDown, Copy } from "../../utils/icons";
+  import { Brain, Check, ChevronDown, Copy, User } from "../../utils/icons";
 
-  // One message in the Thread: a bubble for the user, rendered markdown for the model.
+  // One message in the Thread: a tinted bubble for the user, rendered markdown for the model.
   const { message } = props();
   const state = { copied: false };
 
@@ -26,7 +20,12 @@
   // A user message with files keeps them inside `content` for the model; the bubble shows only what was typed.
   const typed = () => (hasFiles() ? message.text : message.content);
   // render() escapes the text before adding any tags, which makes html="" safe here.
-  const html = () => render(message.content) || "<p></p>";
+  const html = () => render(message.content);
+
+  // The reply that is streaming right now.
+  const live = () => chat.sending && chat.messages[chat.messages.length - 1]?.id === message.id;
+  // Nothing has arrived yet: show typing dots instead of an empty bubble.
+  const waiting = () => live() && !message.content && !message.thinking;
 
   const copyReply = async () => {
     await navigator.clipboard.writeText(message.content);
@@ -46,51 +45,81 @@
     host.addEventListener("click", onClick);
     return () => host.removeEventListener("click", onClick);
   });
+
+  const avatar = "grid size-9 shrink-0 place-items-center rounded-full";
 </script>
 
-<Message align="{isUser() ? 'end' : 'start'}">
-  <MessageContent class="gap-1.5">
-    <if when="isUser()">
+<if when="isUser()">
+  <div class="flex items-start justify-end gap-3">
+    <div class="flex min-w-0 max-w-[80%] flex-col items-end gap-1.5">
       <if when="hasFiles()">
         <div class="flex flex-wrap justify-end gap-1.5">
           <for each="f of message.files" key="f.id"><FileChip file="{f}" /></for>
         </div>
       </if>
       <if when="typed()">
-        <Bubble align="end" variant="tinted">
-          <BubbleContent class="px-3.5 py-2.5 text-[15px] leading-relaxed whitespace-pre-wrap">{typed()}</BubbleContent>
-        </Bubble>
+        <p class="rounded-[1.25rem] rounded-tr-md bg-home-tint px-4 py-2.5 text-[15px] leading-relaxed whitespace-pre-wrap wrap-break-word">{typed()}</p>
       </if>
-    </if>
+    </div>
+    <span aria-hidden="true" class="{avatar} bg-home-card-accent text-[oklch(0.2_0.05_140)]">
+      <Icon icon="{User}" class="size-[18px] [&_svg]:fill-current" />
+    </span>
+  </div>
+</if>
 
-    <else>
+<else>
+  <div class="flex items-start gap-3">
+    <!-- The TOKN mark in lime on deep green, as on the home page. -->
+    <span aria-hidden="true" class="{avatar} bg-[oklch(0.27_0.075_140)] text-[0.85rem] [--logo-glow:var(--home-card-accent)] [--logo-ink:var(--home-card-accent)] dark:ring-1 dark:ring-home-card-accent/25">
+      <Logo />
+    </span>
+
+    <div class="flex min-w-0 flex-1 flex-col items-start gap-2">
       <!-- The model's reasoning: open while it thinks, folds away once the answer starts. -->
       <if when="message.thinking">
         <Collapsible defaultOpen="{!message.content}" class="w-full">
-          <CollapsibleTrigger class="flex cursor-pointer items-center gap-1 rounded-md text-[13px] text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50">
+          <CollapsibleTrigger
+            class="flex h-9 cursor-pointer items-center gap-1.5 rounded-full border border-border px-3 text-[13px] font-medium text-muted-foreground transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+          >
+            <Icon icon="{Brain}" class="size-3.5 {message.content ? '' : 'animate-pulse text-home-ink'}" />
             {message.content ? "Thought process" : "Thinking…"}
             <Icon icon="{ChevronDown}" class="size-3.5 transition-transform group-has-[>input:checked]/collapsible:rotate-180" />
           </CollapsibleTrigger>
           <CollapsibleContent>
-            <div class="mt-1.5 border-l-2 border-border pl-3 text-[13px] leading-relaxed whitespace-pre-wrap text-muted-foreground">{message.thinking.trim()}</div>
+            <div class="mt-2 ml-1 border-l-2 border-home-card-accent/60 pl-4 text-[13px] leading-relaxed whitespace-pre-wrap text-muted-foreground">{message.thinking.trim()}</div>
           </CollapsibleContent>
         </Collapsible>
       </if>
 
-      <Bubble variant="ghost" class="w-full max-w-full">
-        <BubbleContent class="w-full max-w-full"><div class="md" html="html()"></div></BubbleContent>
-      </Bubble>
+      <if when="waiting()">
+        <div class="typing flex h-11 items-center gap-1.5 rounded-[1.25rem] rounded-tl-md bg-muted px-5" role="status" aria-label="Waiting for the reply">
+          <span class="size-1.5 rounded-full bg-foreground"></span>
+          <span class="size-1.5 rounded-full bg-foreground"></span>
+          <span class="size-1.5 rounded-full bg-foreground"></span>
+        </div>
+      </if>
 
-      <MessageFooter class="px-0">
-        <Tooltip>
-          <TooltipTrigger>
-            <Button variant="ghost" size="icon-xs" ariaLabel="Copy response" class="text-muted-foreground" onclick="{copyReply}">
-              <Icon icon="{state.copied ? Check : Copy}" class="size-3.5" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>{state.copied ? "Copied" : "Copy response"}</TooltipContent>
-        </Tooltip>
-      </MessageFooter>
-    </else>
-  </MessageContent>
-</Message>
+      <!-- Stopped before anything arrived. -->
+      <if when="!message.content && !message.thinking && !live()">
+        <p class="pt-2 text-[13px] text-muted-foreground italic">No response</p>
+      </if>
+
+      <if when="message.content">
+        <div class="reply max-w-full min-w-0 rounded-[1.25rem] rounded-tl-md bg-muted px-5 py-3.5"><div class="md" html="html()"></div></div>
+      </if>
+
+      <if when="message.content && !live()">
+        <Button
+          variant="ghost"
+          size="xs"
+          ariaLabel="Copy response"
+          class="-mt-0.5 ml-1 gap-1.5 rounded-full px-2.5 text-muted-foreground hover:bg-home-tint/60"
+          onclick="{copyReply}"
+        >
+          <Icon icon="{state.copied ? Check : Copy}" class="size-3.5" />
+          {state.copied ? "Copied" : "Copy"}
+        </Button>
+      </if>
+    </div>
+  </div>
+</else>

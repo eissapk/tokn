@@ -1,38 +1,91 @@
 <script>
-  import Button from "../ui/Button/Button";
   import Icon from "../ui/Icon/Icon";
+  import Logo from "../Logo";
+  import ThemeToggle from "../home/ThemeToggle";
   import SessionItem from "./SessionItem";
   import { chat } from "../../utils/store";
   import { openSearch } from "../../utils/search";
-  import { Search } from "../../utils/icons";
+  import { OLLAMA_URL } from "../../utils/ollama";
+  import { Plus, Search } from "../../utils/icons";
 
-  // Saved chats: starred ones first, then the rest (newest first).
-  const starred = () => chat.sessions.filter((s) => s.starred);
-  const recent = () => chat.sessions.filter((s) => !s.starred);
+  const newChat = () => chat.newChat();
   const search = () => openSearch();
+
+  // Starred chats first, then the rest by when they were last used (newest first).
+  const starred = () => chat.sessions.filter((s) => s.starred);
+
+  const DAY = 24 * 60 * 60 * 1000;
+  const groups = () => {
+    const midnight = new Date().setHours(0, 0, 0, 0);
+    const buckets = [
+      { label: "Today", from: midnight, items: [] },
+      { label: "Yesterday", from: midnight - DAY, items: [] },
+      { label: "Previous 7 days", from: midnight - 7 * DAY, items: [] },
+      { label: "Older", from: -Infinity, items: [] },
+    ];
+    for (const s of chat.sessions) {
+      if (!s.starred) buckets.find((b) => s.updatedAt >= b.from).items.push(s);
+    }
+    return buckets.filter((b) => b.items.length);
+  };
+
+  const status = () =>
+    ({
+      connected: { dot: "bg-signal", text: "Ollama is running" },
+      offline: { dot: "bg-destructive", text: "Ollama is offline" },
+      connecting: { dot: "bg-muted-foreground animate-pulse", text: "Connecting…" },
+    })[chat.server];
+
+  const heading = "px-3.5 pt-4 pb-1.5 text-xs font-medium text-muted-foreground";
 </script>
 
 <!-- Hidden with a class (not <if>) so page.html never reads the store and re-renders on every token. -->
-<aside class="w-64 shrink-0 flex-col border-r border-border bg-rail {chat.sidebar ? 'flex' : 'hidden'}" aria-label="Chat history">
-  <div class="flex h-14 shrink-0 items-center justify-between border-b border-border pr-2 pl-4">
-    <span class="text-[13px] font-medium text-muted-foreground">Chats</span>
-    <Button variant="ghost" size="icon-sm" class="text-muted-foreground" ariaLabel="Search chats (Ctrl+K)" onclick="{search}">
-      <Icon icon="{Search}" class="size-4" />
-    </Button>
+<aside class="w-[17rem] shrink-0 flex-col border-r border-border bg-rail {chat.sidebar ? 'flex' : 'hidden'}" aria-label="Chat history">
+  <div class="flex h-16 shrink-0 items-center px-5">
+    <a to="/" href="/" class="text-[1.05rem]" aria-label="TOKN home"><Logo wordmark="{true}" /></a>
   </div>
 
-  <nav class="flex flex-1 flex-col gap-0.5 overflow-y-auto p-2">
+  <div class="flex flex-col gap-1 px-3">
+    <button
+      type="button"
+      class="flex h-11 cursor-pointer items-center gap-2.5 rounded-xl bg-home-tint px-3.5 text-[0.95rem] font-semibold transition-colors outline-none hover:bg-home-card-accent/45 focus-visible:ring-3 focus-visible:ring-ring/50"
+      onclick="newChat()"
+    >
+      <Icon icon="{Plus}" class="size-4" />
+      New Chat
+      <kbd class="ml-auto font-mono text-[11px] font-normal text-muted-foreground">Ctrl N</kbd>
+    </button>
+    <button
+      type="button"
+      class="flex h-10 cursor-pointer items-center gap-2.5 rounded-xl px-3.5 text-sm text-muted-foreground transition-colors outline-none hover:bg-home-tint/60 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+      onclick="search()"
+    >
+      <Icon icon="{Search}" class="size-4 text-foreground" />
+      Search chats…
+      <kbd class="ml-auto font-mono text-[11px]">Ctrl K</kbd>
+    </button>
+  </div>
+
+  <nav class="flex flex-1 flex-col gap-0.5 overflow-y-auto px-3 pb-3" aria-label="Saved chats">
     <if when="starred().length">
-      <p class="px-2.5 pb-1 text-[11px] font-medium text-muted-foreground">Starred</p>
+      <p class="{heading}">Starred</p>
       <for each="s of starred()" key="s.id"><SessionItem session="{s}" /></for>
-      <if when="recent().length">
-        <p class="px-2.5 pt-3 pb-1 text-[11px] font-medium text-muted-foreground">Recent</p>
-      </if>
     </if>
-    <for each="s of recent()" key="s.id"><SessionItem session="{s}" /></for>
+
+    <for each="g of groups()" key="g.label">
+      <p class="{heading}">{g.label}</p>
+      <for each="s of g.items" key="s.id"><SessionItem session="{s}" /></for>
+    </for>
 
     <if when="!chat.sessions.length">
-      <p class="px-2.5 py-2 text-[13px] text-muted-foreground">No saved chats yet</p>
+      <p class="px-3.5 pt-4 text-[13px] leading-relaxed text-muted-foreground">Your chats are saved here as you go.</p>
     </if>
   </nav>
+
+  <!-- Is the local Ollama server reachable? -->
+  <div class="flex h-14 shrink-0 items-center gap-2.5 border-t border-border pr-3 pl-5">
+    <span class="size-2 shrink-0 rounded-full {status().dot}"></span>
+    <span class="min-w-0 flex-1 truncate text-[13px] font-medium" title="{OLLAMA_URL}">{status().text}</span>
+    <ThemeToggle />
+  </div>
 </aside>

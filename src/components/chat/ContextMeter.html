@@ -9,11 +9,11 @@
   const short = (n) => (n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k` : String(n));
 </script>
 
-<div class="hidden items-center gap-2 sm:flex" title="Context used by this conversation">
-  <span class="text-[11px] text-muted-foreground">Context</span>
+<div class="hidden h-9 items-center gap-2.5 rounded-xl border border-border px-3 sm:flex" title="Context used by this conversation">
+  <span class="text-xs font-medium text-muted-foreground">Context</span>
   <Progress
     value="{percent()}"
-    class="w-16 {percent() >= 80 ? '[&_[data-slot=progress-indicator]]:bg-warn' : '[&_[data-slot=progress-indicator]]:bg-muted-foreground'}"
+    class="w-16 [&_[data-slot=progress-track]]:h-1.5 {percent() >= 80 ? '[&_[data-slot=progress-indicator]]:bg-warn' : '[&_[data-slot=progress-indicator]]:bg-home-ink'}"
   />
   <span class="tnum font-mono text-[11px] text-muted-foreground">{short(used())}/{short(limit())}</span>
 </div>

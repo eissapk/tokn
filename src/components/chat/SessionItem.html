@@ -3,7 +3,7 @@
   import Button from "../ui/Button/Button";
   import Icon from "../ui/Icon/Icon";
   import { chat } from "../../utils/store";
-  import { Star, Trash2 } from "../../utils/icons";
+  import { MessageSquare, Star, Trash2 } from "../../utils/icons";
 
   // One saved chat in the Sidebar.
   const { session } = props();
@@ -13,33 +13,31 @@
   const remove = () => chat.removeSession(session.id);
   const isOpen = () => session.id === chat.sessionId;
 
-  // Time for today's chats, the date for older ones.
-  const when = () => {
-    const date = new Date(session.updatedAt);
-    return date.toDateString() === new Date().toDateString()
-      ? date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-      : date.toLocaleDateString([], { month: "short", day: "numeric" });
-  };
-
   // The buttons show on hover; a starred chat always shows its (filled) star.
   const reveal = "opacity-0 group-hover:opacity-100 focus-visible:opacity-100";
 </script>
 
-<div class="group flex items-center gap-0.5 rounded-lg pr-1.5 {isOpen() ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}">
+<div class="group flex items-center rounded-xl pr-1.5 transition-colors {isOpen() ? 'bg-home-tint text-foreground' : 'text-foreground/80 hover:bg-home-tint/60 hover:text-foreground'}">
   <button
     type="button"
-    class="flex min-w-0 flex-1 cursor-pointer flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+    class="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 rounded-xl py-2 pl-3.5 text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
     title="{session.title}"
     onclick="open()"
   >
-    <span class="w-full truncate text-[13px]">{session.title}</span>
-    <span class="tnum text-[11px] text-muted-foreground">{when()}</span>
+    <Icon icon="{MessageSquare}" class="size-4 shrink-0 {isOpen() ? '' : 'text-muted-foreground'}" />
+    <span class="truncate text-[0.85rem] {isOpen() ? 'font-medium' : ''}">{session.title}</span>
   </button>
 
-  <Button variant="ghost" size="icon-xs" ariaLabel="{session.starred ? 'Unstar chat' : 'Star chat'}" class="hover:bg-background {session.starred ? '' : reveal}" onclick="{star}">
+  <Button
+    variant="ghost"
+    size="icon-xs"
+    ariaLabel="{session.starred ? 'Unstar chat' : 'Star chat'}"
+    class="rounded-lg hover:bg-background {session.starred ? 'text-home-ink' : reveal}"
+    onclick="{star}"
+  >
     <Icon icon="{Star}" class="size-3.5 {session.starred ? '[&_svg]:fill-current' : ''}" />
   </Button>
-  <Button variant="ghost" size="icon-xs" ariaLabel="Delete chat" class="hover:bg-background {reveal}" onclick="{remove}">
+  <Button variant="ghost" size="icon-xs" ariaLabel="Delete chat" class="rounded-lg hover:bg-background hover:text-destructive {reveal}" onclick="{remove}">
     <Icon icon="{Trash2}" class="size-3.5" />
   </Button>
 </div>

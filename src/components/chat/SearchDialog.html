@@ -15,12 +15,12 @@
 </script>
 
 <CommandDialog>
-  <CommandDialogContent>
+  <CommandDialogContent class="top-[22%] rounded-[1.5rem] p-2 shadow-2xl shadow-black/20 sm:max-w-lg">
     <!-- shouldFilter=false: SearchResults does the filtering, so it can search inside messages. -->
     <Command shouldFilter="{false}">
-      <CommandInput placeholder="Search chats…" />
-      <CommandList>
-        <CommandEmpty>No chats match</CommandEmpty>
+      <CommandInput placeholder="Search chats…" class="text-[15px]" />
+      <CommandList class="mt-1 max-h-[22rem]">
+        <CommandEmpty class="text-muted-foreground">No chats match</CommandEmpty>
         <SearchResults />
       </CommandList>
     </Command>

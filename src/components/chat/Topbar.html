@@ -2,53 +2,66 @@
   import Button from "../ui/Button/Button";
   import DropdownMenu from "../ui/DropdownMenu/DropdownMenu";
   import DropdownMenuContent from "../ui/DropdownMenu/DropdownMenuContent";
-  import DropdownMenuLabel from "../ui/DropdownMenu/DropdownMenuLabel";
-  import DropdownMenuSeparator from "../ui/DropdownMenu/DropdownMenuSeparator";
   import DropdownMenuTrigger from "../ui/DropdownMenu/DropdownMenuTrigger";
   import Icon from "../ui/Icon/Icon";
+  import Logo from "../Logo";
+  import Tooltip from "../ui/Tooltip/Tooltip";
+  import TooltipContent from "../ui/Tooltip/TooltipContent";
+  import TooltipTrigger from "../ui/Tooltip/TooltipTrigger";
   import ContextMeter from "./ContextMeter";
   import ModelOption from "./ModelOption";
   import { chat } from "../../utils/store";
   import { OLLAMA_URL } from "../../utils/ollama";
-  import { ChevronDown, Moon, PanelLeft, SquarePen, Sun } from "../../utils/icons";
+  import { ChevronDown, PanelLeft, SquarePen } from "../../utils/icons";
 
   // Component tags take functions by name, so store actions get local wrappers.
   const newChat = () => chat.newChat();
-  const toggleTheme = () => chat.toggleTheme();
   const toggleSidebar = () => chat.toggleSidebar();
 
   const online = () => chat.server === "connected";
+
+  // Tooltips open upward by default, which would put them off the top of the window.
+  const below = "top-full bottom-auto mt-2 mb-0 [&>div:last-child]:-top-1 [&>div:last-child]:bottom-auto";
+  // The first button sits near the window's left edge, so its tooltip starts at the button instead of centring.
+  const belowLeft = `${below} left-0 translate-x-0 [&>div:last-child]:left-[18px]`;
 </script>
 
-<header class="flex h-14 shrink-0 items-center gap-3 border-b border-border px-4">
-  <Button variant="ghost" size="icon-sm" class="-ml-1.5 text-muted-foreground" ariaLabel="Toggle chat history" onclick="{toggleSidebar}">
-    <Icon icon="{PanelLeft}" class="size-4" />
-  </Button>
+<header class="flex h-16 shrink-0 items-center gap-2 px-4">
+  <Tooltip>
+    <TooltipTrigger>
+      <Button variant="ghost" size="icon-sm" class="size-9 rounded-xl text-muted-foreground" ariaLabel="Toggle chat history" onclick="{toggleSidebar}">
+        <Icon icon="{PanelLeft}" class="size-[18px]" />
+      </Button>
+    </TooltipTrigger>
+    <TooltipContent class="{belowLeft}">{chat.sidebar ? "Hide chats" : "Show chats"}</TooltipContent>
+  </Tooltip>
 
-  <!-- Green dot = the local Ollama server is reachable. -->
-  <span
-    class="size-1.5 shrink-0 rounded-full {online() ? 'bg-signal' : 'bg-muted-foreground'}"
-    title="{online() ? 'Connected to the local server' : 'No local server'}"
-  ></span>
-  <h1 class="font-display hidden text-[15px] leading-none font-bold tracking-tight lowercase sm:block">Buildr</h1>
-  <span class="hidden h-5 w-px bg-border sm:block"></span>
+  <!-- With the sidebar closed, its logo and New Chat move up here. -->
+  <if when="!chat.sidebar">
+    <a to="/" href="/" class="mr-1 text-[1rem]" aria-label="TOKN home"><Logo /></a>
+  </if>
 
-  <!-- Model picker -->
+  <!-- Model picker. The dot is green when the local Ollama server answers. -->
   <DropdownMenu>
-    <DropdownMenuTrigger class="rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
-      <span class="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted">
-        <if when="chat.model"><span class="font-mono text-sm font-medium">{chat.current().label}</span></if>
-        <else><span class="text-sm text-muted-foreground">{chat.server === "connecting" ? "Loading models…" : "No models"}</span></else>
-        <Icon icon="{ChevronDown}" class="size-3.5 text-muted-foreground" />
+    <DropdownMenuTrigger class="rounded-xl outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
+      <span class="flex h-9 items-center gap-2 rounded-xl border border-border bg-background pr-2.5 pl-3 text-sm font-semibold transition-colors hover:bg-muted">
+        <span class="size-2 shrink-0 rounded-full {online() ? 'bg-signal' : 'bg-muted-foreground'}"></span>
+        <if when="chat.model"><span class="max-w-[14rem] truncate">{chat.current().label}</span></if>
+        <else><span class="font-medium text-muted-foreground">{chat.server === "connecting" ? "Loading models…" : "No models"}</span></else>
+        <Icon icon="{ChevronDown}" class="size-4 text-muted-foreground" />
       </span>
     </DropdownMenuTrigger>
 
-    <DropdownMenuContent class="w-96 p-1.5">
-      <DropdownMenuLabel class="px-2 pt-1 pb-2">Installed models</DropdownMenuLabel>
-      <DropdownMenuSeparator />
-      <for each="m of chat.models" key="m.name"><ModelOption model="{m}" /></for>
+    <DropdownMenuContent class="mt-2 w-[min(26rem,calc(100vw-2rem))] rounded-2xl p-2 shadow-xl shadow-black/10">
+      <p class="flex items-center justify-between px-2.5 pt-1 pb-2 text-xs font-medium text-muted-foreground">
+        Installed models
+        <span class="tnum font-mono">{chat.models.length}</span>
+      </p>
+      <div class="flex flex-col gap-0.5">
+        <for each="m of chat.models" key="m.name"><ModelOption model="{m}" /></for>
+      </div>
       <if when="!chat.models.length">
-        <p class="px-2 py-3 text-[13px] text-muted-foreground">
+        <p class="px-2.5 pt-1 pb-2 text-[13px] text-muted-foreground">
           {chat.server === "offline" ? "Can't reach the server at " + OLLAMA_URL : "No models installed"}
         </p>
       </if>
@@ -59,12 +72,14 @@
 
   <if when="chat.messages.length && chat.current().context"><ContextMeter /></if>
 
-  <Button variant="ghost" size="sm" class="gap-1.5 text-muted-foreground" onclick="{newChat}">
-    <Icon icon="{SquarePen}" class="size-3.5" />
-    New chat
-  </Button>
-
-  <Button variant="ghost" size="icon-sm" ariaLabel="Toggle dark theme" onclick="{toggleTheme}">
-    <Icon icon="{chat.theme === 'dark' ? Sun : Moon}" class="size-4" />
-  </Button>
+  <if when="!chat.sidebar">
+    <Tooltip>
+      <TooltipTrigger>
+        <Button variant="ghost" size="icon-sm" class="size-9 rounded-xl text-muted-foreground" ariaLabel="New chat (Ctrl+N)" onclick="{newChat}">
+          <Icon icon="{SquarePen}" class="size-[18px]" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent class="{below}">New chat</TooltipContent>
+    </Tooltip>
+  </if>
 </header>

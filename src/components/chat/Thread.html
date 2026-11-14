@@ -7,6 +7,7 @@
   import MessageScrollerProvider from "../ui/MessageScroller/MessageScrollerProvider";
   import MessageScrollerViewport from "../ui/MessageScroller/MessageScrollerViewport";
   import ChatMessage from "./ChatMessage";
+  import Welcome from "./Welcome";
   import { chat } from "../../utils/store";
 
   // Keep scrolled to the newest text while it streams, unless the reader has scrolled up.
@@ -29,12 +30,13 @@
 <MessageScrollerProvider>
   <MessageScroller class="flex-1">
     <MessageScrollerViewport>
-      <MessageScrollerContent class="mx-auto w-full max-w-measure gap-7 px-6 py-8">
+      <MessageScrollerContent class="mx-auto w-full max-w-measure gap-8 px-4 py-6 sm:px-6">
+        <if when="!chat.messages.length"><Welcome /></if>
         <for each="m of chat.messages" key="m.id">
           <MessageScrollerItem><ChatMessage message="{m}" /></MessageScrollerItem>
         </for>
       </MessageScrollerContent>
     </MessageScrollerViewport>
-    <MessageScrollerButton />
+    <MessageScrollerButton class="size-9 rounded-full shadow-md" />
   </MessageScroller>
 </MessageScrollerProvider>
