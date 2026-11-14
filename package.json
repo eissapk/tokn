@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run css && concurrently -k -n css,app -c magenta,green \"npm run css:watch\" \"npm run dev:app\"",
-    "build": "olum-compiler build && cp public/common.js dist",
+    "build": "rm -rf ./docs && olum-compiler build && mv ./dist ./docs && echo tokn.eissa.top > ./docs/CNAME",
     "start": "olum-compiler start",
     "css": "tailwindcss -i src/main.css -o public/main.css",
     "css:watch": "npm run css -- --watch",
