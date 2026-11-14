@@ -1,0 +1,21 @@
+<script>
+  import Icon from "../ui/Icon/Icon";
+  import { ArrowRight } from "../../utils/icons";
+</script>
+
+<section class="relative z-10 mx-auto max-w-[100rem] px-4 pt-10 pb-10 text-center sm:px-8 sm:pt-12 lg:pb-9">
+  <h1 class="font-logo text-[clamp(3.25rem,9.5vw,7.6rem)] leading-[0.86] font-black tracking-[-0.04em] uppercase">
+    Chat with<br />any model
+  </h1>
+  <p class="mx-auto mt-6 max-w-[34rem] text-[clamp(1.05rem,1.6vw,1.4rem)] leading-tight font-semibold tracking-[-0.01em]">
+    A beautiful, open-source interface for running and interacting with AI models.
+  </p>
+  <a
+    to="/chat"
+    href="/chat"
+    class="mt-6 inline-flex h-[3.15rem] items-center gap-2 rounded-full bg-home-ink px-8 text-base font-semibold text-home-ink-foreground shadow-lg shadow-home-ink/20 transition-transform hover:-translate-y-0.5"
+  >
+    Start Chatting
+    <Icon icon="{ArrowRight}" class="size-[18px]" />
+  </a>
+</section>

@@ -1,0 +1,14 @@
+<script>
+  import { props } from "olum";
+  import Icon from "../ui/Icon/Icon";
+
+  const { icon, title, text } = props();
+</script>
+
+<article class="rounded-[1.5rem] border border-home-ink/10 bg-home-panel p-7 transition-transform hover:-translate-y-1">
+  <span class="grid size-12 place-items-center rounded-2xl bg-home-card-accent text-[oklch(0.25_0.07_140)]">
+    <Icon icon="{icon}" class="size-[22px]" />
+  </span>
+  <h3 class="mt-6 text-xl font-bold tracking-[-0.02em]">{title}</h3>
+  <p class="mt-2 leading-relaxed text-home-text">{text}</p>
+</article>

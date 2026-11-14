@@ -1,0 +1,30 @@
+<script>
+  // The shortcuts src/chat/page.html listens for.
+  const shortcuts = [
+    { keys: ["Ctrl", "N"], label: "New chat" },
+    { keys: ["Ctrl", "K"], label: "Search chats" },
+    { keys: ["Alt", "↑ / ↓"], label: "Previous / next chat" },
+  ];
+</script>
+
+<section class="mx-auto max-w-[100rem] px-4 py-20 sm:px-8 lg:px-16 lg:py-24">
+  <div class="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:items-center">
+    <div>
+      <p class="text-sm font-semibold tracking-[0.12em] text-home-text uppercase">Made for the keyboard</p>
+      <h2 class="mt-3 font-logo text-[clamp(2rem,4vw,3.25rem)] leading-[0.95] font-black tracking-[-0.04em] uppercase">Keep your hands<br />on the keys.</h2>
+      <p class="mt-5 max-w-[28rem] text-lg leading-relaxed text-home-text">Start, find and switch between chats without reaching for the mouse.</p>
+    </div>
+    <ul class="divide-y divide-home-ink/10 rounded-[1.5rem] border border-home-ink/10 bg-home-panel">
+      <for each="s of shortcuts">
+        <li class="flex items-center justify-between gap-4 px-6 py-5">
+          <span class="font-semibold">{s.label}</span>
+          <span class="flex items-center gap-1.5">
+            <for each="k of s.keys">
+              <kbd class="inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-home-ink/15 border-b-[3px] bg-home-base px-2.5 font-mono text-sm font-medium">{k}</kbd>
+            </for>
+          </span>
+        </li>
+      </for>
+    </ul>
+  </div>
+</section>

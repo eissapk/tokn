@@ -1,0 +1,72 @@
+<script>
+  import Icon from "../ui/Icon/Icon";
+  import Logo from "../Logo";
+  import { ChevronDown, Copy, Ellipsis, InfinityIcon, MessageSquare, Paperclip, Plus, Search, SendHorizontal, Settings, User } from "../../utils/icons";
+
+  // Sidebar rows in the preview (the first one is shown as open).
+  const previewChats = ["Getting started", "About TOKN", "Model comparison"];
+</script>
+
+<!-- A static picture of the chat app: nothing in it is interactive. -->
+<figure
+  class="flex min-h-[25rem] overflow-hidden rounded-[1.75rem] border border-black/5 bg-background text-foreground shadow-2xl shadow-black/15"
+  role="img"
+  aria-label="Preview of the TOKN chat app"
+>
+  <div aria-hidden="true" class="hidden w-[13rem] shrink-0 flex-col gap-1 border-r border-border bg-rail p-4 sm:flex">
+    <Logo wordmark="{true}" class="mb-4 px-1 pt-1 text-[0.95rem]" />
+    <div class="flex items-center gap-2.5 rounded-xl bg-home-tint px-3 py-2.5 text-[0.95rem] font-semibold">
+      <Icon icon="{Plus}" class="size-4" /> New Chat
+    </div>
+    <div class="flex items-center gap-2.5 px-3 py-2 text-sm text-muted-foreground">
+      <Icon icon="{Search}" class="size-4 text-foreground" /> Search chats…
+    </div>
+    <p class="mt-3 px-3 pb-1 text-xs font-medium text-muted-foreground">Today</p>
+    <for each="(title, i) of previewChats">
+      <div class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-[0.85rem] {i === 0 ? 'bg-home-tint' : ''}">
+        <Icon icon="{MessageSquare}" class="size-4" /> {title}
+      </div>
+    </for>
+    <div class="flex items-center gap-2.5 px-3 py-2 text-[0.85rem]">
+      <Icon icon="{MessageSquare}" class="size-4" /> <Icon icon="{Ellipsis}" class="size-4" />
+    </div>
+  </div>
+
+  <div aria-hidden="true" class="flex min-w-0 flex-1 flex-col">
+    <div class="flex items-center justify-between px-4 pt-4">
+      <span class="inline-flex items-center gap-2 rounded-xl border border-border px-2.5 py-1.5 text-sm font-semibold">
+        <Icon icon="{InfinityIcon}" class="size-5 text-[oklch(0.55_0.2_255)]" /> Llama 3.2
+        <Icon icon="{ChevronDown}" class="size-4" />
+      </span>
+      <span class="flex items-center gap-4 pr-1 text-foreground/80">
+        <Icon icon="{Copy}" class="size-4" />
+        <Icon icon="{Settings}" class="size-4" />
+      </span>
+    </div>
+
+    <div class="flex flex-1 flex-col gap-6 px-4 py-6">
+      <div class="flex items-center justify-end gap-2.5">
+        <p class="rounded-2xl bg-home-tint px-5 py-3 text-[0.95rem]">What is TOKN?</p>
+        <span class="grid size-9 shrink-0 place-items-center rounded-full bg-home-card-accent text-[oklch(0.2_0.05_140)]">
+          <Icon icon="{User}" class="size-[18px] [&_svg]:fill-current" />
+        </span>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="grid size-9 shrink-0 place-items-center rounded-full bg-[oklch(0.25_0.07_140)] [--logo-ink:var(--home-card-accent)] [--logo-glow:var(--home-card-accent)]">
+          <Logo class="text-[0.85rem]" />
+        </span>
+        <p class="max-w-[21rem] rounded-2xl bg-muted px-5 py-3.5 text-[0.9rem] leading-relaxed">
+          TOKN is a modern, open-source interface for chatting with AI models. It helps you interact with local and remote models in a simple and beautiful way.
+        </p>
+      </div>
+    </div>
+
+    <div class="m-4 mt-0 flex items-center gap-3 rounded-2xl border border-border py-2 pr-2 pl-4">
+      <Icon icon="{Paperclip}" class="size-[18px] text-muted-foreground" />
+      <span class="flex-1 text-sm text-muted-foreground">Type a message…</span>
+      <span class="grid size-9 place-items-center rounded-full bg-[oklch(0.25_0.07_140)] text-[oklch(0.87_0.18_134)]">
+        <Icon icon="{SendHorizontal}" class="size-4 [&_svg]:fill-current" />
+      </span>
+    </div>
+  </div>
+</figure>

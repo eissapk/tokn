@@ -1,0 +1,28 @@
+<script>
+  import FeatureCard from "./FeatureCard";
+  import { Brain, Code, Gauge, Lock, Paperclip, Search } from "../../utils/icons";
+
+  // Everything listed here is something the chat app (src/chat/page.html) really does.
+  const features = [
+    { icon: Lock, title: "Private by default", text: "Models run on your own machine through Ollama. Your prompts and chats never leave it." },
+    { icon: Brain, title: "Thinking mode", text: "Switch on thinking and watch reasoning models work through hard problems step by step." },
+    { icon: Paperclip, title: "Attach files", text: "Add files to a message and ask questions about them, right in the chat." },
+    { icon: Search, title: "Search every chat", text: "Chats are saved as you go. Star the ones that matter and find anything with Ctrl+K." },
+    { icon: Gauge, title: "Context meter", text: "See how much of the model's memory a conversation is using before it starts to forget." },
+    { icon: Code, title: "Code that copies", text: "Answers render as clean markdown, with a copy button on every code block." },
+  ];
+</script>
+
+<section id="features" class="mx-auto max-w-[100rem] scroll-mt-6 px-4 py-20 sm:px-8 lg:px-16 lg:py-28">
+  <div class="max-w-[62rem]">
+    <p class="text-sm font-semibold tracking-[0.12em] text-home-text uppercase">Features</p>
+    <h2 class="mt-3 font-logo text-[clamp(2.25rem,5vw,4rem)] leading-[0.92] font-black tracking-[-0.04em] uppercase">Everything you need.<br />Nothing in the way.</h2>
+    <p class="mt-5 max-w-[34rem] text-lg leading-relaxed text-home-text">A fast, focused chat window for the models on your machine, with the tools you reach for every day.</p>
+  </div>
+
+  <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <for each="f of features">
+      <FeatureCard icon="{f.icon}" title="{f.title}" text="{f.text}" />
+    </for>
+  </div>
+</section>

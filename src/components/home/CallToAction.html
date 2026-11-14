@@ -1,0 +1,33 @@
+<script>
+  import Icon from "../ui/Icon/Icon";
+  import { ArrowRight, Github } from "../../utils/icons";
+  import { REPO } from "../../utils/links";
+</script>
+
+<section class="px-4 pb-20 sm:px-8 lg:px-10 lg:pb-24">
+  <div class="relative mx-auto max-w-[100rem] overflow-hidden rounded-[2rem] bg-home-field px-6 py-16 text-center sm:px-10 lg:py-24">
+    <div aria-hidden="true" class="pointer-events-none absolute -top-20 -left-24 h-[10rem] w-[34rem] -rotate-45 rounded-full bg-home-field-soft"></div>
+    <div aria-hidden="true" class="pointer-events-none absolute -right-24 -bottom-20 h-[10rem] w-[34rem] -rotate-45 rounded-full bg-home-field-soft"></div>
+    <div class="relative">
+      <h2 class="font-logo text-[clamp(2.5rem,7vw,5.5rem)] leading-[0.88] font-black tracking-[-0.045em] uppercase">Your models<br />are waiting.</h2>
+      <p class="mx-auto mt-6 max-w-[30rem] text-lg leading-snug font-semibold">Open TOKN and start a conversation with any model on your machine.</p>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <a
+          to="/chat"
+          href="/chat"
+          class="inline-flex h-[3.15rem] items-center gap-2 rounded-full bg-home-ink px-8 font-semibold text-home-ink-foreground shadow-lg shadow-home-ink/20 transition-transform hover:-translate-y-0.5"
+        >
+          Start Chatting <Icon icon="{ArrowRight}" class="size-[18px]" />
+        </a>
+        <a
+          href="{REPO}"
+          target="_blank"
+          rel="noreferrer noopener"
+          class="inline-flex h-[3.15rem] items-center gap-2 rounded-full border border-home-ink/20 px-7 font-semibold transition-colors hover:bg-home-field-soft"
+        >
+          <Icon icon="{Github}" class="size-[18px] [&_svg]:stroke-none" /> View on GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

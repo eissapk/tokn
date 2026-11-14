@@ -1,0 +1,13 @@
+<script>
+  import Button from "../ui/Button/Button";
+  import Icon from "../ui/Icon/Icon";
+  import { chat } from "../../utils/store";
+  import { Moon, Sun } from "../../utils/icons";
+
+  // Its own component so a theme change redraws only this button.
+  const toggleTheme = () => chat.toggleTheme();
+</script>
+
+<Button variant="ghost" size="icon-sm" class="text-home-ink hover:bg-home-ink/10 hover:text-home-ink" ariaLabel="Toggle dark theme" onclick="{toggleTheme}">
+  <Icon icon="{chat.theme === 'dark' ? Sun : Moon}" class="size-[18px]" />
+</Button>

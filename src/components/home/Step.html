@@ -1,0 +1,12 @@
+<script>
+  import { props } from "olum";
+
+  // One numbered step in GetStarted. `children` is its description plus a command or a button.
+  const { number, title, children } = props();
+</script>
+
+<li class="flex flex-col rounded-[1.5rem] bg-white/[0.06] p-7">
+  <span class="font-logo text-5xl font-black text-home-card-accent">{number}</span>
+  <h3 class="mt-5 text-xl font-bold text-white">{title}</h3>
+  {children}
+</li>

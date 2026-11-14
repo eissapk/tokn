@@ -6,6 +6,39 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
   --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Heavy grotesk for the TOKN wordmark and the home page headline. */
+  --font-logo: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Home page (src/page.html): lime field, deep-green ink. `.dark` flips them. */
+:root {
+  --home-field: oklch(0.89 0.155 134);
+  --home-field-soft: oklch(0.93 0.13 134);
+  --home-ink: oklch(0.27 0.075 140);
+  --home-ink-foreground: oklch(0.95 0.06 134);
+  --home-card: oklch(0.29 0.075 140);
+  --home-card-accent: oklch(0.87 0.18 134);
+  --home-tint: oklch(0.95 0.06 134);
+  --home-base: oklch(0.975 0.004 130);
+  --home-panel: oklch(1 0 0);
+  --home-text: oklch(0.38 0.04 140);
+  --logo-ink: oklch(0.25 0.07 140);
+  --logo-glow: oklch(0.5 0.14 138);
+}
+
+.dark {
+  --home-field: oklch(0.21 0.045 140);
+  --home-field-soft: oklch(0.25 0.055 140);
+  --home-ink: oklch(0.89 0.16 134);
+  --home-ink-foreground: oklch(0.2 0.05 140);
+  --home-card: oklch(0.27 0.055 140);
+  --home-card-accent: oklch(0.89 0.16 134);
+  --home-tint: oklch(0.3 0.06 140);
+  --home-base: oklch(0.155 0.01 140);
+  --home-panel: oklch(0.2 0.02 140);
+  --home-text: oklch(0.82 0.03 140);
+  --logo-ink: oklch(0.89 0.16 134);
+  --logo-glow: oklch(0.75 0.17 134);
 }
 
 /* Theme colours: olum-ui's greys with a faint trace of blue. `.dark` below is the dark theme. */
@@ -60,6 +93,28 @@
   --color-warn: var(--warn);
   --color-rail: var(--rail);
   --container-measure: var(--measure);
+
+  --color-home-field: var(--home-field);
+  --color-home-field-soft: var(--home-field-soft);
+  --color-home-ink: var(--home-ink);
+  --color-home-ink-foreground: var(--home-ink-foreground);
+  --color-home-card: var(--home-card);
+  --color-home-card-accent: var(--home-card-accent);
+  --color-home-tint: var(--home-tint);
+  --color-home-base: var(--home-base);
+  --color-home-panel: var(--home-panel);
+  --color-home-text: var(--home-text);
+  --color-logo-ink: var(--logo-ink);
+}
+
+/* The blinking cursor in the home page's terminal card. */
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+.caret {
+  animation: caret 1.1s steps(1) infinite;
 }
 
 @layer base {

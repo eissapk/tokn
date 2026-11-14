@@ -1,0 +1,46 @@
+<script>
+  import Logo from "../Logo";
+  import { DOCS, OLLAMA, OLUM, REPO } from "../../utils/links";
+
+  const year = new Date().getFullYear();
+
+  // In-page links scroll the page box instead of changing the URL hash,
+  // so the router doesn't see a navigation.
+  const jump = (e) => {
+    e.preventDefault();
+    const id = e.currentTarget.getAttribute("href").slice(1);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+</script>
+
+<footer class="border-t border-home-ink/10">
+  <div class="mx-auto grid max-w-[100rem] gap-10 px-4 py-14 sm:px-8 md:grid-cols-[1.6fr_1fr_1fr] lg:px-16">
+    <div>
+      <a to="/" href="/" class="text-[1.15rem]" aria-label="TOKN home"><Logo wordmark="{true}" /></a>
+      <p class="mt-4 max-w-[22rem] leading-relaxed text-home-text">A beautiful, open-source interface for running and interacting with AI models.</p>
+    </div>
+
+    <nav aria-label="Product">
+      <h3 class="text-sm font-semibold tracking-[0.12em] text-home-text uppercase">Product</h3>
+      <ul class="mt-4 space-y-3 font-medium">
+        <li><a to="/chat" href="/chat" class="hover:underline">Start chatting</a></li>
+        <li><a href="#features" onclick="jump()" class="hover:underline">Features</a></li>
+        <li><a href="#get-started" onclick="jump()" class="hover:underline">Get started</a></li>
+      </ul>
+    </nav>
+
+    <nav aria-label="Resources">
+      <h3 class="text-sm font-semibold tracking-[0.12em] text-home-text uppercase">Resources</h3>
+      <ul class="mt-4 space-y-3 font-medium">
+        <li><a href="{DOCS}" target="_blank" rel="noreferrer noopener" class="hover:underline">Docs</a></li>
+        <li><a href="{REPO}" target="_blank" rel="noreferrer noopener" class="hover:underline">GitHub</a></li>
+        <li><a href="{OLLAMA}" target="_blank" rel="noreferrer noopener" class="hover:underline">Ollama</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="mx-auto flex max-w-[100rem] flex-col gap-2 border-t border-home-ink/10 px-4 py-6 text-sm text-home-text sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-16">
+    <p>© {year} TOKN. Open source.</p>
+    <p>Built with <a href="{OLUM}" target="_blank" rel="noreferrer noopener" class="font-medium text-home-ink hover:underline">Olum.js</a></p>
+  </div>
+</footer>

@@ -1,0 +1,22 @@
+<script>
+  import Icon from "../ui/Icon/Icon";
+  import { ArrowRight } from "../../utils/icons";
+  import { OLLAMA } from "../../utils/links";
+</script>
+
+<article class="relative flex min-h-[25rem] flex-col overflow-hidden rounded-[1.75rem] bg-home-card p-8 text-white/90">
+  <h2 class="font-logo text-[1.9rem] leading-[1.05] font-extrabold tracking-[-0.03em] text-home-card-accent">Your Models.<br />Your Control.</h2>
+  <p class="mt-4 max-w-[19rem] text-[0.98rem] leading-relaxed">Run local models with Ollama and manage your AI workspace with ease.</p>
+  <a href="{OLLAMA}" target="_blank" rel="noreferrer noopener" class="mt-4 inline-flex w-fit items-center gap-1.5 font-medium text-home-card-accent hover:underline">
+    Learn more <Icon icon="{ArrowRight}" class="size-4" />
+  </a>
+
+  <!-- The Ollama llama on a tilted tile (public/ollama.png, from ollama.com). -->
+  <div aria-hidden="true" class="relative mt-auto h-48">
+    <div class="absolute bottom-6 left-0 h-28 w-[19rem] -rotate-[22deg] rounded-full bg-white/[0.07]"></div>
+    <div class="absolute bottom-0 left-[5.5rem] size-40 rotate-[14deg] rounded-[2rem] bg-[oklch(0.62_0.17_136)]"></div>
+    <div class="absolute bottom-3 left-[5.5rem] grid size-40 rotate-[14deg] place-items-center rounded-[2rem] bg-[oklch(0.84_0.18_134)]">
+      <img src="ollama.png" alt="" width="96" height="112" class="h-[5.5rem] w-auto -rotate-[14deg] select-none" draggable="false" />
+    </div>
+  </div>
+</article>

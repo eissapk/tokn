@@ -1,0 +1,45 @@
+<script>
+  import Icon from "../ui/Icon/Icon";
+  import Step from "./Step";
+  import { ArrowRight } from "../../utils/icons";
+  import { OLLAMA } from "../../utils/links";
+</script>
+
+<section id="get-started" class="scroll-mt-6 px-4 sm:px-8 lg:px-10">
+  <div class="mx-auto max-w-[100rem] rounded-[2rem] bg-home-card px-6 py-16 text-white/90 sm:px-10 lg:px-14 lg:py-20">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <p class="text-sm font-semibold tracking-[0.12em] text-home-card-accent uppercase">Get started</p>
+        <h2 class="mt-3 font-logo text-[clamp(2.25rem,5vw,4rem)] leading-[0.92] font-black tracking-[-0.04em] text-home-card-accent uppercase">Up and running<br />in three steps.</h2>
+      </div>
+      <p class="max-w-[24rem] text-lg leading-relaxed">No accounts and no API keys. If Ollama runs on your computer, so does TOKN.</p>
+    </div>
+
+    <ol class="mt-12 grid gap-4 lg:grid-cols-3">
+      <Step number="01" title="Install Ollama">
+        <p class="mt-2 mb-6 leading-relaxed">
+          Download it from <a href="{OLLAMA}" target="_blank" rel="noreferrer noopener" class="text-home-card-accent underline underline-offset-4 hover:no-underline">ollama.com</a> and start its server.
+        </p>
+        <code class="mt-auto block rounded-xl bg-black/45 px-4 py-3 font-mono text-[0.95rem] text-white">
+          <span class="text-home-card-accent">$</span> ollama serve
+        </code>
+      </Step>
+      <Step number="02" title="Pull a model">
+        <p class="mt-2 mb-6 leading-relaxed">Grab any model from the Ollama library. Llama 3.2 is a good first pick.</p>
+        <code class="mt-auto block rounded-xl bg-black/45 px-4 py-3 font-mono text-[0.95rem] text-white">
+          <span class="text-home-card-accent">$</span> ollama pull llama3.2
+        </code>
+      </Step>
+      <Step number="03" title="Start chatting">
+        <p class="mt-2 mb-6 leading-relaxed">Open TOKN, pick the model from the menu at the top, and say hello.</p>
+        <a
+          to="/chat"
+          href="/chat"
+          class="mt-auto inline-flex h-12 w-fit items-center gap-2 rounded-full bg-home-card-accent px-6 font-semibold text-[oklch(0.22_0.06_140)] transition-transform hover:-translate-y-0.5"
+        >
+          Open the chat <Icon icon="{ArrowRight}" class="size-[18px]" />
+        </a>
+      </Step>
+    </ol>
+  </div>
+</section>

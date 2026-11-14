@@ -1,53 +1,44 @@
 <head>
-  <title>Buildr — local chat</title>
-  <meta name="description" content="A desktop client for models running on your own machine." />
+  <title>TOKN — Chat with any model</title>
+  <meta name="description" content="A beautiful, open-source interface for running and interacting with AI models." />
 </head>
 
 <script>
   import { onMount } from "olum";
-  import TooltipProvider from "./components/ui/Tooltip/TooltipProvider";
-  import Composer from "./components/Composer";
-  import SearchDialog from "./components/SearchDialog";
-  import Sidebar from "./components/Sidebar";
-  import Thread from "./components/Thread";
-  import Topbar from "./components/Topbar";
+  import CallToAction from "./components/home/CallToAction";
+  import Features from "./components/home/Features";
+  import GetStarted from "./components/home/GetStarted";
+  import Hero from "./components/home/Hero";
+  import HomeFooter from "./components/home/HomeFooter";
+  import HomeNav from "./components/home/HomeNav";
+  import Shortcuts from "./components/home/Shortcuts";
+  import Showcase from "./components/home/Showcase";
   import { chat } from "./utils/store";
-  import { openSearch } from "./utils/search";
 
-  // Keyboard shortcuts work wherever the focus is:
-  //   Ctrl+N new chat · Ctrl+K search chats · Alt+Up/Down previous/next chat
-  const onKey = (e) => {
-    const ctrl = e.ctrlKey || e.metaKey;
-    if (ctrl && e.key === "n") {
-      e.preventDefault();
-      chat.newChat();
-    } else if (ctrl && e.key === "k") {
-      e.preventDefault();
-      openSearch();
-    } else if (e.altKey && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
-      e.preventDefault();
-      chat.stepSession(e.key === "ArrowDown" ? 1 : -1);
-    }
-  };
-
-  onMount(() => {
-    chat.loadTheme();
-    chat.loadModels();
-    chat.loadSessions();
-
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  });
+  onMount(() => chat.loadTheme());
 </script>
 
-<TooltipProvider>
-  <div class="flex h-screen w-screen overflow-hidden bg-background text-foreground">
-    <Sidebar />
-    <div class="flex min-w-0 flex-1 flex-col">
-      <Topbar />
-      <Thread />
-      <Composer />
+<!-- The app shell sets `overflow: hidden` on <body>, so this page scrolls inside its own box. -->
+<div class="h-screen overflow-x-hidden overflow-y-auto bg-home-base font-sans text-home-ink">
+  <!-- The lime field: nav, hero and the three cards. -->
+  <div class="relative overflow-hidden bg-home-field">
+    <!-- Decorative diagonal bands on the right, as in the design. -->
+    <div aria-hidden="true" class="pointer-events-none absolute inset-0 hidden lg:block">
+      <div class="absolute top-[19rem] -right-[10rem] h-[13rem] w-[44rem] -rotate-45 rounded-full bg-home-field-soft"></div>
+      <div class="absolute top-[29rem] -right-[18rem] h-[10rem] w-[44rem] -rotate-45 rounded-full bg-home-field-soft opacity-70"></div>
     </div>
+
+    <HomeNav />
+    <Hero />
+    <Showcase />
   </div>
-  <SearchDialog />
-</TooltipProvider>
+
+  <main>
+    <Features />
+    <GetStarted />
+    <Shortcuts />
+    <CallToAction />
+  </main>
+
+  <HomeFooter />
+</div>

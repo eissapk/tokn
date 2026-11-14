@@ -1,0 +1,30 @@
+<script>
+  import Icon from "../ui/Icon/Icon";
+  import { ArrowRight } from "../../utils/icons";
+  import { REPO } from "../../utils/links";
+</script>
+
+<article class="flex min-h-[25rem] flex-col rounded-[1.75rem] bg-home-card p-8 text-white/90">
+  <h2 class="font-logo text-[1.9rem] leading-[1.05] font-extrabold tracking-[-0.03em] text-home-card-accent">Open Source.<br />Built for Developers.</h2>
+  <p class="mt-4 max-w-[17rem] text-[0.98rem] leading-relaxed">Flexible, extensible, and ready to be part of your workflow.</p>
+  <a
+    href="{REPO}"
+    target="_blank"
+    rel="noreferrer noopener"
+    class="mt-4 inline-flex w-fit items-center gap-1.5 font-medium text-home-card-accent underline underline-offset-4 hover:no-underline"
+  >
+    View on GitHub <Icon icon="{ArrowRight}" class="size-4" />
+  </a>
+
+  <div class="mt-auto rounded-2xl bg-black/45 p-5 pb-8 font-mono" aria-label="Terminal">
+    <div aria-hidden="true" class="flex gap-2">
+      <span class="size-3 rounded-full bg-[#ff5f57]"></span>
+      <span class="size-3 rounded-full bg-[#febc2e]"></span>
+      <span class="size-3 rounded-full bg-[#28c840]"></span>
+    </div>
+    <!-- break-all: the long repo URL would otherwise widen the card and squeeze the app preview. -->
+    <p class="mt-7 text-[1.05rem] break-all text-white">
+      <span class="text-home-card-accent">$</span> git clone {REPO}.git<span aria-hidden="true" class="caret ml-0.5 inline-block h-[1.15em] w-[0.55em] translate-y-[0.2em] bg-white"></span>
+    </p>
+  </div>
+</article>

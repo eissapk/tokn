@@ -1,0 +1,16 @@
+<script>
+  import AppPreview from "./AppPreview";
+  import ModelsCard from "./ModelsCard";
+  import OpenSourceCard from "./OpenSourceCard";
+</script>
+
+<!-- The three cards under the hero. The bottom band switches to the page base colour, so the cards straddle it. -->
+<section class="relative z-10 px-4 pb-16 sm:px-8 lg:px-10">
+  <div aria-hidden="true" class="absolute inset-x-0 bottom-0 h-[11rem] bg-home-base"></div>
+
+  <div class="relative mx-auto grid max-w-[100rem] gap-4 lg:grid-cols-[1fr_1.45fr_1fr] lg:items-stretch">
+    <ModelsCard />
+    <AppPreview />
+    <OpenSourceCard />
+  </div>
+</section>
