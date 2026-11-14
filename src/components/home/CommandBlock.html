@@ -1,0 +1,32 @@
+<script>
+  import { props } from "olum";
+  import Icon from "../ui/Icon/Icon";
+  import { Check, Copy } from "../../utils/icons";
+
+  // A shell command in GetStarted with a button that copies it to the clipboard.
+  const { command } = props();
+  const state = { copied: false };
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(command);
+      state.copied = true;
+      setTimeout(() => (state.copied = false), 1600);
+    } catch {}
+  };
+</script>
+
+<div class="mt-auto flex items-start gap-2 rounded-xl bg-black/45 py-3 pr-2 pl-4">
+  <code class="min-w-0 flex-1 font-mono text-[0.95rem] break-words text-white">
+    <span class="text-home-card-accent">$</span> {command}
+  </code>
+  <button
+    type="button"
+    aria-label="{state.copied ? 'Copied' : 'Copy command'}"
+    title="{state.copied ? 'Copied' : 'Copy command'}"
+    class="grid size-8 shrink-0 cursor-pointer place-items-center rounded-lg text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+    onclick="copy()"
+  >
+    <Icon icon="{state.copied ? Check : Copy}" class="size-4 {state.copied ? 'text-home-card-accent' : ''}" />
+  </button>
+</div>

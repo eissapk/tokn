@@ -49,7 +49,7 @@ You need [Ollama](https://ollama.com) running with at least one model:
 
 ```bash
 ollama serve
-ollama pull llama3.2
+ollama pull qwen3:0.6b
 ```
 
 ### Installation

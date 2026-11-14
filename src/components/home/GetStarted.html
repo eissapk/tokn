@@ -1,6 +1,7 @@
 <script>
   import Icon from "../ui/Icon/Icon";
   import Step from "./Step";
+  import CommandBlock from "./CommandBlock";
   import { ArrowRight } from "../../utils/icons";
   import { OLLAMA } from "../../utils/links";
 </script>
@@ -18,17 +19,13 @@
     <ol class="mt-12 grid gap-4 lg:grid-cols-3">
       <Step number="01" title="Install Ollama">
         <p class="mt-2 mb-6 leading-relaxed">
-          Download it from <a href="{OLLAMA}" target="_blank" rel="noreferrer noopener" class="text-home-card-accent underline underline-offset-4 hover:no-underline">ollama.com</a> and start its server.
+          Download it from <a href="{OLLAMA}" target="_blank" rel="noreferrer noopener" class="text-home-card-accent underline underline-offset-4 hover:no-underline">ollama.com</a> and start its server with TOKN allowed as an origin, so the browser can reach it.
         </p>
-        <code class="mt-auto block rounded-xl bg-black/45 px-4 py-3 font-mono text-[0.95rem] text-white">
-          <span class="text-home-card-accent">$</span> ollama serve
-        </code>
+        <CommandBlock command="OLLAMA_ORIGINS='*' ollama serve" />
       </Step>
       <Step number="02" title="Pull a model">
-        <p class="mt-2 mb-6 leading-relaxed">Grab any model from the Ollama library. Llama 3.2 is a good first pick.</p>
-        <code class="mt-auto block rounded-xl bg-black/45 px-4 py-3 font-mono text-[0.95rem] text-white">
-          <span class="text-home-card-accent">$</span> ollama pull llama3.2
-        </code>
+        <p class="mt-2 mb-6 leading-relaxed">Grab any model from the Ollama library. Qwen3 0.6B is small, fast, and a good first pick.</p>
+        <CommandBlock command='ollama pull qwen3:0.6b' />
       </Step>
       <Step number="03" title="Start chatting">
         <p class="mt-2 mb-6 leading-relaxed">Open TOKN, pick the model from the menu at the top, and say hello.</p>
