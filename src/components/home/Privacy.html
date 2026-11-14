@@ -1,0 +1,38 @@
+<script>
+  import Icon from "../ui/Icon/Icon";
+  import { FileText, Lock, MessageSquare, User } from "../../utils/icons";
+
+  // Each point is checked against the app: requests go only to the Ollama URL (src/utils/ollama.js),
+  // attachments are read in the browser (Composer), chats live in the browser's private storage (src/utils/sessions.js).
+  const points = [
+    { icon: Lock, title: "Runs on your machine", text: "Every request goes to your own Ollama server. No cloud in between." },
+    { icon: FileText, title: "Files stay with you", text: "Attachments are read in your browser and sent only to your model." },
+    { icon: MessageSquare, title: "Chats saved locally", text: "History is stored on your device, not on someone else's server." },
+    { icon: User, title: "No accounts, no tracking", text: "No sign-up, no API keys, no analytics." },
+  ];
+</script>
+
+<section id="privacy" class="mx-auto max-w-[100rem] scroll-mt-6 px-4 pb-16 sm:px-8 lg:px-16 lg:pb-20">
+  <div class="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:items-center">
+    <div>
+      <p class="text-sm font-semibold tracking-[0.12em] text-home-text uppercase">Private by design</p>
+      <h2 class="mt-3 font-logo text-[clamp(2rem,4vw,3.25rem)] leading-[0.95] font-black tracking-[-0.04em] uppercase">Your data never<br />leaves home.</h2>
+      <p class="mt-5 max-w-[28rem] text-lg leading-relaxed text-home-text">
+        The convenience of a cloud assistant, without handing your prompts, files or chats to anyone. It's safe for work you'd never paste into a website.
+      </p>
+    </div>
+    <ul class="grid gap-px overflow-hidden rounded-[1.5rem] border border-home-ink/10 bg-home-ink/10 sm:grid-cols-2">
+      <for each="p of points">
+        <li class="flex gap-4 bg-home-panel p-6">
+          <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-home-card-accent text-[oklch(0.25_0.07_140)]">
+            <Icon icon="{p.icon}" class="size-[18px]" />
+          </span>
+          <div>
+            <h3 class="font-bold tracking-[-0.01em]">{p.title}</h3>
+            <p class="mt-1 leading-relaxed text-home-text">{p.text}</p>
+          </div>
+        </li>
+      </for>
+    </ul>
+  </div>
+</section>
