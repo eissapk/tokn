@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en" data-olum=""><head>
+    <title data-olum-head="0">TOKN — Chat with any model</title>
+    <meta charset="UTF-8">
+    <meta name="generator" content="OlumJS">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="./favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=Inter:wght@400;500;600;700;800;900&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet">
+    <script type="module" crossorigin="" src="./assets/index-kA3LrZoA.js"></script>
+    <link rel="stylesheet" crossorigin="" href="./assets/index-CmthmiSo.css">
+  <template data-olum-head=""><title>Tokn — local chat</title></template>
+    <meta name="description" content="A beautiful, open-source interface for running and interacting with AI models." data-olum-head=""></head>
+  <body>
+<div id="olum-app"><div data-olum="{&quot;compName&quot;:&quot;page&quot;,&quot;compId&quot;:&quot;8ecvba48vqv&quot;}" data-child-of="page" data-o-8ecvba48vqv="">
+      <div class="h-screen overflow-x-hidden overflow-y-auto bg-home-base font-sans text-home-ink" data-child-of="page" data-o-8ecvba48vqv="">
+  
+  <div class="relative overflow-hidden bg-home-field" data-child-of="page" data-o-8ecvba48vqv="">
+    
+    <div aria-hidden="true" class="pointer-events-none absolute inset-0 hidden lg:block" data-child-of="page" data-o-8ecvba48vqv="">
+      <div class="absolute top-[19rem] -right-[10rem] h-[13rem] w-[44rem] -rotate-45 rounded-full bg-home-field-soft" data-child-of="page" data-o-8ecvba48vqv=""></div>
+      <div class="absolute top-[29rem] -right-[18rem] h-[10rem] w-[44rem] -rotate-45 rounded-full bg-home-field-soft opacity-70" data-child-of="page" data-o-8ecvba48vqv=""></div>
+    </div>
+
+    <div data-olum="{&quot;compName&quot;:&quot;HomeNav&quot;,&quot;compId&quot;:&quot;rgxlxnhc27o&quot;}" data-child-of="HomeNav" data-o-rgxlxnhc27o="" data-o-if="olum-no-condition">
+      <header class="relative z-10 mx-auto flex max-w-[100rem] items-center gap-4 px-4 py-5 sm:px-8 lg:px-16" data-child-of="HomeNav" data-o-rgxlxnhc27o="">
+  <a to="/" href="/" class="text-[1.15rem] active" aria-label="TOKN home" data-child-of="HomeNav" data-o-rgxlxnhc27o="">
+    <div data-olum="{&quot;compName&quot;:&quot;Logo&quot;,&quot;compId&quot;:&quot;6migetd8eb&quot;}" data-child-of="Logo" data-o-6migetd8eb="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center gap-2 text-logo-ink" data-child-of="Logo" data-o-6migetd8eb="">
+  <svg viewBox="285 130 465 345" class="h-[1.4em] w-auto shrink-0" aria-hidden="true" focusable="false" data-child-of="Logo" data-o-6migetd8eb="">
+    <defs data-child-of="Logo" data-o-6migetd8eb="">
+      <linearGradient id="tokn-bar-p1a08g9" x1="300" y1="0" x2="640" y2="0" gradientUnits="userSpaceOnUse" data-child-of="Logo" data-o-6migetd8eb="">
+        <stop offset="0" style="stop-color: var(--logo-ink)" data-child-of="Logo" data-o-6migetd8eb=""></stop>
+        <stop offset="1" style="stop-color: var(--logo-glow)" data-child-of="Logo" data-o-6migetd8eb=""></stop>
+      </linearGradient>
+    </defs>
+    <path fill="url(#tokn-bar-p1a08g9)" d="M290 268 L321 209 C330 193 343 185 372 185 L568 185 C606 185 632 203 643 226 C628 252 600 268 566 268 Z" data-child-of="Logo" data-o-6migetd8eb=""></path>
+    <path fill="currentColor" d="M643 226 C668 268 662 322 626 349 L516 421 L516 312 C516 303 522 298 534 298 C590 297 628 266 643 226 Z" data-child-of="Logo" data-o-6migetd8eb=""></path>
+    <path fill="currentColor" d="M396 298 L466 298 L466 470 L386 421 C362 406 351 383 362 360 Z" data-child-of="Logo" data-o-6migetd8eb=""></path>
+    <path fill="currentColor" d="M693 138 C698 168 712 182 743 188 C712 194 698 208 693 238 C688 208 674 194 643 188 C674 182 688 168 693 138 Z" data-child-of="Logo" data-o-6migetd8eb=""></path>
+  </svg>
+  
+    <span class="font-logo text-[1.35em] leading-none font-black tracking-[-0.02em]" data-child-of="Logo" data-o-6migetd8eb="">TOKN</span>
+  
+</span></div>
+  </a>
+
+  <div class="ml-auto flex items-center gap-3" data-child-of="HomeNav" data-o-rgxlxnhc27o="">
+    <div data-olum="{&quot;compName&quot;:&quot;ThemeToggle&quot;,&quot;compId&quot;:&quot;anwq4l9pwfi&quot;}" data-child-of="ThemeToggle" data-o-anwq4l9pwfi="" data-o-if="olum-no-condition">
+      <div data-olum="{&quot;compName&quot;:&quot;Button&quot;,&quot;compId&quot;:&quot;l14ktomwv5o&quot;}" data-child-of="Button" data-o-l14ktomwv5o="" data-o-if="olum-no-condition">
+      <button data-slot="button" type="button" class="group/button inline-flex shrink-0 items-center justify-center border bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [&amp;_svg:not([class*='size-'])]:size-4 border-transparent aria-expanded:bg-muted aria-expanded:text-foreground size-7 rounded-[min(var(--radius-md),12px)] text-home-ink hover:bg-home-ink/10 hover:text-home-ink" aria-label="Toggle dark theme" data-value="" data-role="" data-child-of="Button" data-o-l14ktomwv5o=""><div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-[18px]" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div></button></div></div>
+    <a href="https://github.com/eissapk/tokn" target="_blank" rel="noreferrer noopener" class="hidden h-9 items-center gap-2 rounded-full border border-home-ink/15 bg-home-field-soft/60 px-3.5 text-[0.8rem] font-semibold transition-colors hover:bg-home-field-soft sm:inline-flex" data-child-of="HomeNav" data-o-rgxlxnhc27o="">
+      <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:pointer-events-none size-[18px] [&amp;_svg]:stroke-none" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 512 512" data-child-of="Icon" data-o-3eukzbyrht3=""><path fill="currentColor" d="M216.5 362.5c-66-8-112.5-55.5-112.5-117 0-25 9-52 24-70-6.5-16.5-5.5-51.5 2-66 20-2.5 47 8 63 22.5 19-6 39-9 63.5-9s44.5 3 62.5 8.5c15.5-14 43-24.5 63-22 7 13.5 8 48.5 1.5 65.5 16 19 24.5 44.5 24.5 70.5 0 61.5-46.5 108-113.5 116.5 17 11 28.5 35 28.5 62.5v52c0 15 12.5 23.5 27.5 17.5C441 459.5 512 369 512 257 512 115.5 397 0 255.5 0S0 115.5 0 257c0 111 70.5 203 165.5 237.5 13.5 5 26.5-4 26.5-17.5v-40c-7 3-16 5-24 5-33 0-52.5-18-66.5-51.5-5.5-13.5-11.5-21.5-23-23-6-.5-8-3-8-6 0-6 10-10.5 20-10.5 14.5 0 27 9 40 27.5 10 14.5 20.5 21 33 21s20.5-4.5 32-16c8.5-8.5 15-16 21-21" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div>
+      Star on GitHub
+    </a>
+    <a to="/chat" href="/chat" class="inline-flex h-9 items-center gap-1.5 rounded-full bg-home-ink px-4 text-[0.8rem] font-semibold text-home-ink-foreground transition-opacity hover:opacity-90" data-child-of="HomeNav" data-o-rgxlxnhc27o="">
+      Get Started
+      <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-4" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="M5 12h14m-7-7 7 7-7 7" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div>
+    </a>
+  </div>
+</header></div>
+    <div data-olum="{&quot;compName&quot;:&quot;Hero&quot;,&quot;compId&quot;:&quot;y4mns9qutp&quot;}" data-child-of="Hero" data-o-y4mns9qutp="" data-o-if="olum-no-condition">
+      <section class="relative z-10 mx-auto max-w-[100rem] px-4 pt-10 pb-10 text-center sm:px-8 sm:pt-12 lg:pb-9" data-child-of="Hero" data-o-y4mns9qutp="">
+  <h1 class="font-logo text-[clamp(3.25rem,9.5vw,7.6rem)] leading-[0.86] font-black tracking-[-0.04em] uppercase" data-child-of="Hero" data-o-y4mns9qutp="">
+    Chat with<br data-child-of="Hero" data-o-y4mns9qutp="">any model
+  </h1>
+  <p class="mx-auto mt-6 max-w-[34rem] text-[clamp(1.05rem,1.6vw,1.4rem)] leading-tight font-semibold tracking-[-0.01em]" data-child-of="Hero" data-o-y4mns9qutp="">
+    A beautiful, open-source interface for running and interacting with AI models.
+  </p>
+  <a to="/chat" href="/chat" class="mt-6 inline-flex h-[3.15rem] items-center gap-2 rounded-full bg-home-ink px-8 text-base font-semibold text-home-ink-foreground shadow-lg shadow-home-ink/20 transition-transform hover:-translate-y-0.5" data-child-of="Hero" data-o-y4mns9qutp="">
+    Start Chatting
+    <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-[18px]" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="M5 12h14m-7-7 7 7-7 7" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div>
+  </a>
+</section></div>
+    <div data-olum="{&quot;compName&quot;:&quot;Showcase&quot;,&quot;compId&quot;:&quot;efgdh1sn4mn&quot;}" data-child-of="Showcase" data-o-efgdh1sn4mn="" data-o-if="olum-no-condition">
+      <section class="relative z-10 px-4 pb-16 sm:px-8 lg:px-10" data-child-of="Showcase" data-o-efgdh1sn4mn="">
+  <div aria-hidden="true" class="absolute inset-x-0 bottom-0 h-[11rem] bg-home-base" data-child-of="Showcase" data-o-efgdh1sn4mn=""></div>
+
+  <div class="relative mx-auto grid max-w-[100rem] gap-4 lg:grid-cols-[1fr_1.45fr_1fr] lg:items-stretch" data-child-of="Showcase" data-o-efgdh1sn4mn="">
+    <div data-olum="{&quot;compName&quot;:&quot;ModelsCard&quot;,&quot;compId&quot;:&quot;a53abuu9opu&quot;}" data-child-of="ModelsCard" data-o-a53abuu9opu="" data-o-if="olum-no-condition">
+      <article class="relative flex min-h-[25rem] flex-col overflow-hidden rounded-[1.75rem] bg-home-card p-8 text-white/90" data-child-of="ModelsCard" data-o-a53abuu9opu="">
+  <h2 class="font-logo text-[1.9rem] leading-[1.05] font-extrabold tracking-[-0.03em] text-home-card-accent" data-child-of="ModelsCard" data-o-a53abuu9opu="">Your Models.<br data-child-of="ModelsCard" data-o-a53abuu9opu="">Your Control.</h2>
+  <p class="mt-4 max-w-[19rem] text-[0.98rem] leading-relaxed" data-child-of="ModelsCard" data-o-a53abuu9opu="">Run local models with Ollama and manage your AI workspace with ease.</p>
+  <a href="https://ollama.com" target="_blank" rel="noreferrer noopener" class="mt-4 inline-flex w-fit items-center gap-1.5 font-medium text-home-card-accent hover:underline" data-child-of="ModelsCard" data-o-a53abuu9opu="">
+    Learn more <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-4" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="M5 12h14m-7-7 7 7-7 7" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div>
+  </a>
+
+  
+  <div aria-hidden="true" class="relative mt-auto h-48" data-child-of="ModelsCard" data-o-a53abuu9opu="">
+    <div class="absolute bottom-6 left-0 h-28 w-[19rem] -rotate-[22deg] rounded-full bg-white/[0.07]" data-child-of="ModelsCard" data-o-a53abuu9opu=""></div>
+    <div class="absolute bottom-0 left-[5.5rem] size-40 rotate-[14deg] rounded-[2rem] bg-[oklch(0.62_0.17_136)]" data-child-of="ModelsCard" data-o-a53abuu9opu=""></div>
+    <div class="absolute bottom-3 left-[5.5rem] grid size-40 rotate-[14deg] place-items-center rounded-[2rem] bg-[oklch(0.84_0.18_134)]" data-child-of="ModelsCard" data-o-a53abuu9opu="">
+      <img src="ollama.png" alt="" width="96" height="112" class="h-[5.5rem] w-auto -rotate-[14deg] select-none" draggable="false" data-child-of="ModelsCard" data-o-a53abuu9opu="">
+    </div>
+  </div>
+</article></div>
+    <div data-olum="{&quot;compName&quot;:&quot;AppPreview&quot;,&quot;compId&quot;:&quot;do8zcqjt2qu&quot;}" data-child-of="AppPreview" data-o-do8zcqjt2qu="" data-o-if="olum-no-condition">
+      <figure class="flex min-h-[25rem] overflow-hidden rounded-[1.75rem] border border-black/5 bg-background text-foreground shadow-2xl shadow-black/15" role="img" aria-label="Preview of the TOKN chat app" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+  <div aria-hidden="true" class="hidden w-[13rem] shrink-0 flex-col gap-1 border-r border-border bg-rail p-4 sm:flex" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+    <div data-olum="{&quot;compName&quot;:&quot;Logo&quot;,&quot;compId&quot;:&quot;6migetd8eb&quot;}" data-child-of="Logo" data-o-6migetd8eb="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center gap-2 text-logo-ink mb-4 px-1 pt-1 text-[0.95rem]" data-child-of="Logo" data-o-6migetd8eb="">
+  <svg viewBox="285 130 465 345" class="h-[1.4em] w-auto shrink-0" aria-hidden="true" focusable="false" data-child-of="Logo" data-o-6migetd8eb="">
+    <defs data-child-of="Logo" data-o-6migetd8eb="">
+      <linearGradient id="tokn-bar-oeh0gz7" x1="300" y1="0" x2="640" y2="0" gradientUnits="userSpaceOnUse" data-child-of="Logo" data-o-6migetd8eb="">
+        <stop offset="0" style="stop-color: var(--logo-ink)" data-child-of="Logo" data-o-6migetd8eb=""></stop>
+        <stop offset="1" style="stop-color: var(--logo-glow)" data-child-of="Logo" data-o-6migetd8eb=""></stop>
+      </linearGradient>
+    </defs>
+    <path fill="url(#tokn-bar-oeh0gz7)" d="M290 268 L321 209 C330 193 343 185 372 185 L568 185 C606 185 632 203 643 226 C628 252 600 268 566 268 Z" data-child-of="Logo" data-o-6migetd8eb=""></path>
+    <path fill="currentColor" d="M643 226 C668 268 662 322 626 349 L516 421 L516 312 C516 303 522 298 534 298 C590 297 628 266 643 226 Z" data-child-of="Logo" data-o-6migetd8eb=""></path>
+    <path fill="currentColor" d="M396 298 L466 298 L466 470 L386 421 C362 406 351 383 362 360 Z" data-child-of="Logo" data-o-6migetd8eb=""></path>
+    <path fill="currentColor" d="M693 138 C698 168 712 182 743 188 C712 194 698 208 693 238 C688 208 674 194 643 188 C674 182 688 168 693 138 Z" data-child-of="Logo" data-o-6migetd8eb=""></path>
+  </svg>
+  
+    <span class="font-logo text-[1.35em] leading-none font-black tracking-[-0.02em]" data-child-of="Logo" data-o-6migetd8eb="">TOKN</span>
+  
+</span></div>
+    <div class="flex items-center gap-2.5 rounded-xl bg-home-tint px-3 py-2.5 text-[0.95rem] font-semibold" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+      <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-4" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="M5 12h14m-7-7v14" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div> New Chat
+    </div>
+    <div class="flex items-center gap-2.5 px-3 py-2 text-sm text-muted-foreground" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+      <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-4 text-foreground" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="m21 21-4.34-4.34" data-child-of="Icon" data-o-3eukzbyrht3=""></path><circle cx="11" cy="11" r="8" data-child-of="Icon" data-o-3eukzbyrht3=""></circle></svg></span></div> Search chats…
+    </div>
+    <p class="mt-3 px-3 pb-1 text-xs font-medium text-muted-foreground" data-child-of="AppPreview" data-o-do8zcqjt2qu="">Today</p>
+    
+      <div class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-[0.85rem] bg-home-tint" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+        <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-4" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div> Getting started
+      </div>
+    
+      <div class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-[0.85rem] " data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+        <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-4" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div> About TOKN
+      </div>
+    
+      <div class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-[0.85rem] " data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+        <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-4" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div> Model comparison
+      </div>
+    
+    <div class="flex items-center gap-2.5 px-3 py-2 text-[0.85rem]" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+      <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-4" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div> <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-4" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><circle cx="12" cy="12" r="1" data-child-of="Icon" data-o-3eukzbyrht3=""></circle><circle cx="19" cy="12" r="1" data-child-of="Icon" data-o-3eukzbyrht3=""></circle><circle cx="5" cy="12" r="1" data-child-of="Icon" data-o-3eukzbyrht3=""></circle></svg></span></div>
+    </div>
+  </div>
+
+  <div aria-hidden="true" class="flex min-w-0 flex-1 flex-col" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+    <div class="flex items-center justify-between px-4 pt-4" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+      <span class="inline-flex items-center gap-2 rounded-xl border border-border px-2.5 py-1.5 text-sm font-semibold" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+        <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-5 text-[oklch(0.55_0.2_255)]" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="M6 16c5 0 7-8 12-8a4 4 0 0 1 0 8c-5 0-7-8-12-8a4 4 0 1 0 0 8" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div> Llama 3.2
+        <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-4" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="m6 9 6 6 6-6" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div>
+      </span>
+      <span class="flex items-center gap-4 pr-1 text-foreground/80" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+        <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-4" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><rect width="14" height="14" x="8" y="8" rx="2" ry="2" data-child-of="Icon" data-o-3eukzbyrht3=""></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div>
+        <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-4" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" data-child-of="Icon" data-o-3eukzbyrht3=""></path><circle cx="12" cy="12" r="3" data-child-of="Icon" data-o-3eukzbyrht3=""></circle></svg></span></div>
+      </span>
+    </div>
+
+    <div class="flex flex-1 flex-col gap-6 px-4 py-6" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+      <div class="flex items-center justify-end gap-2.5" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+        <p class="rounded-2xl bg-home-tint px-5 py-3 text-[0.95rem]" data-child-of="AppPreview" data-o-do8zcqjt2qu="">What is TOKN?</p>
+        <span class="grid size-9 shrink-0 place-items-center rounded-full bg-home-card-accent text-[oklch(0.2_0.05_140)]" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+          <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-[18px] [&amp;_svg]:fill-current" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" data-child-of="Icon" data-o-3eukzbyrht3=""></path><circle cx="12" cy="7" r="4" data-child-of="Icon" data-o-3eukzbyrht3=""></circle></svg></span></div>
+        </span>
+      </div>
+      <div class="flex items-start gap-3" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+        <span class="grid size-9 shrink-0 place-items-center rounded-full bg-[oklch(0.25_0.07_140)] [--logo-ink:var(--home-card-accent)] [--logo-glow:var(--home-card-accent)]" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+          <div data-olum="{&quot;compName&quot;:&quot;Logo&quot;,&quot;compId&quot;:&quot;6migetd8eb&quot;}" data-child-of="Logo" data-o-6migetd8eb="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center gap-2 text-logo-ink text-[0.85rem]" data-child-of="Logo" data-o-6migetd8eb="">
+  <svg viewBox="285 130 465 345" class="h-[1.4em] w-auto shrink-0" aria-hidden="true" focusable="false" data-child-of="Logo" data-o-6migetd8eb="">
+    <defs data-child-of="Logo" data-o-6migetd8eb="">
+      <linearGradient id="tokn-bar-1g9rncb" x1="300" y1="0" x2="640" y2="0" gradientUnits="userSpaceOnUse" data-child-of="Logo" data-o-6migetd8eb="">
+        <stop offset="0" style="stop-color: var(--logo-ink)" data-child-of="Logo" data-o-6migetd8eb=""></stop>
+        <stop offset="1" style="stop-color: var(--logo-glow)" data-child-of="Logo" data-o-6migetd8eb=""></stop>
+      </linearGradient>
+    </defs>
+    <path fill="url(#tokn-bar-1g9rncb)" d="M290 268 L321 209 C330 193 343 185 372 185 L568 185 C606 185 632 203 643 226 C628 252 600 268 566 268 Z" data-child-of="Logo" data-o-6migetd8eb=""></path>
+    <path fill="currentColor" d="M643 226 C668 268 662 322 626 349 L516 421 L516 312 C516 303 522 298 534 298 C590 297 628 266 643 226 Z" data-child-of="Logo" data-o-6migetd8eb=""></path>
+    <path fill="currentColor" d="M396 298 L466 298 L466 470 L386 421 C362 406 351 383 362 360 Z" data-child-of="Logo" data-o-6migetd8eb=""></path>
+    <path fill="currentColor" d="M693 138 C698 168 712 182 743 188 C712 194 698 208 693 238 C688 208 674 194 643 188 C674 182 688 168 693 138 Z" data-child-of="Logo" data-o-6migetd8eb=""></path>
+  </svg>
+  
+</span></div>
+        </span>
+        <p class="max-w-[21rem] rounded-2xl bg-muted px-5 py-3.5 text-[0.9rem] leading-relaxed" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+          TOKN is a modern, open-source interface for chatting with AI models. It helps you interact with local and remote models in a simple and beautiful way.
+        </p>
+      </div>
+    </div>
+
+    <div class="m-4 mt-0 flex items-center gap-3 rounded-2xl border border-border py-2 pr-2 pl-4" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+      <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-[18px] text-muted-foreground" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div>
+      <span class="flex-1 text-sm text-muted-foreground" data-child-of="AppPreview" data-o-do8zcqjt2qu="">Type a message…</span>
+      <span class="grid size-9 place-items-center rounded-full bg-[oklch(0.25_0.07_140)] text-[oklch(0.87_0.18_134)]" data-child-of="AppPreview" data-o-do8zcqjt2qu="">
+        <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-4 [&amp;_svg]:fill-current" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904zM6 12h16" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div>
+      </span>
+    </div>
+  </div>
+</figure></div>
+    <div data-olum="{&quot;compName&quot;:&quot;OpenSourceCard&quot;,&quot;compId&quot;:&quot;atgk8o3x9z9&quot;}" data-child-of="OpenSourceCard" data-o-atgk8o3x9z9="" data-o-if="olum-no-condition">
+      <article class="flex min-h-[25rem] flex-col rounded-[1.75rem] bg-home-card p-8 text-white/90" data-child-of="OpenSourceCard" data-o-atgk8o3x9z9="">
+  <h2 class="font-logo text-[1.9rem] leading-[1.05] font-extrabold tracking-[-0.03em] text-home-card-accent" data-child-of="OpenSourceCard" data-o-atgk8o3x9z9="">Open Source.<br data-child-of="OpenSourceCard" data-o-atgk8o3x9z9="">Built for Developers.</h2>
+  <p class="mt-4 max-w-[17rem] text-[0.98rem] leading-relaxed" data-child-of="OpenSourceCard" data-o-atgk8o3x9z9="">Flexible, extensible, and ready to be part of your workflow.</p>
+  <a href="https://github.com/eissapk/tokn" target="_blank" rel="noreferrer noopener" class="mt-4 inline-flex w-fit items-center gap-1.5 font-medium text-home-card-accent underline underline-offset-4 hover:no-underline" data-child-of="OpenSourceCard" data-o-atgk8o3x9z9="">
+    View on GitHub <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-4" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="M5 12h14m-7-7 7 7-7 7" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div>
+  </a>
+
+  
+  <div class="mt-auto rounded-2xl bg-black/45 p-5 pb-6 font-mono" aria-label="Terminal" data-child-of="OpenSourceCard" data-o-atgk8o3x9z9="">
+    <div aria-hidden="true" class="flex gap-2" data-child-of="OpenSourceCard" data-o-atgk8o3x9z9="">
+      <span class="size-3 rounded-full bg-[#ff5f57]" data-child-of="OpenSourceCard" data-o-atgk8o3x9z9=""></span>
+      <span class="size-3 rounded-full bg-[#febc2e]" data-child-of="OpenSourceCard" data-o-atgk8o3x9z9=""></span>
+      <span class="size-3 rounded-full bg-[#28c840]" data-child-of="OpenSourceCard" data-o-atgk8o3x9z9=""></span>
+    </div>
+    <pre class="mt-5 overflow-x-auto font-mono text-[0.85rem] leading-relaxed text-white" data-child-of="OpenSourceCard" data-o-atgk8o3x9z9=""><span class="text-home-card-accent select-none" data-child-of="OpenSourceCard" data-o-atgk8o3x9z9="">$ </span>git clone https://github.com/eissapk/tokn
+<span class="text-home-card-accent select-none" data-child-of="OpenSourceCard" data-o-atgk8o3x9z9="">$ </span>cd tokn &amp;&amp; npm install
+<span class="text-home-card-accent select-none" data-child-of="OpenSourceCard" data-o-atgk8o3x9z9="">$ </span>npm run dev<span aria-hidden="true" class="caret ml-0.5 inline-block h-[1.15em] w-[0.55em] translate-y-[0.2em] bg-white" data-child-of="OpenSourceCard" data-o-atgk8o3x9z9=""></span></pre>
+  </div>
+</article></div>
+  </div>
+</section></div>
+  </div>
+
+  <main data-child-of="page" data-o-8ecvba48vqv="">
+    <div data-olum="{&quot;compName&quot;:&quot;Features&quot;,&quot;compId&quot;:&quot;pjjjer267qm&quot;}" data-child-of="Features" data-o-pjjjer267qm="" data-o-if="olum-no-condition">
+      <section id="features" class="mx-auto max-w-[100rem] scroll-mt-6 px-4 py-20 sm:px-8 lg:px-16 lg:py-28" data-child-of="Features" data-o-pjjjer267qm="">
+  <div class="max-w-[62rem]" data-child-of="Features" data-o-pjjjer267qm="">
+    <p class="text-sm font-semibold tracking-[0.12em] text-home-text uppercase" data-child-of="Features" data-o-pjjjer267qm="">Features</p>
+    <h2 class="mt-3 font-logo text-[clamp(2.25rem,5vw,4rem)] leading-[0.92] font-black tracking-[-0.04em] uppercase" data-child-of="Features" data-o-pjjjer267qm="">Everything you need.<br data-child-of="Features" data-o-pjjjer267qm="">Nothing in the way.</h2>
+    <p class="mt-5 max-w-[34rem] text-lg leading-relaxed text-home-text" data-child-of="Features" data-o-pjjjer267qm="">A fast, focused chat window for the models on your machine, with the tools you reach for every day.</p>
+  </div>
+
+  <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-child-of="Features" data-o-pjjjer267qm="">
+    
+      <div data-olum="{&quot;compName&quot;:&quot;FeatureCard&quot;,&quot;compId&quot;:&quot;eyyqjr13kb9&quot;}" data-child-of="FeatureCard" data-o-eyyqjr13kb9="" data-o-if="olum-no-condition">
+      <article class="rounded-[1.5rem] border border-home-ink/10 bg-home-panel p-7 transition-transform hover:-translate-y-1" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">
+  <span class="grid size-12 place-items-center rounded-2xl bg-home-card-accent text-[oklch(0.25_0.07_140)]" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">
+    <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-[22px]" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><rect width="18" height="11" x="3" y="11" rx="2" ry="2" data-child-of="Icon" data-o-3eukzbyrht3=""></rect><path d="M7 11V7a5 5 0 0 1 10 0v4" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div>
+  </span>
+  <h3 class="mt-6 text-xl font-bold tracking-[-0.02em]" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">Private by default</h3>
+  <p class="mt-2 leading-relaxed text-home-text" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">Models run on your own machine through Ollama. Your prompts and chats never leave it.</p>
+</article></div>
+    
+      <div data-olum="{&quot;compName&quot;:&quot;FeatureCard&quot;,&quot;compId&quot;:&quot;eyyqjr13kb9&quot;}" data-child-of="FeatureCard" data-o-eyyqjr13kb9="" data-o-if="olum-no-condition">
+      <article class="rounded-[1.5rem] border border-home-ink/10 bg-home-panel p-7 transition-transform hover:-translate-y-1" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">
+  <span class="grid size-12 place-items-center rounded-2xl bg-home-card-accent text-[oklch(0.25_0.07_140)]" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">
+    <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-[22px]" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="M12 18V5m3 8a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4m8.598-6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" data-child-of="Icon" data-o-3eukzbyrht3=""></path><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" data-child-of="Icon" data-o-3eukzbyrht3=""></path><path d="M18 18a4 4 0 0 0 2-7.464" data-child-of="Icon" data-o-3eukzbyrht3=""></path><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" data-child-of="Icon" data-o-3eukzbyrht3=""></path><path d="M6 18a4 4 0 0 1-2-7.464" data-child-of="Icon" data-o-3eukzbyrht3=""></path><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div>
+  </span>
+  <h3 class="mt-6 text-xl font-bold tracking-[-0.02em]" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">Thinking mode</h3>
+  <p class="mt-2 leading-relaxed text-home-text" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">Switch on thinking and watch reasoning models work through hard problems step by step.</p>
+</article></div>
+    
+      <div data-olum="{&quot;compName&quot;:&quot;FeatureCard&quot;,&quot;compId&quot;:&quot;eyyqjr13kb9&quot;}" data-child-of="FeatureCard" data-o-eyyqjr13kb9="" data-o-if="olum-no-condition">
+      <article class="rounded-[1.5rem] border border-home-ink/10 bg-home-panel p-7 transition-transform hover:-translate-y-1" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">
+  <span class="grid size-12 place-items-center rounded-2xl bg-home-card-accent text-[oklch(0.25_0.07_140)]" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">
+    <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-[22px]" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div>
+  </span>
+  <h3 class="mt-6 text-xl font-bold tracking-[-0.02em]" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">Attach files</h3>
+  <p class="mt-2 leading-relaxed text-home-text" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">Add files to a message and ask questions about them, right in the chat.</p>
+</article></div>
+    
+      <div data-olum="{&quot;compName&quot;:&quot;FeatureCard&quot;,&quot;compId&quot;:&quot;eyyqjr13kb9&quot;}" data-child-of="FeatureCard" data-o-eyyqjr13kb9="" data-o-if="olum-no-condition">
+      <article class="rounded-[1.5rem] border border-home-ink/10 bg-home-panel p-7 transition-transform hover:-translate-y-1" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">
+  <span class="grid size-12 place-items-center rounded-2xl bg-home-card-accent text-[oklch(0.25_0.07_140)]" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">
+    <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-[22px]" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="m21 21-4.34-4.34" data-child-of="Icon" data-o-3eukzbyrht3=""></path><circle cx="11" cy="11" r="8" data-child-of="Icon" data-o-3eukzbyrht3=""></circle></svg></span></div>
+  </span>
+  <h3 class="mt-6 text-xl font-bold tracking-[-0.02em]" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">Search every chat</h3>
+  <p class="mt-2 leading-relaxed text-home-text" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">Chats are saved as you go. Star the ones that matter and find anything with Ctrl+K.</p>
+</article></div>
+    
+      <div data-olum="{&quot;compName&quot;:&quot;FeatureCard&quot;,&quot;compId&quot;:&quot;eyyqjr13kb9&quot;}" data-child-of="FeatureCard" data-o-eyyqjr13kb9="" data-o-if="olum-no-condition">
+      <article class="rounded-[1.5rem] border border-home-ink/10 bg-home-panel p-7 transition-transform hover:-translate-y-1" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">
+  <span class="grid size-12 place-items-center rounded-2xl bg-home-card-accent text-[oklch(0.25_0.07_140)]" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">
+    <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-[22px]" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="m12 14 4-4M3.34 19a10 10 0 1 1 17.32 0" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div>
+  </span>
+  <h3 class="mt-6 text-xl font-bold tracking-[-0.02em]" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">Context meter</h3>
+  <p class="mt-2 leading-relaxed text-home-text" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">See how much of the model's memory a conversation is using before it starts to forget.</p>
+</article></div>
+    
+      <div data-olum="{&quot;compName&quot;:&quot;FeatureCard&quot;,&quot;compId&quot;:&quot;eyyqjr13kb9&quot;}" data-child-of="FeatureCard" data-o-eyyqjr13kb9="" data-o-if="olum-no-condition">
+      <article class="rounded-[1.5rem] border border-home-ink/10 bg-home-panel p-7 transition-transform hover:-translate-y-1" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">
+  <span class="grid size-12 place-items-center rounded-2xl bg-home-card-accent text-[oklch(0.25_0.07_140)]" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">
+    <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-[22px]" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="m16 18 6-6-6-6M8 6l-6 6 6 6" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div>
+  </span>
+  <h3 class="mt-6 text-xl font-bold tracking-[-0.02em]" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">Code that copies</h3>
+  <p class="mt-2 leading-relaxed text-home-text" data-child-of="FeatureCard" data-o-eyyqjr13kb9="">Answers render as clean markdown, with a copy button on every code block.</p>
+</article></div>
+    
+  </div>
+</section></div>
+    <div data-olum="{&quot;compName&quot;:&quot;GetStarted&quot;,&quot;compId&quot;:&quot;3a8kseffqi8&quot;}" data-child-of="GetStarted" data-o-3a8kseffqi8="" data-o-if="olum-no-condition">
+      <section id="get-started" class="scroll-mt-6 px-4 sm:px-8 lg:px-10" data-child-of="GetStarted" data-o-3a8kseffqi8="">
+  <div class="mx-auto max-w-[100rem] rounded-[2rem] bg-home-card px-6 py-16 text-white/90 sm:px-10 lg:px-14 lg:py-20" data-child-of="GetStarted" data-o-3a8kseffqi8="">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between" data-child-of="GetStarted" data-o-3a8kseffqi8="">
+      <div data-child-of="GetStarted" data-o-3a8kseffqi8="">
+        <p class="text-sm font-semibold tracking-[0.12em] text-home-card-accent uppercase" data-child-of="GetStarted" data-o-3a8kseffqi8="">Get started</p>
+        <h2 class="mt-3 font-logo text-[clamp(2.25rem,5vw,4rem)] leading-[0.92] font-black tracking-[-0.04em] text-home-card-accent uppercase" data-child-of="GetStarted" data-o-3a8kseffqi8="">Up and running<br data-child-of="GetStarted" data-o-3a8kseffqi8="">in three steps.</h2>
+      </div>
+      <p class="max-w-[24rem] text-lg leading-relaxed" data-child-of="GetStarted" data-o-3a8kseffqi8="">No accounts and no API keys. If Ollama runs on your computer, so does TOKN.</p>
+    </div>
+
+    <ol class="mt-12 grid gap-4 lg:grid-cols-3" data-child-of="GetStarted" data-o-3a8kseffqi8="">
+      <div data-olum="{&quot;compName&quot;:&quot;Step&quot;,&quot;compId&quot;:&quot;wbv6cfyrn5&quot;}" data-child-of="Step" data-o-wbv6cfyrn5="" data-o-if="olum-no-condition">
+      <li class="flex flex-col rounded-[1.5rem] bg-white/[0.06] p-7" data-child-of="Step" data-o-wbv6cfyrn5="">
+  <span class="font-logo text-5xl font-black text-home-card-accent" data-child-of="Step" data-o-wbv6cfyrn5="">01</span>
+  <h3 class="mt-5 text-xl font-bold text-white" data-child-of="Step" data-o-wbv6cfyrn5="">Install Ollama</h3>
+  <p class="mt-2 mb-6 leading-relaxed" data-child-of="Step" data-o-3a8kseffqi8="" data-o-wbv6cfyrn5="">
+          Download it from <a href="https://ollama.com" target="_blank" rel="noreferrer noopener" class="text-home-card-accent underline underline-offset-4 hover:no-underline" data-child-of="Step" data-o-3a8kseffqi8="" data-o-wbv6cfyrn5="">ollama.com</a> and start its server.
+        </p>
+        <code class="mt-auto block rounded-xl bg-black/45 px-4 py-3 font-mono text-[0.95rem] text-white" data-child-of="Step" data-o-3a8kseffqi8="" data-o-wbv6cfyrn5="">
+          <span class="text-home-card-accent" data-child-of="Step" data-o-3a8kseffqi8="" data-o-wbv6cfyrn5="">$</span> ollama serve
+        </code>
+</li></div>
+      <div data-olum="{&quot;compName&quot;:&quot;Step&quot;,&quot;compId&quot;:&quot;wbv6cfyrn5&quot;}" data-child-of="Step" data-o-wbv6cfyrn5="" data-o-if="olum-no-condition">
+      <li class="flex flex-col rounded-[1.5rem] bg-white/[0.06] p-7" data-child-of="Step" data-o-wbv6cfyrn5="">
+  <span class="font-logo text-5xl font-black text-home-card-accent" data-child-of="Step" data-o-wbv6cfyrn5="">02</span>
+  <h3 class="mt-5 text-xl font-bold text-white" data-child-of="Step" data-o-wbv6cfyrn5="">Pull a model</h3>
+  <p class="mt-2 mb-6 leading-relaxed" data-child-of="Step" data-o-3a8kseffqi8="" data-o-wbv6cfyrn5="">Grab any model from the Ollama library. Llama 3.2 is a good first pick.</p>
+        <code class="mt-auto block rounded-xl bg-black/45 px-4 py-3 font-mono text-[0.95rem] text-white" data-child-of="Step" data-o-3a8kseffqi8="" data-o-wbv6cfyrn5="">
+          <span class="text-home-card-accent" data-child-of="Step" data-o-3a8kseffqi8="" data-o-wbv6cfyrn5="">$</span> ollama pull llama3.2
+        </code>
+</li></div>
+      <div data-olum="{&quot;compName&quot;:&quot;Step&quot;,&quot;compId&quot;:&quot;wbv6cfyrn5&quot;}" data-child-of="Step" data-o-wbv6cfyrn5="" data-o-if="olum-no-condition">
+      <li class="flex flex-col rounded-[1.5rem] bg-white/[0.06] p-7" data-child-of="Step" data-o-wbv6cfyrn5="">
+  <span class="font-logo text-5xl font-black text-home-card-accent" data-child-of="Step" data-o-wbv6cfyrn5="">03</span>
+  <h3 class="mt-5 text-xl font-bold text-white" data-child-of="Step" data-o-wbv6cfyrn5="">Start chatting</h3>
+  <p class="mt-2 mb-6 leading-relaxed" data-child-of="Step" data-o-3a8kseffqi8="" data-o-wbv6cfyrn5="">Open TOKN, pick the model from the menu at the top, and say hello.</p>
+        <a to="/chat" href="/chat" class="mt-auto inline-flex h-12 w-fit items-center gap-2 rounded-full bg-home-card-accent px-6 font-semibold text-[oklch(0.22_0.06_140)] transition-transform hover:-translate-y-0.5" data-child-of="Step" data-o-3a8kseffqi8="" data-o-wbv6cfyrn5="">
+          Open the chat <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-[18px]" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="M5 12h14m-7-7 7 7-7 7" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div>
+        </a>
+</li></div>
+    </ol>
+  </div>
+</section></div>
+    <div data-olum="{&quot;compName&quot;:&quot;Shortcuts&quot;,&quot;compId&quot;:&quot;xzqmkebithc&quot;}" data-child-of="Shortcuts" data-o-xzqmkebithc="" data-o-if="olum-no-condition">
+      <section class="mx-auto max-w-[100rem] px-4 py-20 sm:px-8 lg:px-16 lg:py-24" data-child-of="Shortcuts" data-o-xzqmkebithc="">
+  <div class="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:items-center" data-child-of="Shortcuts" data-o-xzqmkebithc="">
+    <div data-child-of="Shortcuts" data-o-xzqmkebithc="">
+      <p class="text-sm font-semibold tracking-[0.12em] text-home-text uppercase" data-child-of="Shortcuts" data-o-xzqmkebithc="">Made for the keyboard</p>
+      <h2 class="mt-3 font-logo text-[clamp(2rem,4vw,3.25rem)] leading-[0.95] font-black tracking-[-0.04em] uppercase" data-child-of="Shortcuts" data-o-xzqmkebithc="">Keep your hands<br data-child-of="Shortcuts" data-o-xzqmkebithc="">on the keys.</h2>
+      <p class="mt-5 max-w-[28rem] text-lg leading-relaxed text-home-text" data-child-of="Shortcuts" data-o-xzqmkebithc="">Start, find and switch between chats without reaching for the mouse.</p>
+    </div>
+    <ul class="divide-y divide-home-ink/10 rounded-[1.5rem] border border-home-ink/10 bg-home-panel" data-child-of="Shortcuts" data-o-xzqmkebithc="">
+      
+        <li class="flex items-center justify-between gap-4 px-6 py-5" data-child-of="Shortcuts" data-o-xzqmkebithc="">
+          <span class="font-semibold" data-child-of="Shortcuts" data-o-xzqmkebithc="">New chat</span>
+          <span class="flex items-center gap-1.5" data-child-of="Shortcuts" data-o-xzqmkebithc="">
+            
+              <kbd class="inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-home-ink/15 border-b-[3px] bg-home-base px-2.5 font-mono text-sm font-medium" data-child-of="Shortcuts" data-o-xzqmkebithc="">Ctrl</kbd>
+            
+              <kbd class="inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-home-ink/15 border-b-[3px] bg-home-base px-2.5 font-mono text-sm font-medium" data-child-of="Shortcuts" data-o-xzqmkebithc="">N</kbd>
+            
+          </span>
+        </li>
+      
+        <li class="flex items-center justify-between gap-4 px-6 py-5" data-child-of="Shortcuts" data-o-xzqmkebithc="">
+          <span class="font-semibold" data-child-of="Shortcuts" data-o-xzqmkebithc="">Search chats</span>
+          <span class="flex items-center gap-1.5" data-child-of="Shortcuts" data-o-xzqmkebithc="">
+            
+              <kbd class="inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-home-ink/15 border-b-[3px] bg-home-base px-2.5 font-mono text-sm font-medium" data-child-of="Shortcuts" data-o-xzqmkebithc="">Ctrl</kbd>
+            
+              <kbd class="inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-home-ink/15 border-b-[3px] bg-home-base px-2.5 font-mono text-sm font-medium" data-child-of="Shortcuts" data-o-xzqmkebithc="">K</kbd>
+            
+          </span>
+        </li>
+      
+        <li class="flex items-center justify-between gap-4 px-6 py-5" data-child-of="Shortcuts" data-o-xzqmkebithc="">
+          <span class="font-semibold" data-child-of="Shortcuts" data-o-xzqmkebithc="">Previous / next chat</span>
+          <span class="flex items-center gap-1.5" data-child-of="Shortcuts" data-o-xzqmkebithc="">
+            
+              <kbd class="inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-home-ink/15 border-b-[3px] bg-home-base px-2.5 font-mono text-sm font-medium" data-child-of="Shortcuts" data-o-xzqmkebithc="">Alt</kbd>
+            
+              <kbd class="inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-home-ink/15 border-b-[3px] bg-home-base px-2.5 font-mono text-sm font-medium" data-child-of="Shortcuts" data-o-xzqmkebithc="">↑ / ↓</kbd>
+            
+          </span>
+        </li>
+      
+    </ul>
+  </div>
+</section></div>
+    <div data-olum="{&quot;compName&quot;:&quot;CallToAction&quot;,&quot;compId&quot;:&quot;ooesesh0z6&quot;}" data-child-of="CallToAction" data-o-ooesesh0z6="" data-o-if="olum-no-condition">
+      <section class="px-4 pb-20 sm:px-8 lg:px-10 lg:pb-24" data-child-of="CallToAction" data-o-ooesesh0z6="">
+  <div class="relative mx-auto max-w-[100rem] overflow-hidden rounded-[2rem] bg-home-field px-6 py-16 text-center sm:px-10 lg:py-24" data-child-of="CallToAction" data-o-ooesesh0z6="">
+    <div aria-hidden="true" class="pointer-events-none absolute -top-20 -left-24 h-[10rem] w-[34rem] -rotate-45 rounded-full bg-home-field-soft" data-child-of="CallToAction" data-o-ooesesh0z6=""></div>
+    <div aria-hidden="true" class="pointer-events-none absolute -right-24 -bottom-20 h-[10rem] w-[34rem] -rotate-45 rounded-full bg-home-field-soft" data-child-of="CallToAction" data-o-ooesesh0z6=""></div>
+    <div class="relative" data-child-of="CallToAction" data-o-ooesesh0z6="">
+      <h2 class="font-logo text-[clamp(2.5rem,7vw,5.5rem)] leading-[0.88] font-black tracking-[-0.045em] uppercase" data-child-of="CallToAction" data-o-ooesesh0z6="">Your models<br data-child-of="CallToAction" data-o-ooesesh0z6="">are waiting.</h2>
+      <p class="mx-auto mt-6 max-w-[30rem] text-lg leading-snug font-semibold" data-child-of="CallToAction" data-o-ooesesh0z6="">Open TOKN and start a conversation with any model on your machine.</p>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-3" data-child-of="CallToAction" data-o-ooesesh0z6="">
+        <a to="/chat" href="/chat" class="inline-flex h-[3.15rem] items-center gap-2 rounded-full bg-home-ink px-8 font-semibold text-home-ink-foreground shadow-lg shadow-home-ink/20 transition-transform hover:-translate-y-0.5" data-child-of="CallToAction" data-o-ooesesh0z6="">
+          Start Chatting <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:stroke-current [&amp;_svg]:pointer-events-none size-[18px]" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" data-child-of="Icon" data-o-3eukzbyrht3=""><path d="M5 12h14m-7-7 7 7-7 7" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div>
+        </a>
+        <a href="https://github.com/eissapk/tokn" target="_blank" rel="noreferrer noopener" class="inline-flex h-[3.15rem] items-center gap-2 rounded-full border border-home-ink/20 px-7 font-semibold transition-colors hover:bg-home-field-soft" data-child-of="CallToAction" data-o-ooesesh0z6="">
+          <div data-olum="{&quot;compName&quot;:&quot;Icon&quot;,&quot;compId&quot;:&quot;3eukzbyrht3&quot;}" data-child-of="Icon" data-o-3eukzbyrht3="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center justify-center [&amp;_svg]:w-full [&amp;_svg]:h-full [&amp;_svg]:text-current [&amp;_svg]:pointer-events-none size-[18px] [&amp;_svg]:stroke-none" data-child-of="Icon" data-o-3eukzbyrht3=""><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 512 512" data-child-of="Icon" data-o-3eukzbyrht3=""><path fill="currentColor" d="M216.5 362.5c-66-8-112.5-55.5-112.5-117 0-25 9-52 24-70-6.5-16.5-5.5-51.5 2-66 20-2.5 47 8 63 22.5 19-6 39-9 63.5-9s44.5 3 62.5 8.5c15.5-14 43-24.5 63-22 7 13.5 8 48.5 1.5 65.5 16 19 24.5 44.5 24.5 70.5 0 61.5-46.5 108-113.5 116.5 17 11 28.5 35 28.5 62.5v52c0 15 12.5 23.5 27.5 17.5C441 459.5 512 369 512 257 512 115.5 397 0 255.5 0S0 115.5 0 257c0 111 70.5 203 165.5 237.5 13.5 5 26.5-4 26.5-17.5v-40c-7 3-16 5-24 5-33 0-52.5-18-66.5-51.5-5.5-13.5-11.5-21.5-23-23-6-.5-8-3-8-6 0-6 10-10.5 20-10.5 14.5 0 27 9 40 27.5 10 14.5 20.5 21 33 21s20.5-4.5 32-16c8.5-8.5 15-16 21-21" data-child-of="Icon" data-o-3eukzbyrht3=""></path></svg></span></div> View on GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+</section></div>
+  </main>
+
+  <div data-olum="{&quot;compName&quot;:&quot;HomeFooter&quot;,&quot;compId&quot;:&quot;ufwirehcdf&quot;}" data-child-of="HomeFooter" data-o-ufwirehcdf="" data-o-if="olum-no-condition">
+      <footer class="border-t border-home-ink/10" data-child-of="HomeFooter" data-o-ufwirehcdf="">
+  <div class="mx-auto grid max-w-[100rem] gap-10 px-4 py-14 sm:px-8 md:grid-cols-[1.6fr_1fr_1fr] lg:px-16" data-child-of="HomeFooter" data-o-ufwirehcdf="">
+    <div data-child-of="HomeFooter" data-o-ufwirehcdf="">
+      <a to="/" href="/" class="text-[1.15rem] active" aria-label="TOKN home" data-child-of="HomeFooter" data-o-ufwirehcdf=""><div data-olum="{&quot;compName&quot;:&quot;Logo&quot;,&quot;compId&quot;:&quot;6migetd8eb&quot;}" data-child-of="Logo" data-o-6migetd8eb="" data-o-if="olum-no-condition">
+      <span class="inline-flex items-center gap-2 text-logo-ink" data-child-of="Logo" data-o-6migetd8eb="">
+  <svg viewBox="285 130 465 345" class="h-[1.4em] w-auto shrink-0" aria-hidden="true" focusable="false" data-child-of="Logo" data-o-6migetd8eb="">
+    <defs data-child-of="Logo" data-o-6migetd8eb="">
+      <linearGradient id="tokn-bar-ee1ezy5" x1="300" y1="0" x2="640" y2="0" gradientUnits="userSpaceOnUse" data-child-of="Logo" data-o-6migetd8eb="">
+        <stop offset="0" style="stop-color: var(--logo-ink)" data-child-of="Logo" data-o-6migetd8eb=""></stop>
+        <stop offset="1" style="stop-color: var(--logo-glow)" data-child-of="Logo" data-o-6migetd8eb=""></stop>
+      </linearGradient>
+    </defs>
+    <path fill="url(#tokn-bar-ee1ezy5)" d="M290 268 L321 209 C330 193 343 185 372 185 L568 185 C606 185 632 203 643 226 C628 252 600 268 566 268 Z" data-child-of="Logo" data-o-6migetd8eb=""></path>
+    <path fill="currentColor" d="M643 226 C668 268 662 322 626 349 L516 421 L516 312 C516 303 522 298 534 298 C590 297 628 266 643 226 Z" data-child-of="Logo" data-o-6migetd8eb=""></path>
+    <path fill="currentColor" d="M396 298 L466 298 L466 470 L386 421 C362 406 351 383 362 360 Z" data-child-of="Logo" data-o-6migetd8eb=""></path>
+    <path fill="currentColor" d="M693 138 C698 168 712 182 743 188 C712 194 698 208 693 238 C688 208 674 194 643 188 C674 182 688 168 693 138 Z" data-child-of="Logo" data-o-6migetd8eb=""></path>
+  </svg>
+  
+    <span class="font-logo text-[1.35em] leading-none font-black tracking-[-0.02em]" data-child-of="Logo" data-o-6migetd8eb="">TOKN</span>
+  
+</span></div></a>
+      <p class="mt-4 max-w-[22rem] leading-relaxed text-home-text" data-child-of="HomeFooter" data-o-ufwirehcdf="">A beautiful, open-source interface for running and interacting with AI models.</p>
+    </div>
+
+    <nav aria-label="Product" data-child-of="HomeFooter" data-o-ufwirehcdf="">
+      <h3 class="text-sm font-semibold tracking-[0.12em] text-home-text uppercase" data-child-of="HomeFooter" data-o-ufwirehcdf="">Product</h3>
+      <ul class="mt-4 space-y-3 font-medium" data-child-of="HomeFooter" data-o-ufwirehcdf="">
+        <li data-child-of="HomeFooter" data-o-ufwirehcdf=""><a to="/chat" href="/chat" class="hover:underline" data-child-of="HomeFooter" data-o-ufwirehcdf="">Start chatting</a></li>
+        <li data-child-of="HomeFooter" data-o-ufwirehcdf=""><a href="#features" class="hover:underline" data-child-of="HomeFooter" data-o-ufwirehcdf="">Features</a></li>
+        <li data-child-of="HomeFooter" data-o-ufwirehcdf=""><a href="#get-started" class="hover:underline" data-child-of="HomeFooter" data-o-ufwirehcdf="">Get started</a></li>
+      </ul>
+    </nav>
+
+    <nav aria-label="Resources" data-child-of="HomeFooter" data-o-ufwirehcdf="">
+      <h3 class="text-sm font-semibold tracking-[0.12em] text-home-text uppercase" data-child-of="HomeFooter" data-o-ufwirehcdf="">Resources</h3>
+      <ul class="mt-4 space-y-3 font-medium" data-child-of="HomeFooter" data-o-ufwirehcdf="">
+        <li data-child-of="HomeFooter" data-o-ufwirehcdf=""><a href="https://github.com/eissapk/tokn#readme" target="_blank" rel="noreferrer noopener" class="hover:underline" data-child-of="HomeFooter" data-o-ufwirehcdf="">Docs</a></li>
+        <li data-child-of="HomeFooter" data-o-ufwirehcdf=""><a href="https://github.com/eissapk/tokn" target="_blank" rel="noreferrer noopener" class="hover:underline" data-child-of="HomeFooter" data-o-ufwirehcdf="">GitHub</a></li>
+        <li data-child-of="HomeFooter" data-o-ufwirehcdf=""><a href="https://ollama.com" target="_blank" rel="noreferrer noopener" class="hover:underline" data-child-of="HomeFooter" data-o-ufwirehcdf="">Ollama</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="mx-auto flex max-w-[100rem] flex-col gap-2 border-t border-home-ink/10 px-4 py-6 text-sm text-home-text sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-16" data-child-of="HomeFooter" data-o-ufwirehcdf="">
+    <p data-child-of="HomeFooter" data-o-ufwirehcdf="">© 2026 TOKN. Open source.</p>
+    <p data-child-of="HomeFooter" data-o-ufwirehcdf="">Built with <a href="https://olumjs.top" target="_blank" rel="noreferrer noopener" class="font-medium text-home-ink hover:underline" data-child-of="HomeFooter" data-o-ufwirehcdf="">Olum.js</a></p>
+  </div>
+</footer></div>
+</div></div></div>
+
+</body></html>
