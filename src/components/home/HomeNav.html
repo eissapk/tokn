@@ -3,7 +3,7 @@
   import Logo from "../Logo";
   import ThemeToggle from "./ThemeToggle";
   import { ArrowRight, Github } from "../../utils/icons";
-  import { DOCS, REPO } from "../../utils/links";
+  import { REPO } from "../../utils/links";
 </script>
 
 <header class="relative z-10 mx-auto flex max-w-[100rem] items-center gap-4 px-4 py-5 sm:px-8 lg:px-16">
@@ -11,16 +11,8 @@
     <Logo wordmark="{true}" />
   </a>
 
-  <nav class="ml-6 hidden items-center gap-8 text-[0.95rem] font-medium md:flex" aria-label="Main">
-    <a to="/" href="/" class="hover:opacity-70">Home</a>
-    <a href="{DOCS}" target="_blank" rel="noreferrer noopener" class="hover:opacity-70">Docs</a>
-    <a href="{REPO}" target="_blank" rel="noreferrer noopener" class="hover:opacity-70">GitHub</a>
-  </nav>
-
-  <span class="ml-2 hidden h-5 w-px bg-home-ink/20 md:block"></span>
-  <ThemeToggle />
-
   <div class="ml-auto flex items-center gap-3">
+    <ThemeToggle />
     <a
       href="{REPO}"
       target="_blank"

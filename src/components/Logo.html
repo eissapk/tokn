@@ -7,6 +7,11 @@
   // `wordmark` adds the "TOKN" name next to it.
   const { class: className = "", wordmark = false, textClass = "" } = props();
 
+  // Each logo needs its own gradient id. With a shared id, url(#…) picks the first
+  // gradient in the page, so every logo drew its bar in the first logo's colours
+  // (the chat avatar's bar vanished: dark green from the sidebar logo on dark green).
+  const gradientId = `tokn-bar-${Math.random().toString(36).slice(2, 9)}`;
+
   const classes = () => twMerge("inline-flex items-center gap-2 text-logo-ink", className);
   const textClasses = () => twMerge("font-logo text-[1.35em] leading-none font-black tracking-[-0.02em]", textClass);
 </script>
@@ -14,12 +19,12 @@
 <span class="{classes()}">
   <svg viewBox="285 130 465 345" class="h-[1.4em] w-auto shrink-0" aria-hidden="true" focusable="false">
     <defs>
-      <linearGradient id="tokn-bar" x1="300" y1="0" x2="640" y2="0" gradientUnits="userSpaceOnUse">
+      <linearGradient id="{gradientId}" x1="300" y1="0" x2="640" y2="0" gradientUnits="userSpaceOnUse">
         <stop offset="0" style="stop-color: var(--logo-ink)" />
         <stop offset="1" style="stop-color: var(--logo-glow)" />
       </linearGradient>
     </defs>
-    <path fill="url(#tokn-bar)" d="M290 268 L321 209 C330 193 343 185 372 185 L568 185 C606 185 632 203 643 226 C628 252 600 268 566 268 Z" />
+    <path fill="url(#{gradientId})" d="M290 268 L321 209 C330 193 343 185 372 185 L568 185 C606 185 632 203 643 226 C628 252 600 268 566 268 Z" />
     <path fill="currentColor" d="M643 226 C668 268 662 322 626 349 L516 421 L516 312 C516 303 522 298 534 298 C590 297 628 266 643 226 Z" />
     <path fill="currentColor" d="M396 298 L466 298 L466 470 L386 421 C362 406 351 383 362 360 Z" />
     <path fill="currentColor" d="M693 138 C698 168 712 182 743 188 C712 194 698 208 693 238 C688 208 674 194 643 188 C674 182 688 168 693 138 Z" />

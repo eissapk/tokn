@@ -1,8 +1,8 @@
-# Buildr
+# TOKN
 
-A web application built with [Olum.js](https://olumjs.top/), a minimal JavaScript framework for building reactive single-page applications with HTML, CSS, and JavaScript.
+A beautiful, open-source interface for chatting with AI models running on your own machine through [Ollama](https://ollama.com) (`ollama serve`, at http://localhost:11434). Nothing leaves your computer.
 
-A chat app for AI models running on your own machine through [Ollama](https://ollama.com) (`ollama serve`, at http://localhost:11434).
+Built with [Olum.js](https://olumjs.top/), a minimal JavaScript framework for reactive single-page apps written in plain HTML, CSS and JavaScript.
 
 ## How the code is organized
 
@@ -15,18 +15,20 @@ src/
 │   ├── Logo.html          the TOKN logo (shared by both pages)
 │   ├── home/              one file per home page section (HomeNav, Hero, Showcase, Features…)
 │   ├── chat/
-│   │   ├── Sidebar.html       saved chats + search icon
+│   │   ├── Sidebar.html       logo, new chat, search, saved chats by date, server status, theme
 │   │   │   └── SessionItem.html   one saved chat (open / star / delete)
 │   │   ├── SearchDialog.html  the chat search palette (search icon or Ctrl+K)
 │   │   │   ├── SearchResults.html the chats listed in it
 │   │   │   └── SearchResult.html  one chat in it
-│   │   ├── Topbar.html        model picker, context meter, new chat, theme
-│   │   │   ├── ModelOption.html   one model in the picker
+│   │   ├── Topbar.html        sidebar toggle, context meter (+ logo / new chat when the sidebar is hidden)
 │   │   │   └── ContextMeter.html  how full the model's memory is
 │   │   ├── Thread.html        the list of messages
+│   │   │   ├── Welcome.html       the empty state: prompts to start from, or how to start Ollama
 │   │   │   └── ChatMessage.html   one message (with thinking + copy buttons)
-│   │   ├── Composer.html      the message box: type, attach files, send / stop
-│   │   └── FileChip.html      one attached file
+│   │   ├── Composer.html      the message box: type, attach files, send / stop, Think toggle
+│   │   │   ├── ModelPicker.html   the model menu under the send button
+│   │   │   │   └── ModelOption.html   one model in it
+│   │   │   └── FileChip.html      one attached file
 │   └── ui/                olum-ui components (added with `npx olum add <name>`)
 └── utils/
     ├── store.js           ALL app state and actions (send, newChat, openSession…)
@@ -43,11 +45,20 @@ Rule of thumb: **components only draw things and call `chat.something()`; the lo
 
 ## Getting Started
 
-### Installation
-
-Install the project dependencies:
+You need [Ollama](https://ollama.com) running with at least one model:
 
 ```bash
+ollama serve
+ollama pull llama3.2
+```
+
+### Installation
+
+Clone the repo and install the project dependencies:
+
+```bash
+git clone https://github.com/eissapk/tokn
+cd tokn
 npm install
 ```
 
