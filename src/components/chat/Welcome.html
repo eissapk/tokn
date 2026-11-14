@@ -3,17 +3,56 @@
   import { chat } from "../../utils/store";
   import { OLLAMA } from "../../utils/links";
   import { openSettings } from "../../utils/settings";
-  import { ArrowRight, Code, Lightbulb, Mail, RotateCw, Scale, Settings } from "../../utils/icons";
+  import {
+    ArrowRight,
+    BookOpen,
+    Bug,
+    ChefHat,
+    Code,
+    Database,
+    GraduationCap,
+    Languages,
+    Lightbulb,
+    Mail,
+    MapIcon,
+    PenLine,
+    Regex,
+    RotateCw,
+    Scale,
+    Settings,
+    Terminal,
+  } from "../../utils/icons";
 
   // What the Thread shows before the first message: a greeting with prompts to
   // start from, or, when there's nothing to talk to yet, how to fix that.
 
+  // The pool of starter prompts. Each new chat shows a random few, so the screen stays short.
   const suggestions = [
     { icon: Code, title: "Explain some code", text: "How does the JavaScript event loop work?", prompt: "Explain how the JavaScript event loop works, with a short example." },
     { icon: Lightbulb, title: "Brainstorm ideas", text: "Names for a reading-tracker side project", prompt: "Give me 8 name ideas for a weekend side project that tracks the books I read. Keep them short." },
     { icon: Mail, title: "Draft a message", text: "Politely move a meeting to next week", prompt: "Write a short, friendly email asking to move our meeting to next week." },
     { icon: Scale, title: "Weigh the options", text: "SQLite or Postgres for a small app?", prompt: "What are the trade-offs between SQLite and Postgres for a small web app? End with a recommendation." },
+    { icon: Bug, title: "Fix a bug", text: "Why does this loop print 3 three times?", prompt: "Why does this print 3 three times instead of 0, 1, 2? Show the fix.\n\nfor (var i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i));\n}" },
+    { icon: Regex, title: "Write a regex", text: "Match dates like 2026-11-14", prompt: "Write a regex that matches dates like 2026-11-14 (YYYY-MM-DD) and explain each part." },
+    { icon: Database, title: "Write a query", text: "Top 5 customers by total spend", prompt: "Write a SQL query that returns the top 5 customers by total spend, from tables customers(id, name) and orders(customer_id, amount)." },
+    { icon: Terminal, title: "Find a command", text: "List the biggest files in a folder", prompt: "Give me a Linux shell command that lists the 10 biggest files in a folder and its subfolders, with human-readable sizes." },
+    { icon: GraduationCap, title: "Learn something", text: "How does HTTPS keep data private?", prompt: "Explain how HTTPS keeps data private, step by step, for someone new to networking." },
+    { icon: BookOpen, title: "Explain simply", text: "What is a vector database?", prompt: "Explain what a vector database is and when I'd use one, in plain language with an everyday analogy." },
+    { icon: PenLine, title: "Polish your writing", text: "Make a sentence clearer and shorter", prompt: "Rewrite this to be clearer and shorter, and give two alternatives:\n\n\"Due to the fact that we were not able to finish the work in time, the release has been pushed back.\"" },
+    { icon: Languages, title: "Translate", text: "“Thanks for your help” in 3 languages", prompt: "How do I say \"thanks for your help\" in Spanish, French and German? Note which ones are formal." },
+    { icon: MapIcon, title: "Plan a trip", text: "A relaxed 3-day weekend in Lisbon", prompt: "Plan a relaxed 3-day weekend in Lisbon: a few sights per day, good areas to eat, and how to get around." },
+    { icon: ChefHat, title: "What's for dinner?", text: "Something with rice, eggs and spinach", prompt: "Suggest a quick dinner I can make with rice, eggs and spinach. Give the steps." },
   ];
+
+  // Four at random (Fisher–Yates), picked once when the welcome screen appears.
+  const shown = (() => {
+    const pool = [...suggestions];
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    return pool.slice(0, 4);
+  })();
 
   const ask = (prompt) => chat.model && !chat.sending && chat.send(prompt, [], false);
   const changeServer = () => openSettings();
@@ -95,7 +134,7 @@
     <p class="mt-5 max-w-[28rem] text-[1.05rem] leading-relaxed text-muted-foreground">Ask anything. It runs on your machine, so your chats never leave it.</p>
 
     <div class="mt-10 grid w-full gap-3 text-left sm:grid-cols-2">
-      <for each="s of suggestions" key="s.title">
+      <for each="s of shown" key="s.title">
         <button
           type="button"
           class="group flex cursor-pointer items-center gap-4 rounded-[1.25rem] text-left border border-border bg-background p-4 transition-[translate,border-color,background-color] outline-none hover:-translate-y-0.5 hover:border-home-ink/25 hover:bg-home-tint/40 focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50"
