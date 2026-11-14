@@ -29,7 +29,8 @@
 
 <MessageScrollerProvider>
   <MessageScroller class="flex-1">
-    <MessageScrollerViewport>
+    <!-- Soft edges where messages scroll under the top bar and above the composer. -->
+    <MessageScrollerViewport class="[mask-image:linear-gradient(to_bottom,transparent,black_1.5rem,black_calc(100%-1.5rem),transparent)]">
       <MessageScrollerContent class="mx-auto w-full max-w-measure gap-8 px-4 py-6 sm:px-6">
         <if when="!chat.messages.length"><Welcome /></if>
         <for each="m of chat.messages" key="m.id">

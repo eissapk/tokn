@@ -1,0 +1,40 @@
+<script>
+  import DropdownMenu from "../ui/DropdownMenu/DropdownMenu";
+  import DropdownMenuContent from "../ui/DropdownMenu/DropdownMenuContent";
+  import DropdownMenuTrigger from "../ui/DropdownMenu/DropdownMenuTrigger";
+  import Icon from "../ui/Icon/Icon";
+  import ModelOption from "./ModelOption";
+  import { chat } from "../../utils/store";
+  import { OLLAMA_URL } from "../../utils/ollama";
+  import { ChevronDown } from "../../utils/icons";
+
+  // The model menu under the Composer, below the send button. The dot is green when the local Ollama server answers.
+  // It sits at the bottom right of the window, so the menu opens upward from its right edge.
+  const online = () => chat.server === "connected";
+</script>
+
+<DropdownMenu>
+  <DropdownMenuTrigger class="rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
+    <span class="flex h-8 items-center gap-2 rounded-full border border-border bg-background pr-2.5 pl-3 text-[13px] font-semibold transition-colors hover:bg-muted">
+      <span class="size-2 shrink-0 rounded-full {online() ? 'bg-signal' : 'bg-muted-foreground'}" title="{online() ? 'Connected to Ollama' : 'No local server'}"></span>
+      <if when="chat.model"><span class="max-w-[10rem] truncate">{chat.current().label}</span></if>
+      <else><span class="font-medium text-muted-foreground">{chat.server === "connecting" ? "Loading models…" : "No models"}</span></else>
+      <Icon icon="{ChevronDown}" class="size-3.5 text-muted-foreground" />
+    </span>
+  </DropdownMenuTrigger>
+
+  <DropdownMenuContent align="end" class="top-auto bottom-full mt-0 mb-2 max-h-[min(30rem,70vh)] w-[min(26rem,calc(100vw-2rem))] overflow-y-auto rounded-2xl p-2 shadow-xl shadow-black/10">
+    <p class="flex items-center justify-between px-2.5 pt-1 pb-2 text-xs font-medium text-muted-foreground">
+      Installed models
+      <span class="tnum font-mono">{chat.models.length}</span>
+    </p>
+    <div class="flex flex-col gap-0.5">
+      <for each="m of chat.models" key="m.name"><ModelOption model="{m}" /></for>
+    </div>
+    <if when="!chat.models.length">
+      <p class="px-2.5 pt-1 pb-2 text-[13px] text-muted-foreground">
+        {chat.server === "offline" ? "Can't reach the server at " + OLLAMA_URL : "No models installed"}
+      </p>
+    </if>
+  </DropdownMenuContent>
+</DropdownMenu>

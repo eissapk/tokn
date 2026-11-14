@@ -1,24 +1,17 @@
 <script>
   import Button from "../ui/Button/Button";
-  import DropdownMenu from "../ui/DropdownMenu/DropdownMenu";
-  import DropdownMenuContent from "../ui/DropdownMenu/DropdownMenuContent";
-  import DropdownMenuTrigger from "../ui/DropdownMenu/DropdownMenuTrigger";
   import Icon from "../ui/Icon/Icon";
   import Logo from "../Logo";
   import Tooltip from "../ui/Tooltip/Tooltip";
   import TooltipContent from "../ui/Tooltip/TooltipContent";
   import TooltipTrigger from "../ui/Tooltip/TooltipTrigger";
   import ContextMeter from "./ContextMeter";
-  import ModelOption from "./ModelOption";
   import { chat } from "../../utils/store";
-  import { OLLAMA_URL } from "../../utils/ollama";
-  import { ChevronDown, PanelLeft, SquarePen } from "../../utils/icons";
+  import { PanelLeft, SquarePen } from "../../utils/icons";
 
   // Component tags take functions by name, so store actions get local wrappers.
   const newChat = () => chat.newChat();
   const toggleSidebar = () => chat.toggleSidebar();
-
-  const online = () => chat.server === "connected";
 
   // Tooltips open upward by default, which would put them off the top of the window.
   const below = "top-full bottom-auto mt-2 mb-0 [&>div:last-child]:-top-1 [&>div:last-child]:bottom-auto";
@@ -35,38 +28,6 @@
     </TooltipTrigger>
     <TooltipContent class="{belowLeft}">{chat.sidebar ? "Hide chats" : "Show chats"}</TooltipContent>
   </Tooltip>
-
-  <!-- With the sidebar closed, its logo and New Chat move up here. -->
-  <if when="!chat.sidebar">
-    <a to="/" href="/" class="mr-1 text-[1rem]" aria-label="TOKN home"><Logo /></a>
-  </if>
-
-  <!-- Model picker. The dot is green when the local Ollama server answers. -->
-  <DropdownMenu>
-    <DropdownMenuTrigger class="rounded-xl outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
-      <span class="flex h-9 items-center gap-2 rounded-xl border border-border bg-background pr-2.5 pl-3 text-sm font-semibold transition-colors hover:bg-muted">
-        <span class="size-2 shrink-0 rounded-full {online() ? 'bg-signal' : 'bg-muted-foreground'}"></span>
-        <if when="chat.model"><span class="max-w-[14rem] truncate">{chat.current().label}</span></if>
-        <else><span class="font-medium text-muted-foreground">{chat.server === "connecting" ? "Loading models…" : "No models"}</span></else>
-        <Icon icon="{ChevronDown}" class="size-4 text-muted-foreground" />
-      </span>
-    </DropdownMenuTrigger>
-
-    <DropdownMenuContent class="mt-2 w-[min(26rem,calc(100vw-2rem))] rounded-2xl p-2 shadow-xl shadow-black/10">
-      <p class="flex items-center justify-between px-2.5 pt-1 pb-2 text-xs font-medium text-muted-foreground">
-        Installed models
-        <span class="tnum font-mono">{chat.models.length}</span>
-      </p>
-      <div class="flex flex-col gap-0.5">
-        <for each="m of chat.models" key="m.name"><ModelOption model="{m}" /></for>
-      </div>
-      <if when="!chat.models.length">
-        <p class="px-2.5 pt-1 pb-2 text-[13px] text-muted-foreground">
-          {chat.server === "offline" ? "Can't reach the server at " + OLLAMA_URL : "No models installed"}
-        </p>
-      </if>
-    </DropdownMenuContent>
-  </DropdownMenu>
 
   <div class="flex-1"></div>
 

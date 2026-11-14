@@ -8,7 +8,10 @@
   // One saved chat in the Sidebar.
   const { session } = props();
 
-  const open = () => chat.openSession(session.id);
+  const open = () => {
+    chat.openSession(session.id);
+    chat.closeSidebarIfNarrow();
+  };
   const star = () => chat.toggleStar(session.id);
   const remove = () => chat.removeSession(session.id);
   const isOpen = () => session.id === chat.sessionId;

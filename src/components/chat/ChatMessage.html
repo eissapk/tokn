@@ -26,6 +26,8 @@
   const live = () => chat.sending && chat.messages[chat.messages.length - 1]?.id === message.id;
   // Nothing has arrived yet: show typing dots instead of an empty bubble.
   const waiting = () => live() && !message.content && !message.thinking;
+  // Older replies show their Copy button on hover, so a long thread isn't a column of buttons.
+  const latest = () => chat.messages[chat.messages.length - 1]?.id === message.id;
 
   const copyReply = async () => {
     await navigator.clipboard.writeText(message.content);
@@ -68,7 +70,7 @@
 </if>
 
 <else>
-  <div class="flex items-start gap-3">
+  <div class="group/reply flex items-start gap-3">
     <!-- The TOKN mark in lime on deep green, as on the home page. -->
     <span aria-hidden="true" class="{avatar} bg-[oklch(0.27_0.075_140)] text-[0.85rem] [--logo-glow:var(--home-card-accent)] [--logo-ink:var(--home-card-accent)] dark:ring-1 dark:ring-home-card-accent/25">
       <Logo />
@@ -113,7 +115,7 @@
           variant="ghost"
           size="xs"
           ariaLabel="Copy response"
-          class="-mt-0.5 ml-1 gap-1.5 rounded-full px-2.5 text-muted-foreground hover:bg-home-tint/60"
+          class="-mt-0.5 ml-1 gap-1.5 rounded-full px-2.5 text-muted-foreground transition-opacity hover:bg-home-tint/60 {latest() || state.copied ? '' : 'opacity-0 group-hover/reply:opacity-100 focus-visible:opacity-100'}"
           onclick="{copyReply}"
         >
           <Icon icon="{state.copied ? Check : Copy}" class="size-3.5" />

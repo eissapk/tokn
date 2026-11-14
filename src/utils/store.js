@@ -120,6 +120,11 @@ export const chat = store({
     this.sidebar = !this.sidebar;
   },
 
+  // Below 768px the sidebar covers the chat, so it gets out of the way once a chat is picked.
+  closeSidebarIfNarrow() {
+    if (window.innerWidth < 768) this.sidebar = false;
+  },
+
   /* ---- chatting ---- */
 
   async send(text, files, think) {

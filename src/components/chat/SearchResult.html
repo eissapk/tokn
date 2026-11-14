@@ -9,7 +9,10 @@
   // One chat in the SearchDialog. Picking it opens that chat.
   const { session, query = "" } = props();
 
-  const open = () => chat.openSession(session.id);
+  const open = () => {
+    chat.openSession(session.id);
+    chat.closeSidebarIfNarrow();
+  };
   // Where the match is, when it's inside a message rather than the title.
   const snippet = () => snippetFor(session, query);
 </script>
