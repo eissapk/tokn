@@ -1,13 +1,13 @@
 <script>
   import { onMount } from "olum";
-  import MessageScroller from "./ui/MessageScroller/MessageScroller";
-  import MessageScrollerButton from "./ui/MessageScroller/MessageScrollerButton";
-  import MessageScrollerContent from "./ui/MessageScroller/MessageScrollerContent";
-  import MessageScrollerItem from "./ui/MessageScroller/MessageScrollerItem";
-  import MessageScrollerProvider from "./ui/MessageScroller/MessageScrollerProvider";
-  import MessageScrollerViewport from "./ui/MessageScroller/MessageScrollerViewport";
+  import MessageScroller from "../ui/MessageScroller/MessageScroller";
+  import MessageScrollerButton from "../ui/MessageScroller/MessageScrollerButton";
+  import MessageScrollerContent from "../ui/MessageScroller/MessageScrollerContent";
+  import MessageScrollerItem from "../ui/MessageScroller/MessageScrollerItem";
+  import MessageScrollerProvider from "../ui/MessageScroller/MessageScrollerProvider";
+  import MessageScrollerViewport from "../ui/MessageScroller/MessageScrollerViewport";
   import ChatMessage from "./ChatMessage";
-  import { chat } from "../utils/store";
+  import { chat } from "../../utils/store";
 
   // Keep scrolled to the newest text while it streams, unless the reader has scrolled up.
   onMount(() => {

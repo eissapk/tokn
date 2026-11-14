@@ -1,12 +1,12 @@
 <script>
   import { props } from "olum";
-  import Attachment from "./ui/Attachment/Attachment";
-  import AttachmentAction from "./ui/Attachment/AttachmentAction";
-  import AttachmentContent from "./ui/Attachment/AttachmentContent";
-  import AttachmentMedia from "./ui/Attachment/AttachmentMedia";
-  import AttachmentTitle from "./ui/Attachment/AttachmentTitle";
-  import Icon from "./ui/Icon/Icon";
-  import { FileText, X } from "../utils/icons";
+  import Attachment from "../ui/Attachment/Attachment";
+  import AttachmentAction from "../ui/Attachment/AttachmentAction";
+  import AttachmentContent from "../ui/Attachment/AttachmentContent";
+  import AttachmentMedia from "../ui/Attachment/AttachmentMedia";
+  import AttachmentTitle from "../ui/Attachment/AttachmentTitle";
+  import Icon from "../ui/Icon/Icon";
+  import { FileText, X } from "../../utils/icons";
 
   // One attached file. Pass `onremove` to show an × button; it is called with the file's id.
   const { file, onremove } = props();

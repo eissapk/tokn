@@ -1,6 +1,6 @@
 <script>
-  import Progress from "./ui/Progress/Progress";
-  import { chat } from "../utils/store";
+  import Progress from "../ui/Progress/Progress";
+  import { chat } from "../../utils/store";
 
   // How much of the model's context window this chat uses. Turns amber past 80%.
   const used = () => chat.contextUsed();

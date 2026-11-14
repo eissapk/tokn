@@ -1,21 +1,21 @@
 <script>
   import { onMount, props } from "olum";
-  import Bubble from "./ui/Bubble/Bubble";
-  import BubbleContent from "./ui/Bubble/BubbleContent";
-  import Button from "./ui/Button/Button";
-  import Collapsible from "./ui/Collapsible/Collapsible";
-  import CollapsibleContent from "./ui/Collapsible/CollapsibleContent";
-  import CollapsibleTrigger from "./ui/Collapsible/CollapsibleTrigger";
-  import Icon from "./ui/Icon/Icon";
-  import Message from "./ui/Message/Message";
-  import MessageContent from "./ui/Message/MessageContent";
-  import MessageFooter from "./ui/Message/MessageFooter";
-  import Tooltip from "./ui/Tooltip/Tooltip";
-  import TooltipContent from "./ui/Tooltip/TooltipContent";
-  import TooltipTrigger from "./ui/Tooltip/TooltipTrigger";
+  import Bubble from "../ui/Bubble/Bubble";
+  import BubbleContent from "../ui/Bubble/BubbleContent";
+  import Button from "../ui/Button/Button";
+  import Collapsible from "../ui/Collapsible/Collapsible";
+  import CollapsibleContent from "../ui/Collapsible/CollapsibleContent";
+  import CollapsibleTrigger from "../ui/Collapsible/CollapsibleTrigger";
+  import Icon from "../ui/Icon/Icon";
+  import Message from "../ui/Message/Message";
+  import MessageContent from "../ui/Message/MessageContent";
+  import MessageFooter from "../ui/Message/MessageFooter";
+  import Tooltip from "../ui/Tooltip/Tooltip";
+  import TooltipContent from "../ui/Tooltip/TooltipContent";
+  import TooltipTrigger from "../ui/Tooltip/TooltipTrigger";
   import FileChip from "./FileChip";
-  import { copyFace, render } from "../utils/markdown";
-  import { Check, ChevronDown, Copy } from "../utils/icons";
+  import { copyFace, render } from "../../utils/markdown";
+  import { Check, ChevronDown, Copy } from "../../utils/icons";
 
   // One message in the Thread: a bubble for the user, rendered markdown for the model.
   const { message } = props();

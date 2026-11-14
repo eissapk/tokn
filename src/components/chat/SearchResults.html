@@ -1,9 +1,9 @@
 <script>
   import { onMount } from "olum";
-  import CommandGroup from "./ui/Command/CommandGroup";
+  import CommandGroup from "../ui/Command/CommandGroup";
   import SearchResult from "./SearchResult";
-  import { chat } from "../utils/store";
-  import { searchSessions } from "../utils/search";
+  import { chat } from "../../utils/store";
+  import { searchSessions } from "../../utils/search";
 
   // The chats listed in the SearchDialog, filtered by what's typed: starred first, then the rest.
   const state = { query: "" };

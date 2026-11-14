@@ -1,17 +1,17 @@
 <script>
   import { onMount } from "olum";
   import FileChip from "./FileChip";
-  import Icon from "./ui/Icon/Icon";
-  import InputGroup from "./ui/InputGroup/InputGroup";
-  import InputGroupAddon from "./ui/InputGroup/InputGroupAddon";
-  import InputGroupButton from "./ui/InputGroup/InputGroupButton";
-  import Textarea from "./ui/Textarea/Textarea";
-  import Toggle from "./ui/Toggle/Toggle";
-  import Tooltip from "./ui/Tooltip/Tooltip";
-  import TooltipContent from "./ui/Tooltip/TooltipContent";
-  import TooltipTrigger from "./ui/Tooltip/TooltipTrigger";
-  import { chat } from "../utils/store";
-  import { ArrowUp, Lightbulb, Mic, Paperclip, Square } from "../utils/icons";
+  import Icon from "../ui/Icon/Icon";
+  import InputGroup from "../ui/InputGroup/InputGroup";
+  import InputGroupAddon from "../ui/InputGroup/InputGroupAddon";
+  import InputGroupButton from "../ui/InputGroup/InputGroupButton";
+  import Textarea from "../ui/Textarea/Textarea";
+  import Toggle from "../ui/Toggle/Toggle";
+  import Tooltip from "../ui/Tooltip/Tooltip";
+  import TooltipContent from "../ui/Tooltip/TooltipContent";
+  import TooltipTrigger from "../ui/Tooltip/TooltipTrigger";
+  import { chat } from "../../utils/store";
+  import { ArrowUp, Lightbulb, Mic, Paperclip, Square } from "../../utils/icons";
 
   // The message box: type, attach files, send (Enter) or stop.
   const state = { input: "", files: [], think: false };

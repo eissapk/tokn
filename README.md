@@ -8,21 +8,25 @@ A chat app for AI models running on your own machine through [Ollama](https://ol
 
 ```
 src/
-├── page.html              the app layout + keyboard shortcuts (Ctrl+N, Ctrl+K, Alt+Up/Down)
+├── page.html              the home page (/) — just lays out components/home
+├── chat/page.html         the chat app (/chat) + keyboard shortcuts (Ctrl+N, Ctrl+K, Alt+Up/Down)
 ├── main.css               theme colours and the style of the model's markdown
 ├── components/
-│   ├── Sidebar.html       saved chats + search icon
-│   │   └── SessionItem.html   one saved chat (open / star / delete)
-│   ├── SearchDialog.html  the chat search palette (search icon or Ctrl+K)
-│   │   ├── SearchResults.html the chats listed in it
-│   │   └── SearchResult.html  one chat in it
-│   ├── Topbar.html        model picker, context meter, new chat, theme
-│   │   ├── ModelOption.html   one model in the picker
-│   │   └── ContextMeter.html  how full the model's memory is
-│   ├── Thread.html        the list of messages
-│   │   └── ChatMessage.html   one message (with thinking + copy buttons)
-│   ├── Composer.html      the message box: type, attach files, send / stop
-│   ├── FileChip.html      one attached file
+│   ├── Logo.html          the TOKN logo (shared by both pages)
+│   ├── home/              one file per home page section (HomeNav, Hero, Showcase, Features…)
+│   ├── chat/
+│   │   ├── Sidebar.html       saved chats + search icon
+│   │   │   └── SessionItem.html   one saved chat (open / star / delete)
+│   │   ├── SearchDialog.html  the chat search palette (search icon or Ctrl+K)
+│   │   │   ├── SearchResults.html the chats listed in it
+│   │   │   └── SearchResult.html  one chat in it
+│   │   ├── Topbar.html        model picker, context meter, new chat, theme
+│   │   │   ├── ModelOption.html   one model in the picker
+│   │   │   └── ContextMeter.html  how full the model's memory is
+│   │   ├── Thread.html        the list of messages
+│   │   │   └── ChatMessage.html   one message (with thinking + copy buttons)
+│   │   ├── Composer.html      the message box: type, attach files, send / stop
+│   │   └── FileChip.html      one attached file
 │   └── ui/                olum-ui components (added with `npx olum add <name>`)
 └── utils/
     ├── store.js           ALL app state and actions (send, newChat, openSession…)
@@ -31,7 +35,8 @@ src/
     ├── sessions.js        saving chats to disk
     ├── search.js          searching inside saved chats + openSearch()
     ├── markdown.js        model output → HTML
-    └── icons.js           the icons the app uses
+    ├── icons.js           the icons the app uses
+    └── links.js           outside links (GitHub, docs, Ollama) used on the home page
 ```
 
 Rule of thumb: **components only draw things and call `chat.something()`; the logic lives in `utils/`.**

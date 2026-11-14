@@ -1,16 +1,16 @@
 <script>
-  import Button from "./ui/Button/Button";
-  import DropdownMenu from "./ui/DropdownMenu/DropdownMenu";
-  import DropdownMenuContent from "./ui/DropdownMenu/DropdownMenuContent";
-  import DropdownMenuLabel from "./ui/DropdownMenu/DropdownMenuLabel";
-  import DropdownMenuSeparator from "./ui/DropdownMenu/DropdownMenuSeparator";
-  import DropdownMenuTrigger from "./ui/DropdownMenu/DropdownMenuTrigger";
-  import Icon from "./ui/Icon/Icon";
+  import Button from "../ui/Button/Button";
+  import DropdownMenu from "../ui/DropdownMenu/DropdownMenu";
+  import DropdownMenuContent from "../ui/DropdownMenu/DropdownMenuContent";
+  import DropdownMenuLabel from "../ui/DropdownMenu/DropdownMenuLabel";
+  import DropdownMenuSeparator from "../ui/DropdownMenu/DropdownMenuSeparator";
+  import DropdownMenuTrigger from "../ui/DropdownMenu/DropdownMenuTrigger";
+  import Icon from "../ui/Icon/Icon";
   import ContextMeter from "./ContextMeter";
   import ModelOption from "./ModelOption";
-  import { chat } from "../utils/store";
-  import { OLLAMA_URL } from "../utils/ollama";
-  import { ChevronDown, Moon, PanelLeft, SquarePen, Sun } from "../utils/icons";
+  import { chat } from "../../utils/store";
+  import { OLLAMA_URL } from "../../utils/ollama";
+  import { ChevronDown, Moon, PanelLeft, SquarePen, Sun } from "../../utils/icons";
 
   // Component tags take functions by name, so store actions get local wrappers.
   const newChat = () => chat.newChat();

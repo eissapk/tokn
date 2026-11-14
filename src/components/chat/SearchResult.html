@@ -1,8 +1,8 @@
 <script>
   import { props } from "olum";
-  import CommandItem from "./ui/Command/CommandItem";
-  import { chat } from "../utils/store";
-  import { snippetFor } from "../utils/search";
+  import CommandItem from "../ui/Command/CommandItem";
+  import { chat } from "../../utils/store";
+  import { snippetFor } from "../../utils/search";
 
   // One chat in the SearchDialog. Picking it opens that chat.
   const { session, query = "" } = props();
